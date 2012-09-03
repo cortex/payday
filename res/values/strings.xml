@@ -1,0 +1,11 @@
+<resources>
+
+    <string name="app_name">payday</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_budget">Payday</string>
+    <string name="days_until_payday">%d</string>
+    <string name="daily_budget">%.2f kr</string>
+    <string name="days_until_payday_title">DAYS UNTIL PAYDAY</string>
+    <string name="daily_budget_title">DAILY BUDGET</string>
+
+</resources>

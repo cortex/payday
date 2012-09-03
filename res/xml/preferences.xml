@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <EditTextPreference 
+        android:dialogTitle="API key" 
+        android:key="pref_API_key" 
+        android:title="Bankdroid API Key" android:dialogMessage="Needed for getting data from Bankdroid"/>
+    <ListPreference 
+        android:enabled="false"
+        android:key="pref_account" 
+        android:title="Pick account"/>       
+        />
+    
+</PreferenceScreen>
