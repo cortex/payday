@@ -4,8 +4,8 @@
     <string name="menu_settings">Inställningar</string>
     <string name="title_activity_budget">Löning</string>
     <string name="days_until_payday">%d</string>
-    <string name="daily_budget">%.2f kr</string>
-    <string name="days_until_payday_title">DAGAR TILL LÖNING</string>
-    <string name="daily_budget_title">DAGSBUDGET</string>
+    <string name="daily_budget">%.0f kr</string>
+    <string name="days_until_payday_title">DAGAR \nTILL \nLÖNING</string>
+    <string name="daily_budget_title">DAGENS \nBUDGET</string>
     
 </resources>
