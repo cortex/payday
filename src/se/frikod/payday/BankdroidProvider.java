@@ -53,7 +53,7 @@ public class BankdroidProvider implements IBankTransactionsProvider {
 		return !(c == null);
 	}
 
-	public String[] getAccounts() {
+	public AccountData getAccounts() {
 		Log.i(TAG, "Getting accounts");
 		prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		String apiKey = prefs.getString(SettingsActivity.KEY_PREF_API_KEY, "a");
@@ -62,20 +62,29 @@ public class BankdroidProvider implements IBankTransactionsProvider {
 				+ "/bankaccounts/API_KEY=" + apiKey);
 		ContentResolver r = context.getContentResolver();
 
-		String[] fields = { "name", "balance" };
+		String[] fields = { "id", "name", "balance" };
 		Cursor c = r.query(uri, fields, null, null, null);
 
-		ArrayList<String> out = new ArrayList<String>();
+		ArrayList<String> names = new ArrayList<String>();
+		ArrayList<String> ids = new ArrayList<String>();
+		AccountData accountData = new AccountData();
+
 		if (c.getCount() == 0){
-			return new String[0];
+			return accountData;
 		}
 		while (!c.isLast()) {
 			c.moveToNext();
-			out.add(c.getString(0));
+			ids.add(c.getString(0));
+			names.add(c.getString(1));
 		}
-		String r1[] = new String[out.size()];
-		r1 = out.toArray(r1);
-		return r1;
+		String rnames[] = new String[names.size()];
+		String rids[] = new String[ids.size()];
+		names.toArray(rnames);
+		ids.toArray(rids);
+		accountData.accountIds = rids;
+		accountData.accountNames = rnames;
+		
+		return accountData;
 	}
 
 	public double getBalance() throws WrongAPIKeyException,
@@ -85,9 +94,9 @@ public class BankdroidProvider implements IBankTransactionsProvider {
 		final Uri uri = Uri.parse("content://" + AUTHORITY
 				+ "/bankaccounts/API_KEY=" + apiKey);
 		ContentResolver r = context.getContentResolver();
-		String[] fields = { "name", "balance" };
+		String[] fields = { "id", "name", "balance" };
 		String name = prefs.getString(SettingsActivity.KEY_PREF_ACCOUNT, "");
-		Cursor c = r.query(uri, fields, "name like '" + name + "'", null, null);
+		Cursor c = r.query(uri, fields, "id = '" + name + "'", null, null);
 		if (c == null) {
 			throw new WrongAPIKeyException();
 		}
@@ -95,7 +104,7 @@ public class BankdroidProvider implements IBankTransactionsProvider {
 			throw new AccountNotFoundException();
 		}
 		c.moveToNext();
-		return c.getDouble(1);
+		return c.getDouble(2);
 
 	}
 

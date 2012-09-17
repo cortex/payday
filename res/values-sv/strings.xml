@@ -7,5 +7,14 @@
     <string name="daily_budget">%.0f kr</string>
     <string name="days_until_payday_title">DAGAR \nTILL \nLÖNING</string>
     <string name="daily_budget_title">DAGENS \nBUDGET</string>
+    <string name="pick_account">Välj konto</string>
+    <string name="bankdroid_api_key">API-nyckel för Bankdroid</string>
+    
+    <string name="bankdroid_is_not_installed">Med Bankdroid kan du ansluta till din internetbank, så att Löning kan se ditt saldo. </string>
+    <string name="install_bankdroid">Installera Bankdroid</string>
+    <string name="bankdroid_not_installed_title">Bankdroid är inte installerat</string>
+    <string name="api_key_dialog_message">Behövs för att kunna hämta ditt kontosaldo. Du hittar nyckeln i Bankdroids inställningar.</string> 
+    <string name="balance_title">SALDO</string>
+    <string name="balance">%.0f kr</string>
     
 </resources>

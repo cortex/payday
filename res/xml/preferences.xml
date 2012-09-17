@@ -3,11 +3,11 @@
     <EditTextPreference 
         android:dialogTitle="API key" 
         android:key="pref_API_key" 
-        android:title="Bankdroid API Key" android:dialogMessage="@string/api_key_dialog_message"/>
+        android:title="@string/bankdroid_api_key" android:dialogMessage="@string/api_key_dialog_message"/>
     <ListPreference 
         android:enabled="false"
         android:key="pref_account" 
-        android:title="Pick account"/>       
+        android:title="@string/pick_account"/>       
         />
     
 </PreferenceScreen>

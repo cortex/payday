@@ -28,9 +28,11 @@ import org.joda.time.Days;
 class Budget {
 	int daysUntilPayday;
 	double dailyBudget;
+	double balance;
 }
 
 public class Payday extends Activity {
+	@SuppressWarnings("unused")
 	private static final String TAG = "Payday";
 	static final int DIALOG_BANKDROID_NOT_INSTALLED = 0;
 	private static final int DIALOG_WRONG_API_KEY = 1;
@@ -163,7 +165,7 @@ public class Payday extends Activity {
 		} else {
 			nextPayday = now.plusMonths(1).withDayOfMonth(payday);
 		}
-
+		budget.balance = balance;
 		budget.daysUntilPayday = Days.daysBetween(now, nextPayday).getDays();
 		budget.dailyBudget = balance / budget.daysUntilPayday;
 	}
@@ -172,6 +174,10 @@ public class Payday extends Activity {
 		Resources res = getResources();
 		TextView bv = (TextView) findViewById(R.id.budgetTextView);
 		TextView dv = (TextView) findViewById(R.id.daysToPaydayView);
+		TextView balanceView = (TextView) findViewById(R.id.balanceView);
+		balanceView.setText(String.format(res.getString(R.string.balance),
+				budget.balance));
+
 		bv.setText(String.format(res.getString(R.string.daily_budget),
 				budget.dailyBudget));
 		dv.setText(String.format(res.getString(R.string.days_until_payday),
@@ -183,9 +189,14 @@ public class Payday extends Activity {
 		Resources res = getResources();
 		TextView bv = (TextView) findViewById(R.id.budgetTextView);
 		TextView dv = (TextView) findViewById(R.id.daysToPaydayView);
+		TextView balanceView = (TextView) findViewById(R.id.balanceView);
 		bv.setText(String.format(res.getString(R.string.daily_budget), 0.0f));
 		dv.setText(String.format(res.getString(R.string.days_until_payday),
 				budget.daysUntilPayday));
+		
+		
+		balanceView.setText(String.format(res.getString(R.string.balance),
+				budget.balance));
 
 		ValueAnimator animation = ValueAnimator.ofFloat(0f,
 				(float) budget.dailyBudget);

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
 import se.frikod.payday.R;
+import android.text.TextUtils;
 import android.util.Log;
 
 public class SettingsActivity extends PreferenceActivity implements
@@ -49,10 +50,11 @@ public class SettingsActivity extends PreferenceActivity implements
 	private void check(){
 		ListPreference lp = (ListPreference)findPreference(KEY_PREF_ACCOUNT);
 		if (bank.verifyAPIKey()) {
-			String[] accounts = bank.getAccounts();
-        
-			lp.setEntries(accounts);
-			lp.setEntryValues(accounts);
+			AccountData accounts = bank.getAccounts();
+			Log.d(TAG, TextUtils.join(" ", accounts.accountNames));
+			Log.d(TAG, TextUtils.join(" ", accounts.accountIds));
+			lp.setEntries(accounts.accountNames);
+			lp.setEntryValues(accounts.accountIds);
 			lp.setEnabled(true);
 			
 		} else {
