@@ -1,5 +1,7 @@
 package se.frikod.payday;
 
+import java.util.ArrayList;
+
 import com.liato.bankdroid.provider.IBankTransactionsProvider;
 
 import android.content.SharedPreferences;
@@ -27,42 +29,51 @@ public class SettingsActivity extends PreferenceActivity implements
 		check();
 	}
 
-	
-	// This crap is needed to make the OnSharedPreferenceChangeListener 
+	// This crap is needed to make the OnSharedPreferenceChangeListener
 	// actually work
-	
+
 	@Override
 	protected void onResume() {
-	    super.onResume();
-	    getPreferenceScreen().getSharedPreferences()
-	            .registerOnSharedPreferenceChangeListener(this);
+		super.onResume();
+		getPreferenceScreen().getSharedPreferences()
+				.registerOnSharedPreferenceChangeListener(this);
 	}
 
 	@Override
 	protected void onPause() {
-	    super.onPause();
-	    getPreferenceScreen().getSharedPreferences()
-	            .unregisterOnSharedPreferenceChangeListener(this);
+		super.onPause();
+		getPreferenceScreen().getSharedPreferences()
+				.unregisterOnSharedPreferenceChangeListener(this);
 	}
 
-	//End of crap
-	
-	private void check(){
-		ListPreference lp = (ListPreference)findPreference(KEY_PREF_ACCOUNT);
+	// End of crap
+
+	private void check() {
+		ListPreference lp = (ListPreference) findPreference(KEY_PREF_ACCOUNT);
 		if (bank.verifyAPIKey()) {
-			AccountData accounts = bank.getAccounts();
-			Log.d(TAG, TextUtils.join(" ", accounts.accountNames));
-			Log.d(TAG, TextUtils.join(" ", accounts.accountIds));
-			lp.setEntries(accounts.accountNames);
-			lp.setEntryValues(accounts.accountIds);
-			lp.setEnabled(true);
-			
+			ArrayList<Account> accounts = bank.getAccounts();
+			if (accounts.size() > 0) {
+				String[] accountNames = new String[accounts.size()];
+				String[] accountIds = new String[accounts.size()];
+
+				for (int i = 0; i < accounts.size(); i++) {
+					accountNames[i] = accounts.get(i).name;
+					accountIds[i] = accounts.get(i).id;
+				}
+
+				lp.setEntries(accountNames);
+				lp.setEntryValues(accountIds);
+				lp.setEnabled(true);
+			} else {
+				lp.setEnabled(false);
+			}
+
 		} else {
 			lp.setEnabled(false);
 		}
 
 	}
-	
+
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 			String key) {
 		Log.i(TAG, "Preferences changed");

@@ -16,9 +16,13 @@ import android.util.Log;
 
 import com.liato.bankdroid.provider.IBankTransactionsProvider;
 
-class AccountData {
-	String[] accountNames;
-	String[] accountIds;
+class Account {
+	String name;
+	String id;
+	public Account(String mid, String mname){
+		name = mname;
+		id = mid;
+	}
 }
 
 public class BankdroidProvider implements IBankTransactionsProvider {
@@ -53,7 +57,7 @@ public class BankdroidProvider implements IBankTransactionsProvider {
 		return !(c == null);
 	}
 
-	public AccountData getAccounts() {
+	public ArrayList<Account> getAccounts() {
 		Log.i(TAG, "Getting accounts");
 		prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		String apiKey = prefs.getString(SettingsActivity.KEY_PREF_API_KEY, "a");
@@ -65,26 +69,14 @@ public class BankdroidProvider implements IBankTransactionsProvider {
 		String[] fields = { "id", "name", "balance" };
 		Cursor c = r.query(uri, fields, null, null, null);
 
-		ArrayList<String> names = new ArrayList<String>();
-		ArrayList<String> ids = new ArrayList<String>();
-		AccountData accountData = new AccountData();
-
-		if (c.getCount() == 0){
-			return accountData;
-		}
-		while (!c.isLast()) {
-			c.moveToNext();
-			ids.add(c.getString(0));
-			names.add(c.getString(1));
-		}
-		String rnames[] = new String[names.size()];
-		String rids[] = new String[ids.size()];
-		names.toArray(rnames);
-		ids.toArray(rids);
-		accountData.accountIds = rids;
-		accountData.accountNames = rnames;
+		ArrayList<Account> accounts = new ArrayList<Account>();
 		
-		return accountData;
+		while (c.getCount() > 0 && !c.isLast()) {
+			c.moveToNext();
+			accounts.add(new Account(c.getString(0), c.getString(1)));
+		}
+				
+		return accounts;
 	}
 
 	public double getBalance() throws WrongAPIKeyException,
