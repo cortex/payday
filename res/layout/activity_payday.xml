@@ -1,110 +1,90 @@
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView1"
+    android:layout_width="match_parent"
     android:layout_height="fill_parent"
-    android:layout_alignLeft="@+id/budgetTextView"
-    android:layout_below="@+id/gridLayout1"
-    android:layout_gravity="top"
-    android:background="@drawable/paper" >
+    android:background="@drawable/cardboard_flat"
+    android:fillViewport="true" >
 
-    <TableRow
-        android:id="@+id/tableRow1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="top" >
-
-        <TextView
-            android:id="@+id/balanceTitleTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="10dp"
-            android:text="@string/balance_title"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#666" />
-
-        <TextView
-            android:id="@+id/balanceView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_margin="10dp"
-            android:gravity="center"
-            android:text="@string/balance"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="24pt" />
-
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-
-        <TextView
-            android:id="@+id/daysToPaydayTitleTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="10dp"
-            android:text="@string/days_until_payday_title"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#666" />
-
-        <TextView
-            android:id="@+id/daysToPaydayView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_margin="10dp"
-            android:gravity="center"
-            android:text="@string/days_until_payday"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="24pt" />
-
-    </TableRow>
-
-    <View
-        android:id="@+id/separator"
+    <TableLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="fill_parent"
-        android:layout_height="5dp"
-        android:layout_margin="10dp"
-        android:background="@drawable/line_separator" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:stretchColumns="2" >
 
-    <TableRow
-        android:id="@+id/tableRow4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-
-        <TextView
-            android:id="@+id/budgetTitleTextView"
+        <TableRow
+            android:id="@+id/tableRow1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="10dp"
-            android:layout_marginTop="24dp"
-            android:lines="2"
-            android:maxLines="2"
-            android:minLines="2"
-            android:text="@string/daily_budget_title"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#666" />
+            android:gravity="top" >
 
-        <TextView
-            android:id="@+id/budgetTextView"
+            <TextView
+                android:id="@+id/balanceTitleTextView"
+                style="@style/paydayLabel"
+                android:text="@string/balance_title" />
+
+            <TextView
+                android:id="@+id/balanceView"
+                style="@style/paydayNumber"
+                android:text="@string/balance" />
+        </TableRow>
+<!-- 
+        <TableRow
+            android:id="@+id/goalRow"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/goalLabel"
+                style="@style/paydayLabel"
+                android:text="@string/goal_label" />
+
+            <TextView
+                android:id="@+id/goalView"
+                style="@style/paydayNumber"
+                android:text="@string/goal" />
+        </TableRow>
+ -->
+        <TableRow
+            android:id="@+id/tableRow3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/daysToPaydayTitleTextView"
+                style="@style/paydayLabel"
+                android:text="@string/days_until_payday_title" />
+
+            <TextView
+                android:id="@+id/daysToPaydayView"
+                style="@style/paydayNumber"
+                android:text="@string/days_until_payday" />
+        </TableRow>
+
+        <View
+            android:id="@+id/separator"
+            android:layout_width="fill_parent"
+            android:layout_height="5dp"
             android:layout_margin="10dp"
-            android:gravity="center_horizontal"
-            android:shadowColor="#feee"
-            android:shadowDx="0"
-            android:shadowDy="2"
-            android:shadowRadius="1"
-            android:text="@string/daily_budget"
-            android:textSize="@dimen/budgetfont"
-            tools:context=".Budget" />
+            android:background="@drawable/line_separator" />
 
-    </TableRow>
+        <TableRow
+            android:id="@+id/tableRow4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
 
-</TableLayout>
+            <TextView
+                android:id="@+id/budgetTitleTextView"
+                style="@style/paydayLabel"
+                android:text="@string/daily_budget_title" />
+
+            <TextView
+                android:id="@+id/budgetTextView"
+                style="@style/paydayNumber"
+                android:text="@string/daily_budget"
+                tools:context=".Budget" />
+        </TableRow>
+    </TableLayout>
+
+</ScrollView>

@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
 import se.frikod.payday.R;
-import android.text.TextUtils;
 import android.util.Log;
 
 public class SettingsActivity extends PreferenceActivity implements
