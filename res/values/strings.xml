@@ -17,5 +17,6 @@
     <string name="bankdroid_api_key">Bankdroid API key</string>
     <string name="goal_label">SAVINGS \nGOAL</string>
     <string name="goal">%.0f kr</string>
+    <string name="api_key_dialog_title">API key</string>
     
 </resources>

@@ -7,14 +7,20 @@ import com.liato.bankdroid.provider.IBankTransactionsProvider;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
 import se.frikod.payday.R;
+import android.text.Html;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ClickableSpan;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
+import android.view.View;
 
 public class SettingsActivity extends PreferenceActivity implements
 		IBankTransactionsProvider, OnSharedPreferenceChangeListener {
-
 	public static String KEY_PREF_API_KEY = "pref_API_key";
 	public static String KEY_PREF_ACCOUNT = "pref_account";
 	private BankdroidProvider bank = new BankdroidProvider(this);
@@ -47,8 +53,24 @@ public class SettingsActivity extends PreferenceActivity implements
 
 	// End of crap
 
+	private void openBankdroidSettings(){
+		Intent i = new Intent("com.liato.bankdroid.SettingsActivity");
+		startActivity(i);
+	}
+	
 	private void check() {
+		EditTextPreference apiKeyEntry = (EditTextPreference) findPreference(KEY_PREF_API_KEY);
+		
+		Spanned s = Html.fromHtml(getString(R.string.api_key_dialog_message));
+		apiKeyEntry.setDialogMessage(s);
+		apiKeyEntry.setOnPreferenceClickListener(openBankdroidSettings)
+		
+		
+		apiKeyEntry.setDialogMessage(s);
+		
 		ListPreference lp = (ListPreference) findPreference(KEY_PREF_ACCOUNT);
+		
+
 		if (bank.verifyAPIKey()) {
 			ArrayList<Account> accounts = bank.getAccounts();
 			if (accounts.size() > 0) {
@@ -59,7 +81,6 @@ public class SettingsActivity extends PreferenceActivity implements
 					accountNames[i] = accounts.get(i).name;
 					accountIds[i] = accounts.get(i).id;
 				}
-
 				lp.setEntries(accountNames);
 				lp.setEntryValues(accountIds);
 				lp.setEnabled(true);
