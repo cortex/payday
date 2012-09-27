@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import com.liato.bankdroid.provider.IBankTransactionsProvider;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
@@ -12,12 +15,16 @@ import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
 import se.frikod.payday.R;
 import android.text.Html;
+import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ClickableSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class SettingsActivity extends PreferenceActivity implements
 		IBankTransactionsProvider, OnSharedPreferenceChangeListener {
@@ -30,7 +37,7 @@ public class SettingsActivity extends PreferenceActivity implements
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.preferences);
-		Log.i(TAG, "Settings created");
+		Log.i(TAG, "Settings created");	
 		check();
 	}
 
@@ -59,15 +66,7 @@ public class SettingsActivity extends PreferenceActivity implements
 	}
 	
 	private void check() {
-		EditTextPreference apiKeyEntry = (EditTextPreference) findPreference(KEY_PREF_API_KEY);
-		
-		Spanned s = Html.fromHtml(getString(R.string.api_key_dialog_message));
-		apiKeyEntry.setDialogMessage(s);
-		apiKeyEntry.setOnPreferenceClickListener(openBankdroidSettings)
-		
-		
-		apiKeyEntry.setDialogMessage(s);
-		
+		EditTextPreference apiKeyEntry = (EditTextPreference) findPreference(KEY_PREF_API_KEY);		
 		ListPreference lp = (ListPreference) findPreference(KEY_PREF_ACCOUNT);
 		
 
@@ -97,8 +96,9 @@ public class SettingsActivity extends PreferenceActivity implements
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 			String key) {
 		Log.i(TAG, "Preferences changed");
-		if (key.equals(KEY_PREF_API_KEY)) {
+		if (key.equals(KEY_PREF_API_KEY)) {		
 			check();
 		}
+		
 	}
 }
