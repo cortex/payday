@@ -4,40 +4,37 @@ import java.util.ArrayList;
 
 import com.liato.bankdroid.provider.IBankTransactionsProvider;
 
-import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import se.frikod.payday.R;
-import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.style.ClickableSpan;
-import android.text.style.UnderlineSpan;
 import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 public class SettingsActivity extends PreferenceActivity implements
 		IBankTransactionsProvider, OnSharedPreferenceChangeListener {
+	public static String KEY_PREF_PAIRED = "pref_paired_with_bankdroid";
 	public static String KEY_PREF_API_KEY = "pref_API_key";
 	public static String KEY_PREF_ACCOUNT = "pref_account";
+	public static String KEY_PREF_PAYDAY = "pref_payday";
+	public static String KEY_PREF_GOAL = "pref_goal";
+
+
 	private BankdroidProvider bank = new BankdroidProvider(this);
+	
 	private static final String TAG = "Payday.settings";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.preferences);
-		Log.i(TAG, "Settings created");	
+		Log.i(TAG, "Settings created");
 		check();
 	}
 
@@ -60,13 +57,42 @@ public class SettingsActivity extends PreferenceActivity implements
 
 	// End of crap
 
-	private void openBankdroidSettings(){
-		Intent i = new Intent("com.liato.bankdroid.SettingsActivity");
-		startActivity(i);
+	private void pairWithBankdroid() {
+		Intent i = new Intent("com.liato.bankroid.PAIR_APPLICATION_ACTION");
+		i.putExtra("com.liato.bankdroid.PAIR_APP_NAME", "Payday");
+
+		this.startActivityForResult(i, 0);
+		Log.i(TAG, "Requesting pairing");
+	}
+
+	@Override
+	protected void onActivityResult(final int requestCode,
+			final int resultCode, final Intent data) {
+		if (resultCode == RESULT_OK) {
+			final String apiKey = data
+					.getStringExtra(IBankTransactionsProvider.API_KEY);
+			Log.d(TAG, "User accepted pairing. Got an API key back: " + apiKey);
+			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+			final SharedPreferences.Editor editor = prefs.edit();
+			// Commit to preferences
+			editor.putString(KEY_PREF_API_KEY, apiKey);
+			editor.commit();			
+			check();
+		} else if (resultCode == RESULT_CANCELED) {
+			Log.d(TAG, "User did not accept pairing.");
+		}
 	}
 	
 	private void check() {
-		EditTextPreference apiKeyEntry = (EditTextPreference) findPreference(KEY_PREF_API_KEY);		
+		CheckBoxPreference apiKeyEntry = (CheckBoxPreference) findPreference(KEY_PREF_PAIRED);
+		apiKeyEntry.setOnPreferenceClickListener(new OnPreferenceClickListener(){
+			@Override
+			public boolean onPreferenceClick(Preference pref) {
+				pairWithBankdroid();
+				return true;
+			}
+		});
+		
 		ListPreference lp = (ListPreference) findPreference(KEY_PREF_ACCOUNT);
 		
 
@@ -96,9 +122,9 @@ public class SettingsActivity extends PreferenceActivity implements
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 			String key) {
 		Log.i(TAG, "Preferences changed");
-		if (key.equals(KEY_PREF_API_KEY)) {		
+		if (key.equals(KEY_PREF_API_KEY)) {
 			check();
 		}
-		
+
 	}
 }

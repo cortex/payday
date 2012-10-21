@@ -1,18 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <se.frikod.payday.APIKeyPreference
-        android:dialogMessage="@string/api_key_dialog_message"
-        android:dialogTitle="@string/api_key_dialog_title"
-        android:key="pref_API_key"
-        android:title="@string/bankdroid_api_key" 
-        android:linksClickable="true"
-        />
+    <PreferenceCategory android:title="@string/bankdroid_integration_section_title" >
+        <CheckBoxPreference
+            android:disableDependentsState="false"
+            android:key="pref_paired_with_bankdroid"
+            android:title="@string/pair_with_bankdroid" />
 
-    <ListPreference
-        android:enabled="false"
-        android:key="pref_account"
-        android:title="@string/pick_account" />
-        />
+        <ListPreference
+            android:dependency="pref_paired_with_bankdroid"
+            android:enabled="false"
+            android:key="pref_account"
+            android:title="@string/pick_account" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/your_budget_section" >
+        <EditTextPreference
+            android:dialogMessage="@string/payday_description"
+            android:dialogTitle="@string/payday_title"
+            android:key="pref_payday"
+            android:numeric="integer"
+            android:title="@string/payday_title" />
+        <EditTextPreference
+            android:dialogMessage="@string/savings_goal_description"
+            android:dialogTitle="@string/savings_goal_title"
+            android:key="pref_goal"
+            android:numeric="integer"
+            android:title="@string/savings_goal_title" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

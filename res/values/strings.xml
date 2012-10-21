@@ -5,18 +5,27 @@
     <string name="title_activity_budget">Payday</string>
     <string name="days_until_payday">%d</string>
     <string name="daily_budget">%.0f kr</string>
-    <string name="days_until_payday_title">DAYS \nUNTIL \nPAYDAY</string>
-    <string name="daily_budget_title">DAILY \nBUDGET</string>
+    <string name="days_until_payday_title">DAYS UNTIL PAYDAY</string>
+    <string name="daily_budget_title">DAILY BUDGET</string>
     <string name="bankdroid_is_not_installed">Bankdroid connects to your internet bank, allowing payday to check your account balance. </string>
     <string name="install_bankdroid">Install Bankdroid</string>
     <string name="bankdroid_not_installed_title">Bankdroid is not installed</string>
-    <string name="api_key_dialog_message">This is needed for accessing your account balance from Bankdroid. You can find this in the Bankdroid settings.</string>
     <string name="balance_title">BALANCE</string>
     <string name="balance">%.0f kr</string>
     <string name="pick_account">Pick account</string>
-    <string name="bankdroid_api_key">Bankdroid API key</string>
-    <string name="goal_label">SAVINGS \nGOAL</string>
+    <string name="goal_label">SAVINGS GOAL</string>
     <string name="goal">%.0f kr</string>
-    <string name="api_key_dialog_title">API key</string>
+    <string name="pair_with_bankdroid">Connect to Bankdroid</string>
+    <string name="savings_goal_description">Reserve this amount from the balance when calculating the daily budget</string>
+    <string name="savings_goal_title">Savings goal</string>
+    <string name="your_budget_section">Your budget</string>
+    <string name="bankdroid_integration_section_title">Bankdroid integration</string>
+    <string name="payday_title">Payday</string>
+    <string name="payday_description">What day of the month do you get paid?</string>
+	<string name="bankdroid_permission_provider_label">Basic account information and the transaction history</string>
+	<string name="bankdroid_permission_provider_desc">Allows the application to access what banks and accounts are configured in BankDroids. Your Bank credentials are not exposed. Transaction history can also be accessed.</string>
+	<string name="connect_to_bankdroid">Connect to Bankdroid</string>
+	<string name="connect_to_bankdroid_dialog_body">You need to connect to Bankdroid to access your account balance</string>
+	<string name="connect_to_bankdroid_settings">Go to settings</string>
     
 </resources>

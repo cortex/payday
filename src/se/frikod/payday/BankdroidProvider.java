@@ -48,7 +48,7 @@ public class BankdroidProvider implements IBankTransactionsProvider {
 
 	public boolean verifyAPIKey() {
 		prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		String apiKey = prefs.getString(SettingsActivity.KEY_PREF_API_KEY, "a");
+		String apiKey = prefs.getString(SettingsActivity.KEY_PREF_API_KEY, "");
 		final Uri uri = Uri.parse("content://" + AUTHORITY
 				+ "/bankaccounts/API_KEY=" + apiKey);
 		ContentResolver r = context.getContentResolver();
