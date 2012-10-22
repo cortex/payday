@@ -40,12 +40,13 @@ public class Payday extends Activity {
 	private static final int DIALOG_BANKDROID_NOT_CONNECTED = 1;
 	private static final int DIALOG_BANKDROID_ACCOUNT_NOT_FOUND = 2;
 	private Budget budget = new Budget();
-	private BankdroidProvider bank = new BankdroidProvider(this);
+	private BankdroidProvider bank = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		bank = new BankdroidProvider(this);
 		super.onCreate(savedInstanceState);
-
+		
 		setContentView(R.layout.activity_payday);
 		TextView bv = (TextView) findViewById(R.id.budgetTextView);
 		bv.setOnClickListener(new OnClickListener() {
