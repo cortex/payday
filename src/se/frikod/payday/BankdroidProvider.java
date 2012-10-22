@@ -19,27 +19,31 @@ import com.liato.bankdroid.provider.IBankTransactionsProvider;
 class Account {
 	String name;
 	String id;
-	public Account(String mid, String mname){
+
+	public Account(String mid, String mname) {
 		name = mname;
 		id = mid;
 	}
 }
 
 public class BankdroidProvider implements IBankTransactionsProvider {
+
 	private static final String TAG = "Payday.provider";
 	public static String KEY_PREF_ACCOUNT = "pref_account";
-
 	private Context context;
 	private SharedPreferences prefs;
+	private String apiKey;
 
 	public BankdroidProvider(Context ctx) {
 		context = ctx;
+		prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		apiKey = prefs.getString(SettingsActivity.KEY_PREF_API_KEY, "");
 	}
 
 	public boolean verifySetup() {
 		try {
-			context.getPackageManager()
-					.getApplicationInfo("com.liato.bankdroid", 0);
+			context.getPackageManager().getApplicationInfo(
+					"com.liato.bankdroid", 0);
 			return true;
 		} catch (PackageManager.NameNotFoundException e) {
 			return false;
@@ -47,8 +51,6 @@ public class BankdroidProvider implements IBankTransactionsProvider {
 	}
 
 	public boolean verifyAPIKey() {
-		prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		String apiKey = prefs.getString(SettingsActivity.KEY_PREF_API_KEY, "");
 		final Uri uri = Uri.parse("content://" + AUTHORITY
 				+ "/bankaccounts/API_KEY=" + apiKey);
 		ContentResolver r = context.getContentResolver();
@@ -59,30 +61,21 @@ public class BankdroidProvider implements IBankTransactionsProvider {
 
 	public ArrayList<Account> getAccounts() {
 		Log.i(TAG, "Getting accounts");
-		prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		String apiKey = prefs.getString(SettingsActivity.KEY_PREF_API_KEY, "a");
-
 		final Uri uri = Uri.parse("content://" + AUTHORITY
 				+ "/bankaccounts/API_KEY=" + apiKey);
 		ContentResolver r = context.getContentResolver();
-
 		String[] fields = { "id", "name", "balance" };
 		Cursor c = r.query(uri, fields, null, null, null);
-
 		ArrayList<Account> accounts = new ArrayList<Account>();
-		
 		while (c.getCount() > 0 && !c.isLast()) {
 			c.moveToNext();
 			accounts.add(new Account(c.getString(0), c.getString(1)));
 		}
-				
 		return accounts;
 	}
 
 	public double getBalance() throws WrongAPIKeyException,
 			AccountNotFoundException {
-		prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		String apiKey = prefs.getString(SettingsActivity.KEY_PREF_API_KEY, "a");
 		final Uri uri = Uri.parse("content://" + AUTHORITY
 				+ "/bankaccounts/API_KEY=" + apiKey);
 		ContentResolver r = context.getContentResolver();
@@ -98,6 +91,10 @@ public class BankdroidProvider implements IBankTransactionsProvider {
 		c.moveToNext();
 		return c.getDouble(2);
 
+	}
+
+	public double getSpentToday() {
+		return 0.0;
 	}
 
 }
