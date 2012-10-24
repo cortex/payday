@@ -2,6 +2,8 @@ package se.frikod.payday;
 
 import java.util.ArrayList;
 
+import org.joda.time.DateTime;
+
 import se.frikod.payday.exceptions.AccountNotFoundException;
 import se.frikod.payday.exceptions.WrongAPIKeyException;
 
@@ -94,7 +96,36 @@ public class BankdroidProvider implements IBankTransactionsProvider {
 	}
 
 	public double getSpentToday() {
-		return 0.0;
+		final Uri uri = Uri.parse("content://" + AUTHORITY + '/'
+				+ TRANSACTIONS_CAT + '/' + "API_KEY=" + apiKey);
+		ContentResolver r = context.getContentResolver();
+		String[] fields = {"account", "amount",  "transdate" };
+		String name = prefs.getString(SettingsActivity.KEY_PREF_ACCOUNT, "");
+		
+		DateTime now = new DateTime();
+		String today = now.toString("YYYY-MM-dd");
+		String tomorrow = now.plusDays(1).toString("YYYY-MM-dd");
+		Log.i(TAG, today);
+		Log.i(TAG, tomorrow);
+		Cursor c = r.query(uri, 
+				fields, 
+				String.format("account = '%s' and transdate >= '%s' and transdate < '%s'", name, today, tomorrow),
+				null, "transdate");
+		float total = 0;
+		if (c.getCount() == 0){
+			return 0.0;
+		}
+		while(!c.isLast()){
+			c.moveToNext();
+			String account = c.getString(0);
+			float amount = c.getFloat(1);
+			String date = c.getString(2);
+			Log.i(TAG, account + " " + date + " " + amount);
+			total -= amount;
+		}
+		Log.i(TAG, "Total :" + Float.toString(total));
+		return total;
+
 	}
 
 }

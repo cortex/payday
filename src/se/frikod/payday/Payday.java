@@ -32,6 +32,7 @@ class Budget {
 	double dailyBudget;
 	double balance;
 	double savingsGoal;
+	double spentToday;
 }
 
 public class Payday extends Activity {
@@ -149,9 +150,11 @@ public class Payday extends Activity {
 
 		double balance;
 		int payday;
-		int savingsGoal;
+		int savingsGoal;		
+		double spentToday;
 		try {
 			balance = this.bank.getBalance();
+			spentToday = this.bank.getSpentToday();
 		} catch (WrongAPIKeyException e) {
 			showDialog(DIALOG_BANKDROID_NOT_CONNECTED);
 			return;
@@ -189,18 +192,26 @@ public class Payday extends Activity {
 		budget.balance = balance;
 		budget.daysUntilPayday = Days.daysBetween(now, nextPayday).getDays();
 		budget.savingsGoal = savingsGoal;
-		budget.dailyBudget = (balance - savingsGoal) / budget.daysUntilPayday;
+		budget.dailyBudget = (balance - savingsGoal- spentToday) / budget.daysUntilPayday;
+		budget.spentToday = spentToday;
 	}
 
 	private void renderBudget() {
 		Resources res = getResources();
 		TextView bv = (TextView) findViewById(R.id.budgetTextView);
 		TextView dv = (TextView) findViewById(R.id.daysToPaydayView);
+		TextView sv = (TextView) findViewById(R.id.spentTodayView);
+		
+		
 		TextView balanceView = (TextView) findViewById(R.id.balanceView);
 		TextView gv = (TextView) findViewById(R.id.goalView);
 		gv.setText(String.format(res.getString(R.string.daily_budget),
 				budget.savingsGoal));
 
+		sv.setText(String.format(res.getString(R.string.spentToday),
+				budget.spentToday));
+		
+		
 		balanceView.setText(String.format(res.getString(R.string.balance),
 				budget.balance));
 

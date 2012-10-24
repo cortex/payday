@@ -21,6 +21,17 @@
             android:text="@string/balance" />
 
         <TextView
+            android:id="@+id/spentTodayTitleTextView"
+            style="@style/paydayLabel"
+            android:text="@string/spentToday_title" />
+
+        <TextView
+            android:id="@+id/spentTodayView"
+            style="@style/paydayNumber"
+            android:text="@string/spentToday" />
+        
+        
+        <TextView
             android:id="@+id/goalLabel"
             style="@style/paydayLabel"
             android:text="@string/goal_label" />
