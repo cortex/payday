@@ -26,12 +26,13 @@ public class SettingsActivity extends PreferenceActivity implements
 	public static String KEY_PREF_GOAL = "pref_goal";
 
 
-	private BankdroidProvider bank = new BankdroidProvider(this);
+	private BankdroidProvider bank;
 	
 	private static final String TAG = "Payday.settings";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		bank = new BankdroidProvider(this);
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.preferences);
 		Log.i(TAG, "Settings created");
