@@ -62,7 +62,6 @@ public class BankdroidProvider implements IBankTransactionsProvider {
 	}
 
 	public ArrayList<Account> getAccounts() {
-		Log.i(TAG, "Getting accounts");
 		final Uri uri = Uri.parse("content://" + AUTHORITY
 				+ "/bankaccounts/API_KEY=" + apiKey);
 		ContentResolver r = context.getContentResolver();
@@ -99,33 +98,27 @@ public class BankdroidProvider implements IBankTransactionsProvider {
 		final Uri uri = Uri.parse("content://" + AUTHORITY + '/'
 				+ TRANSACTIONS_CAT + '/' + "API_KEY=" + apiKey);
 		ContentResolver r = context.getContentResolver();
-		String[] fields = {"account", "amount",  "transdate" };
+		String[] fields = { "amount" };
 		String name = prefs.getString(SettingsActivity.KEY_PREF_ACCOUNT, "");
-		
+
 		DateTime now = new DateTime();
 		String today = now.toString("YYYY-MM-dd");
 		String tomorrow = now.plusDays(1).toString("YYYY-MM-dd");
-		Log.i(TAG, today);
-		Log.i(TAG, tomorrow);
-		Cursor c = r.query(uri, 
-				fields, 
-				String.format("account = '%s' and transdate >= '%s' and transdate < '%s'", name, today, tomorrow),
-				null, "transdate");
+		Cursor c = r.query(uri, fields, String.format(
+				"account = '%s' and transdate >= '%s' and transdate < '%s'",
+				name, today, tomorrow), null, "transdate");
 		float total = 0;
-		if (c.getCount() == 0){
+		if (c.getCount() == 0) {
 			return 0.0;
 		}
-		while(!c.isLast()){
+		while (!c.isLast()) {
 			c.moveToNext();
-			String account = c.getString(0);
-			float amount = c.getFloat(1);
-			String date = c.getString(2);
-			Log.i(TAG, account + " " + date + " " + amount);
-			total -= amount;
+			float amount = c.getFloat(0);
+			if (amount < 0) {
+				total -= amount;
+			}
 		}
-		Log.i(TAG, "Total :" + Float.toString(total));
 		return total;
 
 	}
-
 }
