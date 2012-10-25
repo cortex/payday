@@ -1,5 +1,8 @@
 package se.frikod.payday;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+
 import se.frikod.payday.R;
 import se.frikod.payday.exceptions.AccountNotFoundException;
 import se.frikod.payday.exceptions.WrongAPIKeyException;
@@ -149,9 +152,9 @@ public class Payday extends Activity {
 	public void updateBudget() {
 
 		double balance;
-		int payday;
-		int savingsGoal;		
 		double spentToday;
+		int payday;
+		int savingsGoal;
 		try {
 			balance = this.bank.getBalance();
 			spentToday = this.bank.getSpentToday();
@@ -192,63 +195,42 @@ public class Payday extends Activity {
 		budget.balance = balance;
 		budget.daysUntilPayday = Days.daysBetween(now, nextPayday).getDays();
 		budget.savingsGoal = savingsGoal;
-		budget.dailyBudget = (balance - savingsGoal- spentToday) / budget.daysUntilPayday;
 		budget.spentToday = spentToday;
+		budget.dailyBudget = (balance - spentToday - savingsGoal) / budget.daysUntilPayday;
+		
 	}
 
-	private void renderBudget() {
+	private void renderBudget(double dailyBudget) {
 		Resources res = getResources();
-		TextView bv = (TextView) findViewById(R.id.budgetTextView);
-		TextView dv = (TextView) findViewById(R.id.daysToPaydayView);
-		TextView sv = (TextView) findViewById(R.id.spentTodayView);
-		
-		
+		TextView budgetView = (TextView) findViewById(R.id.budgetTextView);
+		TextView daysToPaydayView = (TextView) findViewById(R.id.daysToPaydayView);
+		TextView spentView = (TextView) findViewById(R.id.spentTodayView);
 		TextView balanceView = (TextView) findViewById(R.id.balanceView);
-		TextView gv = (TextView) findViewById(R.id.goalView);
-		gv.setText(String.format(res.getString(R.string.daily_budget),
-				budget.savingsGoal));
-
-		sv.setText(String.format(res.getString(R.string.spentToday),
-				budget.spentToday));
+		TextView goalView = (TextView) findViewById(R.id.goalView);
+				
+		DecimalFormatSymbols dfs = new DecimalFormatSymbols();						
+		dfs.setGroupingSeparator('\u2006');
+		//dfs.setCurrencySymbol("kr");
+		DecimalFormat formatter = new DecimalFormat("#,###,### ¤", dfs);
 		
-		
-		balanceView.setText(String.format(res.getString(R.string.balance),
-				budget.balance));
+		balanceView.setText(formatter.format(budget.balance));		
+		spentView.setText(formatter.format(budget.spentToday));
+		goalView.setText(formatter.format(budget.savingsGoal));
 
-		bv.setText(String.format(res.getString(R.string.daily_budget),
-				budget.dailyBudget));
-		dv.setText(String.format(res.getString(R.string.days_until_payday),
-				budget.daysUntilPayday));
+		daysToPaydayView.setText(Integer.toString(budget.daysUntilPayday));
+
+		budgetView.setText(formatter.format(dailyBudget));
 	}
 
 	@TargetApi(11)
 	private void renderBudgetAnimated() {
-		Resources res = getResources();
-		TextView budgetView = (TextView) findViewById(R.id.budgetTextView);
-		TextView dv = (TextView) findViewById(R.id.daysToPaydayView);
-		TextView gv = (TextView) findViewById(R.id.goalView);
-
-		TextView balanceView = (TextView) findViewById(R.id.balanceView);
-		budgetView.setText(String.format(res.getString(R.string.daily_budget), 0.0f));
-		dv.setText(String.format(res.getString(R.string.days_until_payday),
-				budget.daysUntilPayday));
-		gv.setText(String.format(res.getString(R.string.daily_budget),
-				budget.savingsGoal));
-
-		
-		balanceView.setText(String.format(res.getString(R.string.balance),
-				budget.balance));
-
 		ValueAnimator animation = ValueAnimator.ofFloat(0f,
 				(float) budget.dailyBudget);
 		animation.setDuration(500);
 
 		animation.addUpdateListener(new AnimatorUpdateListener() {
 			public void onAnimationUpdate(ValueAnimator a) {
-				Resources res = getResources();
-				TextView bv = (TextView) findViewById(R.id.budgetTextView);
-				bv.setText(String.format(res.getString(R.string.daily_budget),
-						(Float) a.getAnimatedValue()));
+				renderBudget((Float) a.getAnimatedValue());
 			}
 		});
 
@@ -261,7 +243,7 @@ public class Payday extends Activity {
 		if (android.os.Build.VERSION.SDK_INT >= 11) {
 			renderBudgetAnimated();
 		} else {
-			renderBudget();
+			renderBudget(budget.dailyBudget);
 		}
 	}
 }
