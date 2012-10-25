@@ -18,7 +18,7 @@
         <TextView
             android:id="@+id/balanceView"
             style="@style/paydayNumber"
-            android:text="@string/balance" />
+            android:text="--" />
 
         <TextView
             android:id="@+id/spentTodayTitleTextView"
@@ -28,7 +28,7 @@
         <TextView
             android:id="@+id/spentTodayView"
             style="@style/paydayNumber"
-            android:text="@string/spentToday" />
+            android:text="--" />
         
         
         <TextView
@@ -39,7 +39,7 @@
         <TextView
             android:id="@+id/goalView"
             style="@style/paydayNumber"
-            android:text="@string/goal" />
+            android:text="--" />
 
         <TextView
             android:id="@+id/daysToPaydayTitleTextView"
@@ -49,7 +49,7 @@
         <TextView
             android:id="@+id/daysToPaydayView"
             style="@style/paydayNumber"
-            android:text="@string/days_until_payday" />
+            android:text="--" />
 
         <View
             android:id="@+id/separator"
@@ -65,8 +65,8 @@
 
         <TextView
             android:id="@+id/budgetTextView"
-            style="@style/paydayNumber"
-            android:text="@string/daily_budget"/>
+            style="@style/budgetNumber"
+            android:text="--"/>
     </LinearLayout>
 
 </ScrollView>

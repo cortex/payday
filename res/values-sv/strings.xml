@@ -3,33 +3,29 @@
     <string name="app_name">Löning</string>
     <string name="menu_settings">Inställningar</string>
     <string name="title_activity_budget">Löning</string>
-    <string name="days_until_payday">%d</string>
-    <string name="daily_budget">%.0f kr</string>
+
+    <!--  Main activity labels -->
     <string name="days_until_payday_title">DAGAR TILL LÖNING</string>
     <string name="daily_budget_title">DAGENS BUDGET</string>
+    <string name="spentToday_title">ANVÄNT IDAG</string>
+    <string name="balance_title">SALDO</string>
+    <string name="goal_label">SPARMÅL</string>
+    
     <string name="pick_account">Välj konto</string>
-  
     <string name="bankdroid_is_not_installed">Med Bankdroid kan du ansluta till din internetbank, så att Löning kan se ditt saldo. </string>
     <string name="install_bankdroid">Installera Bankdroid</string>
     <string name="bankdroid_not_installed_title">Bankdroid är inte installerat</string>
-    <string name="balance_title">SALDO</string>
-    <string name="balance">%.0f kr</string>
-    <string name="goal_label">SPARMÅL</string>
-    <string name="goal">%.0f kr</string>
     <string name="pair_with_bankdroid">Koppla ihop med Bankdroid</string>
-    
     <string name="savings_goal_description">Reservera detta belopp från ditt saldo när dagsbudgeten beräknas</string>
     <string name="savings_goal_title">Sparmål</string>
     <string name="your_budget_section">Din budget</string>
     <string name="bankdroid_integration_section_title">Integration med Bankdroid</string>
     <string name="payday_title">Löningsdag</string>
     <string name="payday_description">Vilken dag i månaden får du lön?</string>
-    
     <string name="bankdroid_permission_provider_label">Grundläggande kontoinformation och transaktionshistorik</string>
-	<string name="bankdroid_permission_provider_desc">Låter applikationen komma åt bankkonton och transaktionshistorik från Bankdroid. Dina inloggningsuppgifter delas inte.</string>
-	<string name="connect_to_bankdroid">Koppla ihop med Bankdroid</string>
-	<string name="connect_to_bankdroid_dialog_body">Koppla ihop med Bankdroid för att komma åt ditt kontosaldo</string>
-	<string name="connect_to_bankdroid_settings">Gå till inställningar</string>
-    
-    
+    <string name="bankdroid_permission_provider_desc">Låter applikationen komma åt bankkonton och transaktionshistorik från Bankdroid. Dina inloggningsuppgifter delas inte.</string>
+    <string name="connect_to_bankdroid">Koppla ihop med Bankdroid</string>
+    <string name="connect_to_bankdroid_dialog_body">Koppla ihop med Bankdroid för att komma åt ditt kontosaldo</string>
+    <string name="connect_to_bankdroid_settings">Gå till inställningar</string>
+
 </resources>
