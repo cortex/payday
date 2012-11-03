@@ -18,7 +18,7 @@
         <item name="android:layout_gravity">center</item>
         <item name="android:layout_margin">0dp</item>
         <item name="android:layout_marginTop">0dp</item>        
-        <item name="android:textSize">36sp</item>
+        <item name="android:textSize">32sp</item>
         
     </style>
 
@@ -31,6 +31,25 @@
         <item name="android:layout_marginTop">0dp</item>        
         <item name="android:textSize">48sp</item>
         
+    </style>
+
+    <style name="budgetNumberWidget" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">#ccc</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:layout_marginTop">0dp</item>        
+        <item name="android:textSize">36dp</item>
+    </style>
+    
+    <style name="paydayLabelWidget" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">#eee</item>
+        <item name="android:layout_marginTop">8dp</item>        
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>        
+        <item name="android:layout_gravity">center</item>       
+        <item name="android:textSize">12dp</item>
     </style>
     
 </resources>
