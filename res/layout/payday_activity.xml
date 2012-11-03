@@ -19,17 +19,6 @@
             android:id="@+id/balanceView"
             style="@style/paydayNumber"
             android:text="--" />
-
-        <TextView
-            android:id="@+id/spentTodayTitleTextView"
-            style="@style/paydayLabel"
-            android:text="@string/spentToday_title" />
-
-        <TextView
-            android:id="@+id/spentTodayView"
-            style="@style/paydayNumber"
-            android:text="--" />
-        
         
         <TextView
             android:id="@+id/goalLabel"
@@ -50,7 +39,7 @@
             android:id="@+id/daysToPaydayView"
             style="@style/paydayNumber"
             android:text="--" />
-
+ 
         <View
             android:id="@+id/separator"
             android:layout_width="fill_parent"
@@ -58,6 +47,16 @@
             android:layout_margin="10dp"
             android:background="@drawable/line_separator" />
 
+        <TextView
+            android:id="@+id/spentTodayTitleTextView"
+            style="@style/paydayLabel"
+            android:text="@string/spentToday_title" />
+
+        <TextView
+            android:id="@+id/spentTodayView"
+            style="@style/budgetNumber"
+            android:text="--" />
+        
         <TextView
             android:id="@+id/budgetTitleTextView"
             style="@style/paydayLabel"
@@ -67,6 +66,8 @@
             android:id="@+id/budgetTextView"
             style="@style/budgetNumber"
             android:text="--"/>
+        
+        
     </LinearLayout>
 
 </ScrollView>
