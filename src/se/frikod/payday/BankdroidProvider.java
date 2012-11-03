@@ -14,7 +14,6 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.liato.bankdroid.provider.IBankTransactionsProvider;
 
@@ -30,7 +29,6 @@ class Account {
 
 public class BankdroidProvider implements IBankTransactionsProvider {
 
-	private static final String TAG = "Payday.provider";
 	public static String KEY_PREF_ACCOUNT = "pref_account";
 	private Context context;
 	private SharedPreferences prefs;

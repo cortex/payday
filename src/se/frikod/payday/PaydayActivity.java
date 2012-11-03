@@ -1,8 +1,5 @@
 package se.frikod.payday;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-
 import se.frikod.payday.R;
 import se.frikod.payday.exceptions.AccountNotFoundException;
 import se.frikod.payday.exceptions.WrongAPIKeyException;
@@ -16,10 +13,11 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,31 +25,21 @@ import android.view.View.OnClickListener;
 
 import android.widget.TextView;
 
-import org.joda.time.DateTime;
-import org.joda.time.Days;
-
-class Budget {
-	int daysUntilPayday;
-	double dailyBudget;
-	double balance;
-	double savingsGoal;
-	double spentToday;
-}
-
-public class Payday extends Activity {
-	private static final String TAG = "Payday";
+public class PaydayActivity extends Activity {
 	static final int DIALOG_BANKDROID_NOT_INSTALLED = 0;
 	private static final int DIALOG_BANKDROID_NOT_CONNECTED = 1;
 	private static final int DIALOG_BANKDROID_ACCOUNT_NOT_FOUND = 2;
-	private Budget budget = new Budget();
+	private Budget budget;
 	private BankdroidProvider bank = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		bank = new BankdroidProvider(this);
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		budget = new Budget(bank, prefs);
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.activity_payday);
+		setContentView(R.layout.payday_activity);
 		TextView bv = (TextView) findViewById(R.id.budgetTextView);
 		bv.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
@@ -103,7 +91,7 @@ public class Payday extends Activity {
 											Intent.ACTION_VIEW).setData(Uri
 											.parse("market://details?id=com.liato.bankdroid"));
 									startActivity(goToMarket);
-									Payday.this.finish();
+									PaydayActivity.this.finish();
 								}
 							});
 			dialog = builder.create();
@@ -118,10 +106,10 @@ public class Payday extends Activity {
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int id) {
-									Intent intent = new Intent(Payday.this,
+									Intent intent = new Intent(PaydayActivity.this,
 											SettingsActivity.class);
 									startActivity(intent);
-									Payday.this.finish();
+									PaydayActivity.this.finish();
 								}
 							});
 			dialog = builder.create();
@@ -135,10 +123,10 @@ public class Payday extends Activity {
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int id) {
-									Intent intent = new Intent(Payday.this,
+									Intent intent = new Intent(PaydayActivity.this,
 											SettingsActivity.class);
 									startActivity(intent);
-									Payday.this.finish();
+									PaydayActivity.this.finish();
 								}
 							});
 			dialog = builder.create();
@@ -149,77 +137,22 @@ public class Payday extends Activity {
 		return dialog;
 	}
 
-	public void updateBudget() {
 
-		double balance;
-		double spentToday;
-		int payday;
-		int savingsGoal;
-		try {
-			balance = this.bank.getBalance();
-			spentToday = this.bank.getSpentToday();
-		} catch (WrongAPIKeyException e) {
-			showDialog(DIALOG_BANKDROID_NOT_CONNECTED);
-			return;
-
-		} catch (AccountNotFoundException e) {
-			showDialog(DIALOG_BANKDROID_ACCOUNT_NOT_FOUND);
-			return;
-		}
-		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(this);
-		String paydayStr = prefs.getString(SettingsActivity.KEY_PREF_PAYDAY,
-				"25");
-		String goalStr = prefs.getString(SettingsActivity.KEY_PREF_GOAL, "0");
-
-		try {
-			payday = Integer.parseInt(paydayStr);
-		} catch (NumberFormatException e) {
-			payday = 25;
-		}
-
-		try {
-			savingsGoal = Integer.parseInt(goalStr);
-		} catch (NumberFormatException e) {
-			savingsGoal = 0;
-		}
-
-		DateTime now = new DateTime();
-		DateTime nextPayday;
-
-		if (now.getDayOfMonth() < payday) {
-			nextPayday = now.withDayOfMonth(payday);
-		} else {
-			nextPayday = now.plusMonths(1).withDayOfMonth(payday);
-		}
-		budget.balance = balance;
-		budget.daysUntilPayday = Days.daysBetween(now, nextPayday).getDays();
-		budget.savingsGoal = savingsGoal;
-		budget.spentToday = spentToday;
-		budget.dailyBudget = (balance - spentToday - savingsGoal) / budget.daysUntilPayday;
-		
-	}
 
 	private void renderBudget(double dailyBudget) {
-		Resources res = getResources();
 		TextView budgetView = (TextView) findViewById(R.id.budgetTextView);
 		TextView daysToPaydayView = (TextView) findViewById(R.id.daysToPaydayView);
 		TextView spentView = (TextView) findViewById(R.id.spentTodayView);
 		TextView balanceView = (TextView) findViewById(R.id.balanceView);
 		TextView goalView = (TextView) findViewById(R.id.goalView);
-				
-		DecimalFormatSymbols dfs = new DecimalFormatSymbols();						
-		dfs.setGroupingSeparator('\u2006');
-		//dfs.setCurrencySymbol("kr");
-		DecimalFormat formatter = new DecimalFormat("#,###,### ¤", dfs);
-		
-		balanceView.setText(formatter.format(budget.balance));		
-		spentView.setText(formatter.format(budget.spentToday));
-		goalView.setText(formatter.format(budget.savingsGoal));
+
+		balanceView.setText(budget.formatter.format(budget.balance));		
+		spentView.setText(budget.formatter.format(budget.spentToday));
+		goalView.setText(budget.formatter.format(budget.savingsGoal));
 
 		daysToPaydayView.setText(Integer.toString(budget.daysUntilPayday));
 
-		budgetView.setText(formatter.format(dailyBudget));
+		budgetView.setText(budget.formatter.format(dailyBudget));
 	}
 
 	@TargetApi(11)
@@ -239,7 +172,27 @@ public class Payday extends Activity {
 	}
 
 	public void update() {
-		updateBudget();
+		try {
+			budget.update();
+		} catch (WrongAPIKeyException e) {
+			showDialog(DIALOG_BANKDROID_NOT_CONNECTED);
+			return;
+
+		} catch (AccountNotFoundException e) {
+			showDialog(DIALOG_BANKDROID_ACCOUNT_NOT_FOUND);
+			return;
+		}
+	    AppWidgetManager man = AppWidgetManager.getInstance(this);
+	    int[] ids = man.getAppWidgetIds(
+	            new ComponentName(this,PaydayWidget.class));
+
+	    Intent updateIntent = new Intent();
+	    updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+	    updateIntent.putExtra(PaydayWidget.WIDGET_IDS_KEY, ids);
+	    this.sendBroadcast(updateIntent);
+
+		
+		
 		if (android.os.Build.VERSION.SDK_INT >= 11) {
 			renderBudgetAnimated();
 		} else {
