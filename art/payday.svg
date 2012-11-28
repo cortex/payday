@@ -229,9 +229,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="16.166667"
-     inkscape:cx="29.300808"
-     inkscape:cy="18.629709"
+     inkscape:zoom="32.333334"
+     inkscape:cx="9.8858529"
+     inkscape:cy="21.196186"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:grid-bbox="true"
@@ -239,7 +239,7 @@
      showguides="true"
      inkscape:guide-bbox="true"
      inkscape:window-width="2560"
-     inkscape:window-height="1381"
+     inkscape:window-height="1385"
      inkscape:window-x="0"
      inkscape:window-y="27"
      inkscape:window-maximized="1">
@@ -414,13 +414,13 @@
        height="35.844948"
        width="37.231674"
        id="rect4242"
-       style="fill:url(#linearGradient4250);stroke:none;stroke-width:0.50000000000000000;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4303);fill-opacity:1" />
+       style="fill:url(#linearGradient4250);fill-opacity:1;stroke:none;filter:url(#filter4303)" />
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="Pengar"
-     style="display:inline"
+     style="display:none"
      sodipodi:insensitive="true">
     <rect
        style="fill:url(#radialGradient4214);fill-opacity:1;stroke:#6d9568;stroke-width:0.5;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
@@ -599,7 +599,7 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Shine"
-     style="display:inline"
+     style="display:none"
      sodipodi:insensitive="true">
     <path
        sodipodi:nodetypes="sssccss"
