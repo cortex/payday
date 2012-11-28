@@ -5,11 +5,12 @@
     <string name="title_activity_budget">Löning</string>
 
     <!--  Main activity labels -->
-    <string name="days_until_payday_title">DAGAR TILL LÖNING</string>
-    <string name="daily_budget_title">DAGENS BUDGET</string>
-    <string name="spentToday_title">ANVÄNT IDAG</string>
-    <string name="balance_title">SALDO</string>
-    <string name="goal_label">SPARMÅL</string>
+    <string name="details">Detaljer</string>
+    <string name="days_until_payday_title">dagar till löning</string>
+    <string name="daily_budget_title">Dagens budget</string>
+    <string name="spentToday_title">Använt idag</string>
+    <string name="balance_title">Saldo</string>
+    <string name="goal_label">Sparmål</string>
     
     <string name="pick_account">Välj konto</string>
     <string name="bankdroid_is_not_installed">Med Bankdroid kan du ansluta till din internetbank, så att Löning kan se ditt saldo. </string>
@@ -27,5 +28,7 @@
     <string name="connect_to_bankdroid">Koppla ihop med Bankdroid</string>
     <string name="connect_to_bankdroid_dialog_body">Koppla ihop med Bankdroid för att komma åt ditt kontosaldo</string>
     <string name="connect_to_bankdroid_settings">Gå till inställningar</string>
-
+	<string name="use_spent_today">Aktivera använt idag</string>
+	<string name="use_spent_today_summary">För vissa banker är beräkningen opålitlig.</string>
+    
 </resources>

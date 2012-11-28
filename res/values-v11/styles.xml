@@ -1,5 +1,22 @@
 <resources>
 
     <style name="AppTheme" />
+   <style name="PaydayTheme" parent="@android:style/Theme.Holo.Light" >
+        <item name="android:actionBarStyle">@style/PaydayActionBar</item>
+        <item name="android:actionBarTabTextStyle">@style/PaydayActionStyle</item>
+        <item name="android:actionMenuTextColor">#fff</item>
+        
+        <!-- other activity and action bar styles here -->
+    </style>
 
+    <!-- style for the action bar backgrounds -->
+    <style name="PaydayActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:titleTextStyle">@style/PaydayActionStyle</item>        
+        <item name="android:background">#ff222222</item>
+    </style>
+
+    <style name="PaydayActionStyle" parent="@android:style/TextAppearance.Holo">        
+        <item name="android:textColor">#ffffffff</item>        
+    </style>
+    
 </resources>
