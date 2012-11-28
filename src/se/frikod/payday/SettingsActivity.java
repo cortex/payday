@@ -24,6 +24,7 @@ public class SettingsActivity extends PreferenceActivity implements
 	public static String KEY_PREF_ACCOUNT = "pref_account";
 	public static String KEY_PREF_PAYDAY = "pref_payday";
 	public static String KEY_PREF_GOAL = "pref_goal";
+	public static String KEY_PREF_USE_SPENT_TODAY = "pref_use_spent_today";
 
 
 	private BankdroidProvider bank;
@@ -61,8 +62,7 @@ public class SettingsActivity extends PreferenceActivity implements
 	private void pairWithBankdroid() {
 		Intent i = new Intent("com.liato.bankroid.PAIR_APPLICATION_ACTION");
 		i.putExtra("com.liato.bankdroid.PAIR_APP_NAME", "Payday");
-
-		this.startActivityForResult(i, 0);
+		this.startActivityForResult(i, 0);		
 		Log.i(TAG, "Requesting pairing");
 	}
 
@@ -89,7 +89,9 @@ public class SettingsActivity extends PreferenceActivity implements
 		apiKeyEntry.setOnPreferenceClickListener(new OnPreferenceClickListener(){
 			@Override
 			public boolean onPreferenceClick(Preference pref) {
-				pairWithBankdroid();
+				if(!pref.isEnabled()){
+					pairWithBankdroid();
+				}
 				return true;
 			}
 		});

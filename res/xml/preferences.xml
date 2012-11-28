@@ -12,7 +12,12 @@
             android:enabled="false"
             android:key="pref_account"
             android:title="@string/pick_account" />
-    </PreferenceCategory>
+
+        <CheckBoxPreference
+            android:key="pref_use_spent_today"
+            android:title="@string/use_spent_today" android:summary="@string/use_spent_today_summary"/>
+        
+        </PreferenceCategory>
     <PreferenceCategory android:title="@string/your_budget_section" >
         <EditTextPreference
             android:dialogMessage="@string/payday_description"
