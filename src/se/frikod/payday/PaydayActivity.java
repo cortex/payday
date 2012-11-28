@@ -18,11 +18,14 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 
+import android.widget.TableRow;
 import android.widget.TextView;
 
 public class PaydayActivity extends Activity {
@@ -31,16 +34,42 @@ public class PaydayActivity extends Activity {
 	private static final int DIALOG_BANKDROID_ACCOUNT_NOT_FOUND = 2;
 	private Budget budget;
 	private BankdroidProvider bank = null;
-
+	Typeface numberFont;
+	Typeface labelFont;
+	Typeface detailsLabelFont;
+	Typeface budgetLabelFont;
+	Typeface budgetNumberFont;
+	SharedPreferences prefs;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		//numberFont = Typeface.createFromAsset(getAssets(), "fonts/ArbutusSlab-Regular.ttf");
+		//numberFont = Typeface.createFromAsset(getAssets(), "fonts/Alegreya-Regular.otf");
+		//numberFont = Typeface.createFromAsset(getAssets(), "fonts/ITC American Typewriter LT Medium.ttf");
+		//numberFont = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
+		
+		//budgetLabelFont = Typeface.createFromAsset(getAssets(), "fonts/OpenSans-Bold.ttf");
+		budgetLabelFont = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
+		//budgetNumberFont = Typeface.createFromAsset(getAssets(), "fonts/OpenSans-Bold.ttf");
+		//budgetNumberFont = Typeface.createFromAsset(getAssets(), "fonts/ArbutusSlab-Regular.ttf");
+		budgetNumberFont = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Medium.ttf");
+		
+		detailsLabelFont = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
+		//detailsLabelFont = Typeface.createFromAsset(getAssets(), "fonts/OpenSans-Bold.ttf");
+		
+		numberFont = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Regular.ttf");
+		//labelFont = Typeface.createFromAsset(getAssets(), "fonts/ArbutusSlab-Regular.ttf");
+		//labelFont = Typeface.createFromAsset(getAssets(), "fonts/Alegreya-Regular.otf");
+		labelFont = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
+		
 		bank = new BankdroidProvider(this);
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		budget = new Budget(bank, prefs);
+		prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		
+		budget = new Budget(bank, prefs, new Holidays(this));
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.payday_activity);
-		TextView bv = (TextView) findViewById(R.id.budgetTextView);
+		TextView bv = (TextView) findViewById(R.id.budgetNumber);
 		bv.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				update();
@@ -54,6 +83,12 @@ public class PaydayActivity extends Activity {
 		}
 	}
 
+	@Override
+	public void onResume(){
+		super.onResume();
+		update();
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_budget, menu);
@@ -91,7 +126,6 @@ public class PaydayActivity extends Activity {
 											Intent.ACTION_VIEW).setData(Uri
 											.parse("market://details?id=com.liato.bankdroid"));
 									startActivity(goToMarket);
-									PaydayActivity.this.finish();
 								}
 							});
 			dialog = builder.create();
@@ -109,7 +143,6 @@ public class PaydayActivity extends Activity {
 									Intent intent = new Intent(PaydayActivity.this,
 											SettingsActivity.class);
 									startActivity(intent);
-									PaydayActivity.this.finish();
 								}
 							});
 			dialog = builder.create();
@@ -126,7 +159,6 @@ public class PaydayActivity extends Activity {
 									Intent intent = new Intent(PaydayActivity.this,
 											SettingsActivity.class);
 									startActivity(intent);
-									PaydayActivity.this.finish();
 								}
 							});
 			dialog = builder.create();
@@ -140,19 +172,51 @@ public class PaydayActivity extends Activity {
 
 
 	private void renderBudget(double dailyBudget) {
-		TextView budgetView = (TextView) findViewById(R.id.budgetTextView);
-		TextView daysToPaydayView = (TextView) findViewById(R.id.daysToPaydayView);
-		TextView spentView = (TextView) findViewById(R.id.spentTodayView);
-		TextView balanceView = (TextView) findViewById(R.id.balanceView);
-		TextView goalView = (TextView) findViewById(R.id.goalView);
+		
 
+		TableRow spentTodayRow = (TableRow) findViewById(R.id.spentTodayRow);
+
+		if (!this.prefs.getBoolean(SettingsActivity.KEY_PREF_USE_SPENT_TODAY, true)){
+			Log.d("Payday", "spent today hidden");
+			spentTodayRow.setVisibility(View.GONE);
+		}else{
+			spentTodayRow.setVisibility(View.VISIBLE);
+		}
+		
+		TextView budgetView = (TextView) findViewById(R.id.budgetNumber);
+				
+		TextView daysToPaydayView = (TextView) findViewById(R.id.daysToPaydayNumber);
+		
+		
+		((TextView) findViewById(R.id.budgetLabel)).setTypeface(budgetLabelFont);
+		budgetView.setTypeface(budgetNumberFont );
+		
+		((TextView) findViewById(R.id.detailsLabel)).setTypeface(detailsLabelFont);
+		
+		((TextView) findViewById(R.id.daysToPaydayLabel)).setTypeface(labelFont);
+		((TextView) findViewById(R.id.spentTodayLabel)).setTypeface(labelFont);
+		((TextView) findViewById(R.id.balanceLabel)).setTypeface(labelFont);
+		((TextView) findViewById(R.id.goalLabel)).setTypeface(labelFont);
+		
+		
+		TextView spentView = (TextView) findViewById(R.id.spentTodayNumber);
+		TextView balanceView = (TextView) findViewById(R.id.balanceNumber);
+		TextView goalView = (TextView) findViewById(R.id.goalNumber);
+
+		spentView.setTypeface(numberFont);
+		balanceView.setTypeface(numberFont);
+		goalView.setTypeface(numberFont);
+		daysToPaydayView.setTypeface(numberFont);
+		
 		balanceView.setText(budget.formatter.format(budget.balance));		
 		spentView.setText(budget.formatter.format(budget.spentToday));
 		goalView.setText(budget.formatter.format(budget.savingsGoal));
 
-		daysToPaydayView.setText(Integer.toString(budget.daysUntilPayday));
-
+		daysToPaydayView.setText(Integer.toString(budget.daysUntilPayday) + " ");
+		
 		budgetView.setText(budget.formatter.format(dailyBudget));
+		
+
 	}
 
 	@TargetApi(11)

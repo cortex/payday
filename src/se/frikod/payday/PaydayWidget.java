@@ -43,7 +43,10 @@ public class PaydayWidget extends AppWidgetProvider {
 		BankdroidProvider bank = new BankdroidProvider(context);
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(context);
-		Budget budget = new Budget(bank, prefs);
+		
+		Holidays holidays = new Holidays(context);
+		
+		Budget budget = new Budget(bank, prefs, holidays);
 		try {
 			budget.update();
 		} catch (WrongAPIKeyException e) {

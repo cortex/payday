@@ -51,6 +51,7 @@ public class BankdroidProvider implements IBankTransactionsProvider {
 	}
 
 	public boolean verifyAPIKey() {
+		apiKey = prefs.getString(SettingsActivity.KEY_PREF_API_KEY, "");
 		final Uri uri = Uri.parse("content://" + AUTHORITY
 				+ "/bankaccounts/API_KEY=" + apiKey);
 		ContentResolver r = context.getContentResolver();
@@ -80,15 +81,19 @@ public class BankdroidProvider implements IBankTransactionsProvider {
 		ContentResolver r = context.getContentResolver();
 		String[] fields = { "id", "name", "balance" };
 		String name = prefs.getString(SettingsActivity.KEY_PREF_ACCOUNT, "");
-		Cursor c = r.query(uri, fields, "id = '" + name + "'", null, null);
-		if (c == null) {
+		try {
+			Cursor c = r.query(uri, fields, "id = '" + name + "'", null, null);
+			if (c == null) {
+				throw new WrongAPIKeyException();
+			}
+			if (c.getCount() == 0) {
+				throw new AccountNotFoundException();
+			}
+			c.moveToNext();
+			return c.getDouble(2);
+		} catch (IllegalArgumentException e) {
 			throw new WrongAPIKeyException();
 		}
-		if (c.getCount() == 0) {
-			throw new AccountNotFoundException();
-		}
-		c.moveToNext();
-		return c.getDouble(2);
 
 	}
 
