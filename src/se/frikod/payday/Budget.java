@@ -21,15 +21,20 @@ public class Budget {
 	BankdroidProvider bank;
 	SharedPreferences prefs;
 	DecimalFormat formatter;
+	Holidays holidays;
 	
-	Budget(BankdroidProvider bank, SharedPreferences prefs){
+	Budget(BankdroidProvider bank, SharedPreferences prefs, Holidays holidays) {
+		
 		this.bank = bank;
 		this.prefs = prefs;
+		this.holidays = holidays;
 		
+
 		Currency currency = Currency.getInstance("SEK");
         DecimalFormatSymbols dfs = new DecimalFormatSymbols();
         dfs.setCurrency(currency);
-		dfs.setGroupingSeparator('\u2006');
+		//dfs.setGroupingSeparator('\u2006');
+		dfs.setGroupingSeparator(' ');
 		dfs.setCurrencySymbol("kr");
 		
 		formatter = new DecimalFormat("#,###,### ¤", dfs);
@@ -65,16 +70,30 @@ public class Budget {
 
 		DateTime now = new DateTime();
 		DateTime nextPayday;
-
-		if (now.getDayOfMonth() < payday) {
-			nextPayday = now.withDayOfMonth(payday);
-		} else {
-			nextPayday = now.plusMonths(1).withDayOfMonth(payday);
+		nextPayday = now.withDayOfMonth(payday);
+		
+		while(holidays.isHoliday(nextPayday) ){
+			nextPayday = nextPayday.minusDays(1);
 		}
+		
+		if (nextPayday.isBefore(now) || nextPayday.toDate() == now.toDate()){
+			nextPayday = now.plusMonths(1).withDayOfMonth(payday); 
+			while(holidays.isHoliday(nextPayday) ){
+				nextPayday = nextPayday.minusDays(1);
+			}					
+		}
+
 		this.balance = balance;
 		this.daysUntilPayday = Days.daysBetween(now, nextPayday).getDays();
 		this.savingsGoal = savingsGoal;
-		this.spentToday = spentToday;
+
+		if (this.prefs.getBoolean(SettingsActivity.KEY_PREF_USE_SPENT_TODAY, true)){
+			this.spentToday = spentToday;	
+		}else
+		{
+			this.spentToday = 0;
+		}
+		
 		this.dailyBudget = (balance + spentToday - savingsGoal)
 				/ this.daysUntilPayday;
 
