@@ -1,16 +1,20 @@
-package se.frikod.payday;
+	package se.frikod.payday;
 
 import java.util.ArrayList;
 
 import com.liato.bankdroid.provider.IBankTransactionsProvider;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
@@ -19,7 +23,7 @@ import android.util.Log;
 
 public class SettingsActivity extends PreferenceActivity implements
 		IBankTransactionsProvider, OnSharedPreferenceChangeListener {
-	public static String KEY_PREF_PAIRED = "pref_paired_with_bankdroid";
+	public static String KEY_PREF_PAIRED_WITH_BANKDROID = "pref_paired_with_bankdroid";
 	public static String KEY_PREF_API_KEY = "pref_API_key";
 	public static String KEY_PREF_ACCOUNT = "pref_account";
 	public static String KEY_PREF_PAYDAY = "pref_payday";
@@ -35,13 +39,37 @@ public class SettingsActivity extends PreferenceActivity implements
 	public void onCreate(Bundle savedInstanceState) {
 		bank = new BankdroidProvider(this);
 		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(R.xml.preferences);
-		Log.i(TAG, "Settings created");
-		check();
+		addPreferencesFromResource(R.xml.preferences);	     
 	}
 
-	// This crap is needed to make the OnSharedPreferenceChangeListener
-	// actually work
+	
+	void pairWithBankdroid(){
+			Intent i = new Intent("com.liato.bankroid.PAIR_APPLICATION_ACTION");
+			i.putExtra("com.liato.bankdroid.PAIR_APP_NAME", "Payday");		
+			this.startActivityForResult(i, 0);
+	}
+	
+	@Override
+	protected void onActivityResult(final int requestCode,
+			final int resultCode, final Intent data) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);		
+		
+		final SharedPreferences.Editor editor = prefs.edit();
+		if (resultCode == RESULT_OK) {
+			final String apiKey = data
+					.getStringExtra(IBankTransactionsProvider.API_KEY);
+			Log.d(TAG, "User accepted pairing. Got an API key back: " + apiKey);
+			editor.putString(KEY_PREF_API_KEY, apiKey);
+			editor.putBoolean(KEY_PREF_PAIRED_WITH_BANKDROID, true);
+		} else if (resultCode == RESULT_CANCELED) {
+			Log.d(TAG, "User did not accept pairing.");
+			editor.putString(KEY_PREF_API_KEY, null);
+			editor.putBoolean(KEY_PREF_PAIRED_WITH_BANKDROID, false);
+		}
+		editor.commit();
+		check();
+
+	}
 
 	@Override
 	protected void onResume() {
@@ -59,42 +87,9 @@ public class SettingsActivity extends PreferenceActivity implements
 
 	// End of crap
 
-	private void pairWithBankdroid() {
-		Intent i = new Intent("com.liato.bankroid.PAIR_APPLICATION_ACTION");
-		i.putExtra("com.liato.bankdroid.PAIR_APP_NAME", "Payday");
-		this.startActivityForResult(i, 0);		
-		Log.i(TAG, "Requesting pairing");
-	}
 
-	@Override
-	protected void onActivityResult(final int requestCode,
-			final int resultCode, final Intent data) {
-		if (resultCode == RESULT_OK) {
-			final String apiKey = data
-					.getStringExtra(IBankTransactionsProvider.API_KEY);
-			Log.d(TAG, "User accepted pairing. Got an API key back: " + apiKey);
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-			final SharedPreferences.Editor editor = prefs.edit();
-			// Commit to preferences
-			editor.putString(KEY_PREF_API_KEY, apiKey);
-			editor.commit();			
-			check();
-		} else if (resultCode == RESULT_CANCELED) {
-			Log.d(TAG, "User did not accept pairing.");
-		}
-	}
 	
 	private void check() {
-		CheckBoxPreference apiKeyEntry = (CheckBoxPreference) findPreference(KEY_PREF_PAIRED);
-		apiKeyEntry.setOnPreferenceClickListener(new OnPreferenceClickListener(){
-			@Override
-			public boolean onPreferenceClick(Preference pref) {
-				if(!pref.isEnabled()){
-					pairWithBankdroid();
-				}
-				return true;
-			}
-		});
 		
 		ListPreference lp = (ListPreference) findPreference(KEY_PREF_ACCOUNT);
 		
@@ -117,17 +112,15 @@ public class SettingsActivity extends PreferenceActivity implements
 			}
 
 		} else {
-			lp.setEnabled(false);
+			lp.setEnabled(false);			
 		}
 
 	}
 
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 			String key) {
-		Log.i(TAG, "Preferences changed");
 		if (key.equals(KEY_PREF_API_KEY)) {
 			check();
 		}
-
 	}
 }

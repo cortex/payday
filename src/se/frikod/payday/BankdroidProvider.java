@@ -7,13 +7,17 @@ import org.joda.time.DateTime;
 import se.frikod.payday.exceptions.AccountNotFoundException;
 import se.frikod.payday.exceptions.WrongAPIKeyException;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.liato.bankdroid.provider.IBankTransactionsProvider;
 
@@ -25,10 +29,15 @@ class Account {
 		name = mname;
 		id = mid;
 	}
+
+    public String toString(){
+        return name;
+    }
 }
 
-public class BankdroidProvider implements IBankTransactionsProvider {
-
+public class BankdroidProvider implements IBankTransactionsProvider,
+OnSharedPreferenceChangeListener{
+    private static String TAG = "Payday.BankdroidProvider";
 	public static String KEY_PREF_ACCOUNT = "pref_account";
 	private Context context;
 	private SharedPreferences prefs;
@@ -36,11 +45,11 @@ public class BankdroidProvider implements IBankTransactionsProvider {
 
 	public BankdroidProvider(Context ctx) {
 		context = ctx;
-		prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		apiKey = prefs.getString(SettingsActivity.KEY_PREF_API_KEY, "");
+		reload();
 	}
-
-	public boolean verifySetup() {
+	
+	
+	public boolean bankdroidInstalled() {
 		try {
 			context.getPackageManager().getApplicationInfo(
 					"com.liato.bankdroid", 0);
@@ -50,23 +59,57 @@ public class BankdroidProvider implements IBankTransactionsProvider {
 		}
 	}
 
+	private void reload(){
+		prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		apiKey = prefs.getString(SettingsActivity.KEY_PREF_API_KEY, null);
+		
+	}
+	
+	public boolean verifySetup(){
+		return verifyAPIKey();
+	}
+	
 	public boolean verifyAPIKey() {
-		apiKey = prefs.getString(SettingsActivity.KEY_PREF_API_KEY, "");
+		apiKey = prefs.getString(SettingsActivity.KEY_PREF_API_KEY, null);
+        if (apiKey == null){
+            return false;
+        }
+		Log.i("se.frikod.payday", "API KEY:" + apiKey);
 		final Uri uri = Uri.parse("content://" + AUTHORITY
 				+ "/bankaccounts/API_KEY=" + apiKey);
 		ContentResolver r = context.getContentResolver();
 		String[] fields = { "name", "balance" };
-		Cursor c = r.query(uri, fields, null, null, null);
-		return !(c == null);
+		Cursor c = null;
+		try{
+			c = r.query(uri, fields, null, null, null);			
+			return !(c == null);
+		}catch (IllegalArgumentException e){
+			if (!(c==null))c.close();
+			return false;
+		}
 	}
+    
+    public boolean verifyAccount(){
+        try{
+            getBalance();
+        } catch (AccountNotFoundException e){
+            return false;
+        } catch (WrongAPIKeyException e){
+            return false;
+        }
+       return true;
+    }
 
 	public ArrayList<Account> getAccounts() {
+        ArrayList<Account> accounts = new ArrayList<Account>();
+        if (apiKey == null) return accounts;
 		final Uri uri = Uri.parse("content://" + AUTHORITY
 				+ "/bankaccounts/API_KEY=" + apiKey);
+
 		ContentResolver r = context.getContentResolver();
 		String[] fields = { "id", "name", "balance" };
 		Cursor c = r.query(uri, fields, null, null, null);
-		ArrayList<Account> accounts = new ArrayList<Account>();
+
 		while (c.getCount() > 0 && !c.isLast()) {
 			c.moveToNext();
 			accounts.add(new Account(c.getString(0), c.getString(1)));
@@ -123,5 +166,11 @@ public class BankdroidProvider implements IBankTransactionsProvider {
 		}
 		return total;
 
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+			String key) {
+		reload();
 	}
 }

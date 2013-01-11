@@ -1,19 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+    <string name="pair_with_bankdroid">Pair with Bankdroid</string>
     <string name="app_name">Payday</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_budget">Payday</string>
-
     <string name="days_until_payday_title">days until payday</string>
     <string name="daily_budget_title">Today\'s budget</string>
-	<string name="balance_title">Balance</string>
-	<string name="goal_label">Savings goal</string>
-	<string name="spentToday_title">Spent today</string>
-	
+    <string name="balance_title">Balance</string>
+    <string name="goal_label">Savings goal</string>
+    <string name="spentToday_title">Spent today</string>
     <string name="bankdroid_is_not_installed">Bankdroid connects to your internet bank, allowing payday to check your account balance. </string>
     <string name="install_bankdroid">Install Bankdroid</string>
     <string name="bankdroid_not_installed_title">Bankdroid is not installed</string>
-    
     <string name="pick_account">Pick account</string>
     <string name="savings_goal_description">Reserve this amount from the balance when calculating the daily budget</string>
     <string name="savings_goal_title">Savings goal</string>
@@ -21,13 +20,35 @@
     <string name="bankdroid_integration_section_title">Bankdroid integration</string>
     <string name="payday_title">Payday</string>
     <string name="payday_description">What day of the month do you get paid?</string>
-	<string name="bankdroid_permission_provider_label">Basic account information and the transaction history</string>
-	<string name="bankdroid_permission_provider_desc">Allows the application to access what banks and accounts are configured in BankDroids. Your Bank credentials are not exposed. Transaction history can also be accessed.</string>
-	<string name="connect_to_bankdroid">Connect to Bankdroid</string>
-	<string name="connect_to_bankdroid_dialog_body">You need to connect to Bankdroid to access your account balance</string>
-	<string name="connect_to_bankdroid_settings">Go to settings</string>
-	<string name="details">Details</string>
-	<string name="use_spent_today">Activate spent today</string>
-	<string name="use_spent_today_summary">For some banks, this calculation is unreliable. </string>
+    <string name="bankdroid_permission_provider_label">Basic account information and the transaction history</string>
+    <string name="bankdroid_permission_provider_desc">Allows the application to access what banks and accounts are configured in BankDroids. Your Bank credentials are not exposed. Transaction history can also be accessed.</string>
+    <string name="connect_to_bankdroid">Connect to Bankdroid</string>
+    <string name="connect_to_bankdroid_dialog_body">You need to connect to Bankdroid to access your account balance</string>
+    <string name="connect_to_bankdroid_settings">Go to settings</string>
+    <string name="details">Details</string>
+    <string name="use_spent_today">Activate spent today</string>
+    <string name="use_spent_today_summary">For some banks, this calculation is unreliable. </string>
+    <string name="about_title">About</string>
+    <string name="about_button">Source code and improvement suggestions</string>
+    <string name="about_text">        Bankdroid and Payday is handling your bank account information.\n\n
+	     
+	    All source code is available so that you can verify that they are being handled safely. \n\n
+	    
+	    Source code for Payday is available at \n<b>http://github.com/cortex/payday</b>\n
+	    Patches and bug reports are welcome! \n
+	    \n
+	    Send feedback and improvement suggestions to\n<b>joakim.lundborg\@gmail.com</b>    \n
+	    \n	    
+	    Payday is using Bankdroid to connect to your internet bank\n 
+	    Source code is available at:\n<b>https://github.com/liato/android-bankdroid</b>	    \nIf you like Bankdroid, support development with donations or code!\n        </string>
+	    
     
+    <!-- Welcome screen -->
+    <string name="welcome_title">Welcome! We need to set up a few things before we start.</string>
+    <string name="welcome_done">Done</string>
+    <string name="welcome_setup_bankdroid">1. Pair with bankdroid </string>
+    <string name="welcome_choose_account">2. Choose account </string>
+    <string name="welcome_choose_payday">3. Your payday </string>    
+    <string name="title_activity_setup">Setup</string>
+
 </resources>

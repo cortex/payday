@@ -1,24 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-
-    <PreferenceCategory android:title="@string/bankdroid_integration_section_title" >
-        <CheckBoxPreference
-            android:disableDependentsState="false"
-            android:key="pref_paired_with_bankdroid"
-            android:title="@string/pair_with_bankdroid" />
-
-        <ListPreference
-            android:dependency="pref_paired_with_bankdroid"
-            android:enabled="false"
-            android:key="pref_account"
-            android:title="@string/pick_account" />
-
+    <PreferenceCategory android:title="@string/your_budget_section" >
         <CheckBoxPreference
             android:key="pref_use_spent_today"
-            android:title="@string/use_spent_today" android:summary="@string/use_spent_today_summary"/>
+            android:summary="@string/use_spent_today_summary"
+            android:title="@string/use_spent_today" />
         
-        </PreferenceCategory>
-    <PreferenceCategory android:title="@string/your_budget_section" >
+        
         <EditTextPreference
             android:dialogMessage="@string/payday_description"
             android:dialogTitle="@string/payday_title"
@@ -31,6 +19,14 @@
             android:key="pref_goal"
             android:numeric="integer"
             android:title="@string/savings_goal_title" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/about_title" >
+        <Preference android:title="@string/about_button" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:targetClass="se.frikod.payday.AboutPaydayActivity"
+                android:targetPackage="se.frikod.payday" />
+        </Preference>
     </PreferenceCategory>
 
 </PreferenceScreen>

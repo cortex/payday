@@ -92,6 +92,7 @@ public class Budget {
 		}else
 		{
 			this.spentToday = 0;
+			spentToday = 0;
 		}
 		
 		this.dailyBudget = (balance + spentToday - savingsGoal)

@@ -1,0 +1,207 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/setupView"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:layout_marginBottom="8dp"
+    android:layout_marginTop="0dp"
+    android:background="@drawable/bg"
+    android:fillViewport="true" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@drawable/title_bg"
+            android:orientation="vertical"
+            android:padding="8dp" >
+
+            <TextView
+                android:id="@+id/setupTitle"
+                style="@style/budgetNumber"
+                android:layout_marginBottom="0dp"
+                android:text="Payday Setup" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/card" >
+
+            <TextView
+                android:id="@+id/setupDescription"
+                style="@style/setupLabel"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="0dp"
+                android:text="Complete these steps to start using Payday "
+                android:textSize="14sp" />
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
+
+                <ImageView
+                    android:id="@+id/bankdroidInstalledStatusIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:src="@drawable/ic_notok" />
+
+                <TextView
+                    android:id="@+id/setupStep1"
+                    style="@style/setupLabel"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:text="1. "
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView1"
+                    style="@style/setupLabel"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/setupStep1"
+                    android:text="Install Bankdroid" />
+
+                <Button
+                    android:id="@+id/installBankdroidButton"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="false"
+                    android:layout_alignParentLeft="false"
+                    android:layout_alignParentTop="false"
+                    android:layout_below="@id/textView1"
+                    android:minHeight="24dip"
+                    android:onClick="installBankdroidClicked"
+                    android:text="Install Bankdroid" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp" >
+
+                <TextView
+                        android:id="@+id/setupStep2"
+                        style="@style/setupLabel"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="true"
+                        android:text="2. "
+                        android:textStyle="bold" />
+
+
+                <TextView
+                        android:id="@+id/textView"
+                        style="@style/setupLabel"
+                        android:text="Set up the account you want to use in Bankdroid"
+                        android:layout_toRightOf="@+id/setupStep2" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" >
+
+                <TextView
+                    android:id="@+id/setup_3"
+                    style="@style/setupLabel"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:text="3. "
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/connectToBankdroidLabel"
+                    style="@style/setupLabel"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@+id/setup_3"
+                    android:maxLines="2"
+                    android:text="Connect to Bankdroid" />
+
+                <ImageView
+                    android:id="@+id/bankdroidConnectedStatusIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:src="@drawable/ic_notok" />
+
+                <Button
+                        android:id="@+id/connectBankdroidButton"
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="false"
+                        android:layout_alignParentLeft="false"
+                        android:layout_alignParentTop="false"
+                        android:layout_below="@id/connectToBankdroidLabel"
+                        android:minHeight="24dip"
+                        android:onClick="connectToBankdroidClicked"
+                        android:text="Connect to Bankdroid" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp" >
+
+                <TextView
+                    style="@style/setupLabel"
+                    android:text="4. "
+                    android:textStyle="bold"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:id="@+id/textView3"/>
+
+                <TextView
+                    style="@style/setupLabel"
+                    android:text="Pick account"
+                    android:id="@+id/setupAccountLabel"
+                    android:layout_toRightOf="@+id/textView3"
+                    android:layout_alignTop="@+id/textView3"
+                    android:layout_alignParentTop="true"/>
+
+                <ImageView
+                    android:id="@+id/accountPickedStatusIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_notok"
+                    android:layout_gravity="center"
+                    android:layout_alignParentLeft="false"
+                    android:layout_marginLeft="189dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="0dp"
+                    android:layout_alignParentRight="true"/>
+
+                <Spinner
+                    android:id="@+id/setupAccountSpinner"
+                    android:layout_below="@id/setupAccountLabel"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="0dp"
+                    android:layout_weight="1"
+                    android:padding="0dp"
+
+
+                        />
+
+            </RelativeLayout>
+
+
+            <Button
+                android:id="@+id/setupDoneButton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:onClick="doneClicked"
+                android:text="Done" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

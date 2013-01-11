@@ -3,4 +3,8 @@
         android:title="@string/menu_settings"
         android:orderInCategory="100"
         android:showAsAction="ifRoom"/>
+      <item android:id="@+id/menu_setup"
+        android:title="setup"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"/>
 </menu>

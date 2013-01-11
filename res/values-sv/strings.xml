@@ -7,7 +7,7 @@
     <!--  Main activity labels -->
     <string name="details">Detaljer</string>
     <string name="days_until_payday_title">dagar till löning</string>
-    <string name="daily_budget_title">Dagens budget</string>
+    <string name="daily_budget_title">DAGENS BUDGET</string>
     <string name="spentToday_title">Använt idag</string>
     <string name="balance_title">Saldo</string>
     <string name="goal_label">Sparmål</string>
@@ -31,4 +31,22 @@
 	<string name="use_spent_today">Aktivera använt idag</string>
 	<string name="use_spent_today_summary">För vissa banker är beräkningen opålitlig.</string>
     
+	<string name="about_title">Om</string>
+	<string name="about_button">Källkod och förbättringsförslag</string>
+	<string name="about_text">Bankdroid och Löning hanterar dina bankuppgifter.\n\n
+All källkod finns tillgänglig så att du kan kontrollera att dom hanteras säkert. \n\n
+Källkod för Löning finns tillgänglig på \n
+<b>http://github.com/cortex/payday</b>\n
+Kodpatchar och buggrapporter emottages tacksamt! \n
+	\n
+Skicka feedback och förbättringsförslag till\n
+<b>joakim.lundborg\@gmail.com</b>    \n
+\n
+Löning använder Bankdroid för att ansluta till din internetbank.\n
+Källkod för Bankdroid finns tillgänglig på\n
+<b>https://github.com/liato/android-bankdroid</b>
+\nOm du gillar Bankdroid, stöd utvecklingen genom donationer eller kod!\n
+\n</string>
+	
+	
 </resources>
