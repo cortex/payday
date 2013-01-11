@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="setup.svg">
+  <defs
+     id="defs4">
+    <filter
+       id="filter3870"
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow">
+      <feFlood
+         id="feFlood3872"
+         flood-opacity="0.5"
+         flood-color="rgb(0,0,0)"
+         result="flood" />
+      <feComposite
+         id="feComposite3874"
+         in2="SourceGraphic"
+         in="flood"
+         operator="in"
+         result="composite1" />
+      <feGaussianBlur
+         id="feGaussianBlur3876"
+         in="composite"
+         stdDeviation="2"
+         result="blur" />
+      <feOffset
+         id="feOffset3878"
+         dx="2"
+         dy="2"
+         result="offset" />
+      <feComposite
+         id="feComposite3880"
+         in2="offset"
+         in="SourceGraphic"
+         operator="over"
+         result="composite2" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="241.65749"
+     inkscape:cy="563.69744"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     showguides="false"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1562"
+     inkscape:window-height="1218"
+     inkscape:window-x="678"
+     inkscape:window-y="331"
+     inkscape:window-maximized="0">
+    <sodipodi:guide
+       orientation="0,1"
+       position="160.61426,722.25907"
+       id="guide3882" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="187.88837,543.46207"
+       id="guide3884" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="223.24371,333.35034"
+       id="guide3886" />
+    <inkscape:grid
+       type="xygrid"
+       id="grid3892" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="187.88837,543.46207"
+       id="guide3894" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#f2f2f2"
+       id="rect3003"
+       width="745.49255"
+       height="1048.5383"
+       x="0"
+       y="-4.2573795" />
+    <rect
+       style="opacity:0.75000000000000000;fill:#37abc8;fill-opacity:1"
+       id="rect3820"
+       width="742.46216"
+       height="158.59396"
+       x="2.0203052"
+       y="-2.2370777" />
+    <rect
+       style="fill:#ffffff;fill-rule:evenodd;stroke:#999999;stroke-width:1.14806581px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect2985"
+       width="617.22375"
+       height="711.39496"
+       x="55.379971"
+       y="194.69939" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;filter:url(#filter3870);font-family:Sans"
+       x="146.90646"
+       y="108.95535"
+       id="text2987"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan2989"
+         x="146.90646"
+         y="108.95535"
+         style="font-size:72px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#ffffff;font-family:Roboto;-inkscape-font-specification:Roboto Bold">Payday setup</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text2991"
+       y="363.57462"
+       x="150.51273"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Roboto;-inkscape-font-specification:Roboto Light"
+       xml:space="preserve"><tspan
+         y="363.57462"
+         x="150.51273"
+         sodipodi:role="line"
+         id="tspan3005"><tspan
+   style="font-weight:bold;fill:#4d4d4d;-inkscape-font-specification:Roboto Bold"
+   id="tspan3000">1.</tspan> Install Bankdroid</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text2999"
+       y="545.55005"
+       x="146.47212"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         y="545.55005"
+         x="146.47212"
+         id="tspan3001"
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;fill:#4d4d4d;font-family:Roboto;-inkscape-font-specification:Roboto Light"><tspan
+   style="font-weight:bold;fill:#4d4d4d;-inkscape-font-specification:Roboto Bold"
+   id="tspan3002">2</tspan>. Allow Payday access to</tspan><tspan
+         y="595.55005"
+         x="146.47212"
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;fill:#4d4d4d;font-family:Roboto;-inkscape-font-specification:Roboto Light"
+         id="tspan3818">     your data</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Sans"
+       x="146.47212"
+       y="768.93292"
+       id="text2995"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan2997"
+         x="146.47212"
+         y="768.93292"
+         style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;fill:#4d4d4d;font-family:Roboto;-inkscape-font-specification:Roboto Light"><tspan
+   style="font-weight:bold;fill:#4d4d4d;-inkscape-font-specification:Roboto Bold"
+   id="tspan3004">3.</tspan> Select account</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text3006"
+       y="255.02138"
+       x="137.81511"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:Sans"
+       xml:space="preserve"><tspan
+         style="font-size:28px;font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;fill:#4d4d4d;font-family:Roboto;-inkscape-font-specification:Roboto Light"
+         y="255.02138"
+         x="137.81511"
+         sodipodi:role="line"
+         id="tspan3020">Payday needs to connect to Bankdroid </tspan><tspan
+         style="font-size:28px;font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;fill:#4d4d4d;font-family:Roboto;-inkscape-font-specification:Roboto Light"
+         y="290.02136"
+         x="137.81511"
+         sodipodi:role="line"
+         id="tspan3030">to fetch your bank information</tspan></text>
+    <rect
+       style="fill:#37abc8"
+       id="rect3032"
+       width="340.42142"
+       height="63.63961"
+       x="202.0305"
+       y="399.51938" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Roboto;-inkscape-font-specification:Roboto Light"
+       x="318.79395"
+       y="446.36847"
+       id="text3034"
+       sodipodi:linespacing="125%"><tspan
+         id="tspan3036"
+         sodipodi:role="line"
+         x="318.79395"
+         y="446.36847">Install</tspan></text>
+    <rect
+       y="620.96106"
+       x="202.0305"
+       height="63.63961"
+       width="340.42142"
+       id="rect3040"
+       style="fill:#37abc8" />
+    <text
+       sodipodi:linespacing="125%"
+       id="text3042"
+       y="665.74731"
+       x="302.34625"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Roboto;-inkscape-font-specification:Roboto Light"
+       xml:space="preserve"><tspan
+         y="665.74731"
+         x="302.34625"
+         sodipodi:role="line"
+         id="tspan3044">Connect</tspan></text>
+    <rect
+       style="opacity:0.75;fill:#ffffff"
+       id="rect3046"
+       width="526.28949"
+       height="316.17773"
+       x="89.228424"
+       y="474.55499" />
+  </g>
+</svg>
