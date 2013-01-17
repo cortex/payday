@@ -64,6 +64,12 @@ public class SetupActivity extends Activity
 
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        check();
+    }
+
     private void check() {
 
 
@@ -82,6 +88,9 @@ public class SetupActivity extends Activity
                 connectBankdroidButton.setEnabled(true);
             }
 
+        }
+        else{
+            bankdroidStarted = false;
         }
 
         if (bank.verifyAPIKey()) {
@@ -153,7 +162,7 @@ public class SetupActivity extends Activity
                 Intent.ACTION_VIEW).setData(Uri
                 .parse("market://details?id=com.liato.bankdroid"));
         startActivity(goToMarket);
-
+        bankdroidStarted = false;
     }
 
     @Override
