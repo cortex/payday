@@ -33,8 +33,9 @@
                 style="@style/setupLabel"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="0dp"
+                android:textStyle="bold"
                 android:text="Complete these steps to start using Payday "
-                android:textSize="14sp" />
+                 />
 
             <RelativeLayout
                 android:layout_width="fill_parent"
@@ -50,7 +51,7 @@
                     android:src="@drawable/ic_notok" />
 
                 <TextView
-                    android:id="@+id/setupStep1"
+                    android:id="@+id/setupStep1Number"
                     style="@style/setupLabel"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
@@ -58,10 +59,10 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/textView1"
+                    android:id="@+id/setupStep1Label"
                     style="@style/setupLabel"
                     android:layout_alignParentTop="true"
-                    android:layout_toRightOf="@+id/setupStep1"
+                    android:layout_toRightOf="@+id/setupStep1Number"
                     android:text="Install Bankdroid" />
 
                 <Button
@@ -69,10 +70,7 @@
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="false"
-                    android:layout_alignParentLeft="false"
-                    android:layout_alignParentTop="false"
-                    android:layout_below="@id/textView1"
+                    android:layout_below="@id/setupStep1Label"
                     android:minHeight="24dip"
                     android:onClick="installBankdroidClicked"
                     android:text="Install Bankdroid" />
@@ -82,10 +80,10 @@
             <RelativeLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp" >
+                    android:layout_marginTop="8dp">
 
                 <TextView
-                        android:id="@+id/setupStep2"
+                        android:id="@+id/setupStep2Number"
                         style="@style/setupLabel"
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentTop="true"
@@ -94,10 +92,25 @@
 
 
                 <TextView
-                        android:id="@+id/textView"
+                        android:id="@+id/setupStep2Label"
                         style="@style/setupLabel"
+                        android:layout_marginRight="40dp"
                         android:text="Set up the account you want to use in Bankdroid"
-                        android:layout_toRightOf="@+id/setupStep2" />
+                        android:layout_toRightOf="@+id/setupStep2Number" />
+
+                <Button
+                        android:id="@+id/startBankdroidButton"
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="false"
+                        android:layout_alignParentLeft="false"
+                        android:layout_alignParentTop="false"
+                        android:layout_below="@id/setupStep2Label"
+                        android:minHeight="24dip"
+                        android:onClick="startBankdroidClicked"
+                        android:text="Start Bankdroid" />
+
             </RelativeLayout>
 
             <RelativeLayout
@@ -187,8 +200,6 @@
                     android:layout_margin="0dp"
                     android:layout_weight="1"
                     android:padding="0dp"
-
-
                         />
 
             </RelativeLayout>

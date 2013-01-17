@@ -28,18 +28,11 @@ public class PaydayActivity extends Activity {
 
     SharedPreferences prefs;
     private Budget budget;
+    private boolean setupStarted = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         BankdroidProvider bank = new BankdroidProvider(this);
-
-        if (bank.verifySetup()) {
-            Log.i("Payday", "Verify setup failed");
-            update();
-        } else {
-            runSetup();
-        }
-
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         budget = new Budget(bank, prefs, new Holidays(this));
         super.onCreate(savedInstanceState);
@@ -54,12 +47,24 @@ public class PaydayActivity extends Activity {
         });
 
         FontUtils.setRobotoFont(this, this.getWindow().getDecorView());
+        if (bank.verifySetup()) {
+            Log.i("Payday", "Verify setup failed");
+            update();
+        } else {
+            runSetup();
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
         update();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (setupStarted) finish();
     }
 
     @Override
@@ -71,7 +76,6 @@ public class PaydayActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
-        // Handle item selection
         switch (item.getItemId()) {
             case R.id.menu_settings:
                 intent = new Intent(this, SettingsActivity.class);
@@ -86,6 +90,7 @@ public class PaydayActivity extends Activity {
     }
 
     private void runSetup() {
+        setupStarted = true;
         Intent intent;
         intent = new Intent(this, SetupActivity.class);
         startActivity(intent);
