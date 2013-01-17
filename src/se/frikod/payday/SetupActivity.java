@@ -22,6 +22,8 @@ public class SetupActivity extends Activity
     public static String KEY_PREF_BANDROID_ACCOUNT = "pref_account";
     private static String TAG = "Payday.SetupActivity";
     private static BankdroidProvider bank;
+    private boolean bankdroidStarted = true;
+
     Spinner accountSpinner;
     BroadcastReceiver br;
     private SharedPreferences prefs;
@@ -45,6 +47,8 @@ public class SetupActivity extends Activity
         br = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                if (intent.getData().toString() == "package:com.liato.bankdroid")
+                    bankdroidStarted = false;
                 check();
             }
         };
@@ -69,6 +73,14 @@ public class SetupActivity extends Activity
 
             Button installBankdroidButton = (Button) findViewById(R.id.installBankdroidButton);
             installBankdroidButton.setVisibility(View.GONE);
+
+            Button startBankdroidButton = (Button) findViewById(R.id.startBankdroidButton);
+            startBankdroidButton.setEnabled(true);
+
+            if (bankdroidStarted){
+                Button connectBankdroidButton = (Button) findViewById(R.id.connectBankdroidButton);
+                connectBankdroidButton.setEnabled(true);
+            }
 
         }
 
@@ -178,5 +190,6 @@ public class SetupActivity extends Activity
         PackageManager pm = getPackageManager();
         Intent intent = pm.getLaunchIntentForPackage("com.liato.bankdroid");
         startActivity(intent);
+        bankdroidStarted = true;
     }
 }

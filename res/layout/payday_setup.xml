@@ -101,6 +101,7 @@
                 <Button
                         android:id="@+id/startBankdroidButton"
                         style="?android:attr/buttonStyleSmall"
+                        android:enabled="false"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="false"
@@ -145,6 +146,7 @@
                 <Button
                         android:id="@+id/connectBankdroidButton"
                         style="?android:attr/buttonStyleSmall"
+                        android:enabled="false"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="false"
@@ -193,6 +195,7 @@
 
                 <Spinner
                     android:id="@+id/setupAccountSpinner"
+                    android:enabled="false"
                     android:layout_below="@id/setupAccountLabel"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
