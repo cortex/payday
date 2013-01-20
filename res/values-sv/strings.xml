@@ -60,7 +60,7 @@
     <string name="setup_intro">Vi måste ställa in några saker innan du kan sätta igång </string>
     <string name="setup_install_bankdroid">Installera Bankdroid</string>
     <string name="setup_install_bankdroid_button">Installera Bankdroid</string>
-    <string name="setup_bankdrid_account">Ställ in kontot du vill använda i Bankdroid</string>
+    <string name="setup_bankdroid_account">Ställ in kontot du vill använda i Bankdroid</string>
     <string name="setup_pair_with_bankdroid">Koppla ihop med Bankdroid</string>
     <string name="setup_pick_account">Välj konto</string>
     <string name="setup_done">Klart</string>

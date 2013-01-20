@@ -96,7 +96,7 @@
                 <TextView
                         android:id="@+id/textView"
                         style="@style/setupLabel"
-                        android:text="@string/setup_bankdrid_account"
+                        android:text="@string/setup_bankdroid_account"
                         android:layout_toRightOf="@+id/setupStep2" />
             </RelativeLayout>
 

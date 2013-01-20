@@ -41,21 +41,14 @@
 	    \n	    
 	    Payday is using Bankdroid to connect to your internet bank\n 
 	    Source code is available at:\n<b>https://github.com/liato/android-bankdroid</b>	    \nIf you like Bankdroid, support development with donations or code!\n        </string>
-	    
-    
-    <!-- Welcome screen -->
-    <string name="welcome_title">Welcome! We need to set up a few things before we start.</string>
-    <string name="welcome_done">Done</string>
-    <string name="welcome_setup_bankdroid">1. Pair with bankdroid </string>
-    <string name="welcome_choose_account">2. Choose account </string>
-    <string name="welcome_choose_payday">3. Your payday </string>
 
+    <!-- Setup screen -->
     <string name="setup_activity_title">Welcome to Payday</string>
     <string name="setup_intro">Complete these steps to start using Payday</string>
     <string name="setup_title">Payday Setup</string>
     <string name="setup_install_bankdroid">Install Bankdroid</string>
     <string name="setup_install_bankdroid_button">Install Bankdroid</string>
-    <string name="setup_bankdrid_account">Set up the account you want to use in Bankdroid</string>
+    <string name="setup_bankdroid_account">Set up the account you want to use in Bankdroid</string>
     <string name="setup_pair_with_bankdroid">Connect to Bankdroid</string>
     <string name="setup_pick_account">Pick account</string>
     <string name="setup_done">Done</string>
