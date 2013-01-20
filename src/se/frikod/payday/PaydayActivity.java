@@ -44,6 +44,14 @@ public class PaydayActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		
 		bank = new BankdroidProvider(this);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        budget = new Budget(bank, prefs, new Holidays(this));
+
+		super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.payday_activity);
+        FontUtils.setRobotoFont(this, this.getWindow().getDecorView());
+
 
         if (bank.verifySetup()) {
             Log.i("Payday", "Verify setup failed");
@@ -52,12 +60,6 @@ public class PaydayActivity extends Activity {
             runSetup();
         }
 
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		budget = new Budget(bank, prefs, new Holidays(this));
-		super.onCreate(savedInstanceState);
-		
-		setContentView(R.layout.payday_activity);
-		
 		TextView bv = (TextView) findViewById(R.id.budgetNumber);
 		bv.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
@@ -65,8 +67,6 @@ public class PaydayActivity extends Activity {
 			}
 		});
 
-		FontUtils.setRobotoFont(this, (ViewGroup) this.getWindow()
-				.getDecorView());		
 	}
 
 	
@@ -104,6 +104,7 @@ public class PaydayActivity extends Activity {
 		Intent intent;
 		intent = new Intent(this, SetupActivity.class);
 		startActivity(intent);
+        finish();
 	}
 		
 	private void renderBudget(double dailyBudget) {
