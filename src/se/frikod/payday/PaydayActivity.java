@@ -23,13 +23,12 @@ import se.frikod.payday.exceptions.WrongAPIKeyException;
 public class PaydayActivity extends Activity {
 
     private Budget budget;
-    private BankdroidProvider bank = null;
     SharedPreferences prefs;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
-        bank = new BankdroidProvider(this);
+        BankdroidProvider bank = new BankdroidProvider(this);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         budget = new Budget(bank, prefs, new Holidays(this));
 
