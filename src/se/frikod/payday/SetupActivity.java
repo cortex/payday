@@ -19,9 +19,9 @@ public class SetupActivity extends Activity
     implements OnItemSelectedListener
 {
     private static String TAG = "Payday.SetupActivity";
-    public static String KEY_PREF_BANDROID_PAIRED = "pref_bankdroid_paired";
-    public static String KEY_PREF_BANDROID_API_KEY = "pref_API_key";
-    public static String KEY_PREF_BANDROID_ACCOUNT = "pref_account";
+    public static String KEY_PREF_BANKDROID_PAIRED = "pref_bankdroid_paired";
+    public static String KEY_PREF_BANKDROID_API_KEY = "pref_API_key";
+    public static String KEY_PREF_BANKDROID_ACCOUNT = "pref_account";
     private static BankdroidProvider bank;
     Spinner accountSpinner;
     private SharedPreferences prefs;
@@ -68,7 +68,7 @@ public class SetupActivity extends Activity
                         accounts);
 
                 accountSpinner.setAdapter(adapter);
-                accountSpinner.setSelection(adapter.getPosition(prefs.getString(KEY_PREF_BANDROID_ACCOUNT, "")));
+                accountSpinner.setSelection(adapter.getPosition(prefs.getString(KEY_PREF_BANKDROID_ACCOUNT, "")));
                 accountSpinner.setEnabled(true);
             } else {
                 accountSpinner.setEnabled(false);
@@ -101,7 +101,7 @@ public class SetupActivity extends Activity
         Account pickedAccount = (Account) parent.getItemAtPosition(pos);
         Log.i(TAG, pickedAccount.id);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(KEY_PREF_BANDROID_ACCOUNT, pickedAccount.id);
+        editor.putString(KEY_PREF_BANKDROID_ACCOUNT, pickedAccount.id);
         editor.commit();
         checkAccount();
     }
@@ -137,12 +137,12 @@ public class SetupActivity extends Activity
             final String apiKey = data
                     .getStringExtra(IBankTransactionsProvider.API_KEY);
             Log.d(TAG, "User accepted pairing. Got an API key back: " + apiKey);
-            editor.putString(KEY_PREF_BANDROID_API_KEY, apiKey);
-            editor.putBoolean(KEY_PREF_BANDROID_PAIRED, true);
+            editor.putString(KEY_PREF_BANKDROID_API_KEY, apiKey);
+            editor.putBoolean(KEY_PREF_BANKDROID_PAIRED, true);
         } else if (resultCode == RESULT_CANCELED) {
             Log.d(TAG, "User did not accept pairing.");
-            editor.putString(KEY_PREF_BANDROID_API_KEY, null);
-            editor.putBoolean(KEY_PREF_BANDROID_PAIRED, false);
+            editor.putString(KEY_PREF_BANKDROID_API_KEY, null);
+            editor.putBoolean(KEY_PREF_BANKDROID_PAIRED, false);
         }
         editor.commit();
         check();
