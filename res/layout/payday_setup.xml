@@ -103,7 +103,8 @@
             <RelativeLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp" >
+                android:layout_marginTop="8dp"
+                android:layout_gravity="right|left">
 
                 <TextView
                     android:id="@+id/setup_3"
@@ -118,7 +119,7 @@
                     style="@style/setupLabel"
                     android:layout_alignParentTop="true"
                     android:layout_toRightOf="@+id/setup_3"
-                    android:maxLines="2"
+                    android:layout_marginRight="40dp"
                     android:text="@string/setup_pair_with_bankdroid" />
 
                 <ImageView
@@ -140,7 +141,7 @@
                         android:layout_below="@id/connectToBankdroidLabel"
                         android:minHeight="24dip"
                         android:onClick="connectToBankdroidClicked"
-                        android:text="Connect to Bankdroid" />
+                        android:text="@string/setup_pair_with_bankdroid_button" />
 
 
             </RelativeLayout>

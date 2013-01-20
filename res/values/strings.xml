@@ -44,12 +44,13 @@
 
     <!-- Setup screen -->
     <string name="setup_activity_title">Welcome to Payday</string>
-    <string name="setup_intro">Complete these steps to start using Payday</string>
-    <string name="setup_title">Payday Setup</string>
+    <string name="setup_intro">We need to set up a few things before you can start using Payday</string>
+    <string name="setup_title">Welcome</string>
     <string name="setup_install_bankdroid">Install Bankdroid</string>
     <string name="setup_install_bankdroid_button">Install Bankdroid</string>
     <string name="setup_bankdroid_account">Set up the account you want to use in Bankdroid</string>
     <string name="setup_pair_with_bankdroid">Connect to Bankdroid</string>
+    <string name="setup_pair_with_bankdroid_button">Connect to Bankdroid</string>
     <string name="setup_pick_account">Pick account</string>
     <string name="setup_done">Done</string>
 
