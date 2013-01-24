@@ -77,9 +77,6 @@ public class PaydayActivity extends Activity {
                 intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 return true;
-            case R.id.menu_setup:
-                runSetup();
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

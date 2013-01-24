@@ -35,11 +35,14 @@
     <string name="use_spent_today">Aktivera använt idag</string>
     <string name="use_spent_today_summary">För vissa banker är beräkningen opålitlig.</string>
 
-    <string name="about_title">Om</string>
-    <string name="about_button">Källkod och förbättringsförslag</string>
-    <string name="about_text">Bankdroid och Löning hanterar dina bankuppgifter.\n\n
-        All källkod finns tillgänglig så att du kan kontrollera att dom hanteras säkert. \n\n
-        Källkod för Löning finns tillgänglig på \n
+    <string name="about_title">Information</string>
+    <string name="about_button">Om Löning</string>
+    <string name="about_text">
+        Bankdroid och Löning hanterar dina bankuppgifter.\n
+        \n
+        All källkod finns tillgänglig så att du kan kontrollera att dom hanteras säkert. \n
+        \n
+        Källkod för Löning finns på \n
         <b>http://github.com/cortex/payday</b>\n
         Kodpatchar och buggrapporter emottages tacksamt! \n
         \n
@@ -48,8 +51,8 @@
         \n
         \n
         Löning använder Bankdroid för att ansluta till din internetbank.\n
-        Källkod för Bankdroid finns tillgänglig på\n
-        <b>https://github.com/liato/android-bankdroid</b>
+        Källkod för Bankdroid finns på\n
+        <b>https://github.com/liato/android-bankdroid</b>\n
         \nOm du gillar Bankdroid, stöd utvecklingen genom donationer eller kod!\n
         \n
     </string>

@@ -28,19 +28,27 @@
     <string name="details">Details</string>
     <string name="use_spent_today">Activate spent today</string>
     <string name="use_spent_today_summary">For some banks, this calculation is unreliable. </string>
-    <string name="about_title">About</string>
-    <string name="about_button">Source code and improvement suggestions</string>
-    <string name="about_text">        Bankdroid and Payday is handling your bank account information.\n\n
+    <string name="about_title">Information</string>
+    <string name="about_button">About Payday</string>
+    <string name="about_text">Bankdroid and Payday are handling your bank account information.\n\n
 	     
-	    All source code is available so that you can verify that they are being handled safely. \n\n
+	    All source code is available so you can verify that it is being handled safely.\n\n
 	    
-	    Source code for Payday is available at \n<b>http://github.com/cortex/payday</b>\n
+	    Source code for Payday is available at \n
+        <b>http://github.com/cortex/payday</b>\n
+        \n
 	    Patches and bug reports are welcome! \n
 	    \n
-	    Send feedback and improvement suggestions to\n<b>joakim.lundborg\@gmail.com</b>    \n
+	    Send feedback and improvement suggestions to\n
+        <b>joakim.lundborg\@gmail.com</b>\n
 	    \n	    
-	    Payday is using Bankdroid to connect to your internet bank\n 
-	    Source code is available at:\n<b>https://github.com/liato/android-bankdroid</b>	    \nIf you like Bankdroid, support development with donations or code!\n        </string>
+	    Payday uses Bankdroid to connect to your internet bank.\n
+        \n
+	    Source code for Bankdroid is available at:\n
+        <b>https://github.com/liato/android-bankdroid</b>\n
+        \n
+        If you like Bankdroid, support development with donations or code!\n
+    </string>
 
     <!-- Setup screen -->
     <string name="setup_activity_title">Welcome to Payday</string>
