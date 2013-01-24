@@ -1,8 +1,8 @@
 package se.frikod.payday;
 
 import android.app.Activity;
-import android.content.*;
-import android.content.pm.PackageManager;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -16,21 +16,17 @@ import java.util.ArrayList;
 import static android.widget.AdapterView.OnItemSelectedListener;
 
 public class SetupActivity extends Activity
-        implements OnItemSelectedListener {
-    public static String KEY_PREF_BANDROID_PAIRED = "pref_bankdroid_paired";
-    public static String KEY_PREF_BANDROID_API_KEY = "pref_API_key";
-    public static String KEY_PREF_BANDROID_ACCOUNT = "pref_account";
+    implements OnItemSelectedListener
+{
     private static String TAG = "Payday.SetupActivity";
+    public static String KEY_PREF_BANKDROID_PAIRED = "pref_bankdroid_paired";
+    public static String KEY_PREF_BANKDROID_API_KEY = "pref_API_key";
+    public static String KEY_PREF_BANKDROID_ACCOUNT = "pref_account";
     private static BankdroidProvider bank;
-    private boolean bankdroidStarted = true;
-
     Spinner accountSpinner;
-    BroadcastReceiver br;
     private SharedPreferences prefs;
 
-
     @Override
-    @SuppressWarnings("deprecation")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.payday_setup);
@@ -42,55 +38,20 @@ public class SetupActivity extends Activity
         accountSpinner.setOnItemSelectedListener(this);
 
         FontUtils.setRobotoFont(this, this.getWindow().getDecorView());
-
-
-        br = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent.getData().toString() == "package:com.liato.bankdroid")
-                    bankdroidStarted = false;
-                check();
-            }
-        };
-
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
-        intentFilter.addAction(Intent.ACTION_PACKAGE_INSTALL);
-        intentFilter.addDataScheme("package");
-        registerReceiver(br, intentFilter);
-
-
         check();
 
-    }
-
-    @Override
-    public void onResume(){
-        super.onResume();
-        check();
     }
 
     private void check() {
 
 
-        if (bank.bankdroidInstalled()) {
+        if (bank.bankdroidInstalled()){
             ImageView bankdroidInstalledStatusIcon = (ImageView) findViewById(R.id.bankdroidInstalledStatusIcon);
             bankdroidInstalledStatusIcon.setImageResource(R.drawable.ic_ok);
 
             Button installBankdroidButton = (Button) findViewById(R.id.installBankdroidButton);
             installBankdroidButton.setVisibility(View.GONE);
 
-            Button startBankdroidButton = (Button) findViewById(R.id.startBankdroidButton);
-            startBankdroidButton.setEnabled(true);
-
-            if (bankdroidStarted){
-                Button connectBankdroidButton = (Button) findViewById(R.id.connectBankdroidButton);
-                connectBankdroidButton.setEnabled(true);
-            }
-
-        }
-        else{
-            bankdroidStarted = false;
         }
 
         if (bank.verifyAPIKey()) {
@@ -107,7 +68,7 @@ public class SetupActivity extends Activity
                         accounts);
 
                 accountSpinner.setAdapter(adapter);
-                accountSpinner.setSelection(adapter.getPosition(prefs.getString(KEY_PREF_BANDROID_ACCOUNT, "")));
+                accountSpinner.setSelection(adapter.getPosition(prefs.getString(KEY_PREF_BANKDROID_ACCOUNT, "")));
                 accountSpinner.setEnabled(true);
             } else {
                 accountSpinner.setEnabled(false);
@@ -121,13 +82,13 @@ public class SetupActivity extends Activity
 
     }
 
-    private void checkAccount() {
+    private void checkAccount(){
         ImageView accountPickedStatusIcon = (ImageView) findViewById(R.id.accountPickedStatusIcon);
-        if (bank.verifyAccount()) {
+        if (bank.verifyAccount()){
             accountPickedStatusIcon.setImageResource(R.drawable.ic_ok);
             Button doneButton = (Button) findViewById(R.id.setupDoneButton);
             doneButton.setEnabled(true);
-        } else {
+        }else{
             accountPickedStatusIcon.setImageResource(R.drawable.ic_notok);
             Button doneButton = (Button) findViewById(R.id.setupDoneButton);
             doneButton.setEnabled(false);
@@ -136,11 +97,11 @@ public class SetupActivity extends Activity
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id){
         Account pickedAccount = (Account) parent.getItemAtPosition(pos);
         Log.i(TAG, pickedAccount.id);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(KEY_PREF_BANDROID_ACCOUNT, pickedAccount.id);
+        editor.putString(KEY_PREF_BANKDROID_ACCOUNT, pickedAccount.id);
         editor.commit();
         checkAccount();
     }
@@ -157,12 +118,12 @@ public class SetupActivity extends Activity
         startActivity(intent);
     }
 
-    public void installBankdroidClicked(View view) {
+    public void installBankdroidClicked(View view){
         Intent goToMarket = new Intent(
                 Intent.ACTION_VIEW).setData(Uri
                 .parse("market://details?id=com.liato.bankdroid"));
         startActivity(goToMarket);
-        bankdroidStarted = false;
+
     }
 
     @Override
@@ -176,29 +137,23 @@ public class SetupActivity extends Activity
             final String apiKey = data
                     .getStringExtra(IBankTransactionsProvider.API_KEY);
             Log.d(TAG, "User accepted pairing. Got an API key back: " + apiKey);
-            editor.putString(KEY_PREF_BANDROID_API_KEY, apiKey);
-            editor.putBoolean(KEY_PREF_BANDROID_PAIRED, true);
+            editor.putString(KEY_PREF_BANKDROID_API_KEY, apiKey);
+            editor.putBoolean(KEY_PREF_BANKDROID_PAIRED, true);
         } else if (resultCode == RESULT_CANCELED) {
             Log.d(TAG, "User did not accept pairing.");
-            editor.putString(KEY_PREF_BANDROID_API_KEY, null);
-            editor.putBoolean(KEY_PREF_BANDROID_PAIRED, false);
+            editor.putString(KEY_PREF_BANKDROID_API_KEY, null);
+            editor.putBoolean(KEY_PREF_BANKDROID_PAIRED, false);
         }
         editor.commit();
         check();
 
     }
 
-    public void connectToBankdroidClicked(View view) {
+
+    public void connectToBankdroidClicked(View view){
         Intent i = new Intent("com.liato.bankroid.PAIR_APPLICATION_ACTION");
         i.putExtra("com.liato.bankdroid.PAIR_APP_NAME", "Payday");
         this.startActivityForResult(i, 0);
         check();
-    }
-
-    public void startBankdroidClicked(View view) {
-        PackageManager pm = getPackageManager();
-        Intent intent = pm.getLaunchIntentForPackage("com.liato.bankdroid");
-        startActivity(intent);
-        bankdroidStarted = true;
     }
 }

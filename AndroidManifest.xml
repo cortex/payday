@@ -46,7 +46,7 @@
         </activity>
         <activity
                 android:name="se.frikod.payday.SetupActivity"
-                android:label="@string/title_activity_setup">
+                android:label="@string/setup_activity_title">
         </activity>
 
     </application>

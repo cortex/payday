@@ -1,12 +1,5 @@
 package se.frikod.payday;
 
-
-import se.frikod.payday.exceptions.AccountNotFoundException;
-import se.frikod.payday.exceptions.WrongAPIKeyException;
-
-
-import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.annotation.TargetApi;
@@ -15,29 +8,42 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-
 import android.widget.TableRow;
 import android.widget.TextView;
+import se.frikod.payday.exceptions.AccountNotFoundException;
+import se.frikod.payday.exceptions.WrongAPIKeyException;
 
 public class PaydayActivity extends Activity {
 
-    SharedPreferences prefs;
     private Budget budget;
-    private boolean setupStarted = false;
+    SharedPreferences prefs;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         BankdroidProvider bank = new BankdroidProvider(this);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         budget = new Budget(bank, prefs, new Holidays(this));
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.payday_activity);
+        FontUtils.setRobotoFont(this, this.getWindow().getDecorView());
+
+
+        if (bank.verifySetup()) {
+            Log.i("Payday", "Verify setup failed");
+            update();
+        } else {
+            runSetup();
+        }
 
         TextView bv = (TextView) findViewById(R.id.budgetNumber);
         bv.setOnClickListener(new OnClickListener() {
@@ -46,14 +52,8 @@ public class PaydayActivity extends Activity {
             }
         });
 
-        FontUtils.setRobotoFont(this, this.getWindow().getDecorView());
-        if (bank.verifySetup()) {
-            Log.i("Payday", "Verify setup failed");
-            update();
-        } else {
-            runSetup();
-        }
     }
+
 
     @Override
     public void onResume() {
@@ -62,20 +62,16 @@ public class PaydayActivity extends Activity {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        if (setupStarted) finish();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_budget, menu);
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
+        // Handle item selection
         switch (item.getItemId()) {
             case R.id.menu_settings:
                 intent = new Intent(this, SettingsActivity.class);
@@ -90,10 +86,10 @@ public class PaydayActivity extends Activity {
     }
 
     private void runSetup() {
-        setupStarted = true;
         Intent intent;
         intent = new Intent(this, SetupActivity.class);
         startActivity(intent);
+        finish();
     }
 
     private void renderBudget(double dailyBudget) {

@@ -7,10 +7,8 @@ import org.joda.time.DateTime;
 import se.frikod.payday.exceptions.AccountNotFoundException;
 import se.frikod.payday.exceptions.WrongAPIKeyException;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
@@ -38,7 +36,6 @@ class Account {
 public class BankdroidProvider implements IBankTransactionsProvider,
 OnSharedPreferenceChangeListener{
     private static String TAG = "Payday.BankdroidProvider";
-	public static String KEY_PREF_ACCOUNT = "pref_account";
 	private Context context;
 	private SharedPreferences prefs;
 	private String apiKey;
@@ -61,7 +58,7 @@ OnSharedPreferenceChangeListener{
 
 	private void reload(){
 		prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		apiKey = prefs.getString(SettingsActivity.KEY_PREF_API_KEY, null);
+		apiKey = prefs.getString(SetupActivity.KEY_PREF_BANKDROID_API_KEY, null);
 		
 	}
 	
@@ -70,7 +67,7 @@ OnSharedPreferenceChangeListener{
 	}
 	
 	public boolean verifyAPIKey() {
-		apiKey = prefs.getString(SettingsActivity.KEY_PREF_API_KEY, null);
+		apiKey = prefs.getString(SetupActivity.KEY_PREF_BANKDROID_API_KEY, null);
         if (apiKey == null){
             return false;
         }
@@ -123,7 +120,7 @@ OnSharedPreferenceChangeListener{
 				+ "/bankaccounts/API_KEY=" + apiKey);
 		ContentResolver r = context.getContentResolver();
 		String[] fields = { "id", "name", "balance" };
-		String name = prefs.getString(SettingsActivity.KEY_PREF_ACCOUNT, "");
+		String name = prefs.getString(SettingsActivity.KEY_PREF_BANKDROID_ACCOUNT, "");
 		try {
 			Cursor c = r.query(uri, fields, "id = '" + name + "'", null, null);
 			if (c == null) {
@@ -145,7 +142,7 @@ OnSharedPreferenceChangeListener{
 				+ TRANSACTIONS_CAT + '/' + "API_KEY=" + apiKey);
 		ContentResolver r = context.getContentResolver();
 		String[] fields = { "amount" };
-		String name = prefs.getString(SettingsActivity.KEY_PREF_ACCOUNT, "");
+		String name = prefs.getString(SettingsActivity.KEY_PREF_BANKDROID_ACCOUNT, "");
 
 		DateTime now = new DateTime();
 		String today = now.toString("YYYY-MM-dd");

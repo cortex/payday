@@ -23,7 +23,7 @@
                 android:id="@+id/setupTitle"
                 style="@style/budgetNumber"
                 android:layout_marginBottom="0dp"
-                android:text="Payday Setup" />
+                android:text="@string/setup_title" />
         </LinearLayout>
 
         <LinearLayout style="@style/card" >
@@ -33,9 +33,8 @@
                 style="@style/setupLabel"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="0dp"
-                android:textStyle="bold"
-                android:text="Complete these steps to start using Payday "
-                 />
+                android:text="@string/setup_intro"
+                android:textSize="16sp" />
 
             <RelativeLayout
                 android:layout_width="fill_parent"
@@ -51,7 +50,7 @@
                     android:src="@drawable/ic_notok" />
 
                 <TextView
-                    android:id="@+id/setupStep1Number"
+                    android:id="@+id/setupStep1"
                     style="@style/setupLabel"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
@@ -59,31 +58,34 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/setupStep1Label"
+                    android:id="@+id/textView1"
                     style="@style/setupLabel"
                     android:layout_alignParentTop="true"
-                    android:layout_toRightOf="@+id/setupStep1Number"
-                    android:text="Install Bankdroid" />
+                    android:layout_toRightOf="@+id/setupStep1"
+                    android:text="@string/setup_install_bankdroid" />
 
                 <Button
                     android:id="@+id/installBankdroidButton"
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/setupStep1Label"
+                    android:layout_alignParentBottom="false"
+                    android:layout_alignParentLeft="false"
+                    android:layout_alignParentTop="false"
+                    android:layout_below="@id/textView1"
                     android:minHeight="24dip"
                     android:onClick="installBankdroidClicked"
-                    android:text="Install Bankdroid" />
+                    android:text="@string/setup_install_bankdroid_button" />
 
             </RelativeLayout>
 
             <RelativeLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp">
+                    android:layout_marginTop="8dp" >
 
                 <TextView
-                        android:id="@+id/setupStep2Number"
+                        android:id="@+id/setupStep2"
                         style="@style/setupLabel"
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentTop="true"
@@ -92,32 +94,17 @@
 
 
                 <TextView
-                        android:id="@+id/setupStep2Label"
+                        android:id="@+id/textView"
                         style="@style/setupLabel"
-                        android:layout_marginRight="40dp"
-                        android:text="Set up the account you want to use in Bankdroid"
-                        android:layout_toRightOf="@+id/setupStep2Number" />
-
-                <Button
-                        android:id="@+id/startBankdroidButton"
-                        style="?android:attr/buttonStyleSmall"
-                        android:enabled="false"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="false"
-                        android:layout_alignParentLeft="false"
-                        android:layout_alignParentTop="false"
-                        android:layout_below="@id/setupStep2Label"
-                        android:minHeight="24dip"
-                        android:onClick="startBankdroidClicked"
-                        android:text="Start Bankdroid" />
-
+                        android:text="@string/setup_bankdroid_account"
+                        android:layout_toRightOf="@+id/setupStep2" />
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp" >
+                android:layout_marginTop="8dp"
+                android:layout_gravity="right|left">
 
                 <TextView
                     android:id="@+id/setup_3"
@@ -132,8 +119,8 @@
                     style="@style/setupLabel"
                     android:layout_alignParentTop="true"
                     android:layout_toRightOf="@+id/setup_3"
-                    android:maxLines="2"
-                    android:text="Connect to Bankdroid" />
+                    android:layout_marginRight="40dp"
+                    android:text="@string/setup_pair_with_bankdroid" />
 
                 <ImageView
                     android:id="@+id/bankdroidConnectedStatusIcon"
@@ -146,7 +133,6 @@
                 <Button
                         android:id="@+id/connectBankdroidButton"
                         style="?android:attr/buttonStyleSmall"
-                        android:enabled="false"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="false"
@@ -155,7 +141,7 @@
                         android:layout_below="@id/connectToBankdroidLabel"
                         android:minHeight="24dip"
                         android:onClick="connectToBankdroidClicked"
-                        android:text="Connect to Bankdroid" />
+                        android:text="@string/setup_pair_with_bankdroid_button" />
 
 
             </RelativeLayout>
@@ -175,7 +161,7 @@
 
                 <TextView
                     style="@style/setupLabel"
-                    android:text="Pick account"
+                    android:text="@string/setup_pick_account"
                     android:id="@+id/setupAccountLabel"
                     android:layout_toRightOf="@+id/textView3"
                     android:layout_alignTop="@+id/textView3"
@@ -195,7 +181,6 @@
 
                 <Spinner
                     android:id="@+id/setupAccountSpinner"
-                    android:enabled="false"
                     android:layout_below="@id/setupAccountLabel"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -214,7 +199,7 @@
                 android:layout_height="wrap_content"
                 android:enabled="false"
                 android:onClick="doneClicked"
-                android:text="Done" />
+                android:text="@string/setup_done" />
         </LinearLayout>
     </LinearLayout>
 
