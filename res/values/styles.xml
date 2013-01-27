@@ -51,8 +51,6 @@
 
     <style name="paydayLabelWidget" parent="@android:style/TextAppearance.Medium">
         <item name="android:textColor">#aaa</item>
-        <item name="android:layout_marginTop">0dp</item>
-        <item name="android:layout_marginBottom">-8dp</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center</item>
@@ -64,9 +62,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center</item>
-        <item name="android:layout_margin">0dp</item>
-        <item name="android:layout_marginTop">-36dp</item>
-        <item name="android:textSize">36sp</item>
+        <item name="android:textSize">22sp</item>
     </style>
 
     <style name="tableLine">
