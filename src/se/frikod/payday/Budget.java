@@ -76,7 +76,7 @@ public class Budget {
 			nextPayday = nextPayday.minusDays(1);
 		}
 		
-		if (nextPayday.isBefore(now) || nextPayday.toDate() == now.toDate()){
+		if (nextPayday.isBefore(now) || Days.daysBetween(now, nextPayday).getDays() == 0){
 			nextPayday = now.plusMonths(1).withDayOfMonth(payday); 
 			while(holidays.isHoliday(nextPayday) ){
 				nextPayday = nextPayday.minusDays(1);
