@@ -22,12 +22,6 @@ import se.frikod.payday.R;
 import android.util.Log;
 
 public class SettingsActivity extends PreferenceActivity {
-	public static String KEY_PREF_PAYDAY = "pref_payday";
-	public static String KEY_PREF_GOAL = "pref_goal";
-	public static String KEY_PREF_USE_SPENT_TODAY = "pref_use_spent_today";
-    public static String KEY_PREF_BANKDROID_ACCOUNT = "pref_account";
-
-
     private BankdroidProvider bank;
 	
 	private static final String TAG = "Payday.settings";
@@ -42,7 +36,7 @@ public class SettingsActivity extends PreferenceActivity {
 
 
 	private void getAccounts() {
-		ListPreference lp = (ListPreference) findPreference(KEY_PREF_BANKDROID_ACCOUNT);
+		ListPreference lp = (ListPreference) findPreference(PreferenceKeys.KEY_PREF_BANKDROID_ACCOUNT);
 
         ArrayList<Account> accounts = bank.getAccounts();
         if (accounts.size() > 0) {

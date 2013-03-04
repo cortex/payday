@@ -28,6 +28,10 @@
     <string name="details">Details</string>
     <string name="use_spent_today">Activate spent today</string>
     <string name="use_spent_today_summary">For some banks, this calculation is unreliable. </string>
+
+    <string name="add_budget_item">Add budget item </string>
+
+    <!-- About screen -->
     <string name="about_title">Information</string>
     <string name="about_button">About Payday</string>
     <string name="about_text">Bankdroid and Payday are handling your bank account information.\n\n
@@ -61,5 +65,10 @@
     <string name="setup_pair_with_bankdroid_button">Connect to Bankdroid</string>
     <string name="setup_pick_account">Pick account</string>
     <string name="setup_done">Done</string>
+
+    <!-- Budget entry dialog-->
+    <string name="new_budget_entry_hint">New shoes</string>
+    <string name="new_budget_entry_amount">500</string>
+    <string name="cancel_add_budget_item">Cancel</string>
 
 </resources>

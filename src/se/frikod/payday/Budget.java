@@ -2,6 +2,7 @@ package se.frikod.payday;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.StringCharacterIterator;
 import java.util.Currency;
 
 import org.joda.time.DateTime;
@@ -11,6 +12,16 @@ import se.frikod.payday.exceptions.AccountNotFoundException;
 import se.frikod.payday.exceptions.WrongAPIKeyException;
 
 import android.content.SharedPreferences;
+
+class BudgetItem{
+    String title;
+    double amount;
+    public BudgetItem(String mTitle, double mAmount){
+        title = mTitle;
+        amount = mAmount;
+    }
+
+}
 
 public class Budget {
 	int daysUntilPayday;
@@ -52,9 +63,9 @@ public class Budget {
         balance = this.bank.getBalance();
 		spentToday = this.bank.getSpentToday();
 
-		String paydayStr = prefs.getString(SettingsActivity.KEY_PREF_PAYDAY,
+		String paydayStr = prefs.getString(PreferenceKeys.KEY_PREF_PAYDAY,
 				"25");
-		String goalStr = prefs.getString(SettingsActivity.KEY_PREF_GOAL, "0");
+		String goalStr = prefs.getString(PreferenceKeys.KEY_PREF_GOAL, "0");
 
 		try {
 			payday = Integer.parseInt(paydayStr);
@@ -87,7 +98,7 @@ public class Budget {
 		this.daysUntilPayday = Days.daysBetween(now, nextPayday).getDays();
 		this.savingsGoal = savingsGoal;
 
-		if (this.prefs.getBoolean(SettingsActivity.KEY_PREF_USE_SPENT_TODAY, true)){
+		if (this.prefs.getBoolean(PreferenceKeys.KEY_PREF_USE_SPENT_TODAY, true)){
 			this.spentToday = spentToday;	
 		}else
 		{

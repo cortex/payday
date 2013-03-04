@@ -106,6 +106,25 @@
                 </TableRow>
             </TableLayout>
 
+            <TableLayout
+                    android:id="@+id/budgetItems"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stretchColumns="0,1" >
+            </TableLayout>
+
+            <TextView
+                    android:id="@+id/addBudgetItem"
+                    style="@style/paydayLabel"
+                    android:text="@string/add_budget_item"
+                    android:layout_gravity="center_horizontal"
+                    android:textStyle="italic"
+                    android:clickable="true"
+                    android:onClick="addBudgetItem"
+
+                    />
+
+
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

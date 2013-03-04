@@ -120,7 +120,7 @@ OnSharedPreferenceChangeListener{
 				+ "/bankaccounts/API_KEY=" + apiKey);
 		ContentResolver r = context.getContentResolver();
 		String[] fields = { "id", "name", "balance" };
-		String name = prefs.getString(SettingsActivity.KEY_PREF_BANKDROID_ACCOUNT, "");
+		String name = prefs.getString(PreferenceKeys.KEY_PREF_BANKDROID_ACCOUNT, "");
 		try {
 			Cursor c = r.query(uri, fields, "id = '" + name + "'", null, null);
 			if (c == null) {
@@ -142,7 +142,7 @@ OnSharedPreferenceChangeListener{
 				+ TRANSACTIONS_CAT + '/' + "API_KEY=" + apiKey);
 		ContentResolver r = context.getContentResolver();
 		String[] fields = { "amount" };
-		String name = prefs.getString(SettingsActivity.KEY_PREF_BANKDROID_ACCOUNT, "");
+		String name = prefs.getString(PreferenceKeys.KEY_PREF_BANKDROID_ACCOUNT, "");
 
 		DateTime now = new DateTime();
 		String today = now.toString("YYYY-MM-dd");
