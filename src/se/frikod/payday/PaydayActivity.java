@@ -7,29 +7,20 @@ import android.app.AlertDialog;
 import android.appwidget.AppWidgetManager;
 import android.content.*;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.*;
 import android.view.View.OnClickListener;
-import android.widget.EditText;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import android.widget.*;
 import se.frikod.payday.exceptions.AccountNotFoundException;
 import se.frikod.payday.exceptions.WrongAPIKeyException;
-
-import java.lang.reflect.Type;
-import java.util.LinkedList;
 
 public class PaydayActivity extends FragmentActivity {
 
     SharedPreferences prefs;
     private Budget budget;
-    private LinkedList<BudgetItem> budgetItems;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,9 +32,8 @@ public class PaydayActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.payday_activity);
-        FontUtils.setRobotoFont(this, this.getWindow().getDecorView());
 
-        loadBudgetItems();
+        FontUtils.setRobotoFont(this, this.getWindow().getDecorView());
 
         if (bank.verifySetup()) {
             Log.i("Payday", "Verify setup failed");
@@ -58,6 +48,8 @@ public class PaydayActivity extends FragmentActivity {
                 update();
             }
         });
+
+        updateBudgetItems();
 
 
     }
@@ -95,49 +87,13 @@ public class PaydayActivity extends FragmentActivity {
         finish();
     }
 
-    private void saveBudgetItems(){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        SharedPreferences.Editor e = prefs.edit();
-
-        GsonBuilder gsonb = new GsonBuilder();
-        Gson gson = gsonb.create();
-
-        String newJson = gson.toJson(budgetItems);
-
-        Log.d("Payday", newJson);
-        e.putString(PreferenceKeys.KEY_PREF_BUDGET_ITEMS, newJson);
-        e.commit();
-
-    }
-
-    private void loadBudgetItems(){
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        String budgetItemsJson = prefs.getString(PreferenceKeys.KEY_PREF_BUDGET_ITEMS, null);
-
-        GsonBuilder gsonb = new GsonBuilder();
-        Gson gson = gsonb.create();
-
-        Type collectionType = new TypeToken<LinkedList<BudgetItem>>() {
-        }.getType();
-        LinkedList<BudgetItem> items = gson.fromJson(budgetItemsJson, collectionType);
-
-        if (items == null) {
-            items = new LinkedList<BudgetItem>();
-        }
-
-        budgetItems = items;
-
-    }
-
     private void updateBudgetItems() {
 
         TableLayout itemsTable = (TableLayout) findViewById(R.id.budgetItems);
         itemsTable.removeAllViews();
 
-        for (int i = 0; i < budgetItems.size(); i++) {
-            BudgetItem bi = budgetItems.get(i);
+        for (int i = 0; i < budget.budgetItems.size(); i++) {
+            BudgetItem bi = budget.budgetItems.get(i);
             final int currentIndex = i;
             LayoutInflater inflater = this.getLayoutInflater();
             TableRow budgetItemView = (TableRow) inflater.inflate(R.layout.payday_budget_item, itemsTable, false);
@@ -147,7 +103,8 @@ public class PaydayActivity extends FragmentActivity {
             TextView title = (TextView) budgetItemView.findViewById(R.id.budgetItemLabel);
 
             Log.e("Payday", amount.toString());
-            amount.setText(Double.toString(bi.amount));
+            amount.setText(budget.formatter.format(bi.amount));
+
             title.setText(bi.title);
 
             budgetItemView.setLongClickable(true);
@@ -155,7 +112,10 @@ public class PaydayActivity extends FragmentActivity {
                 @Override
                 public boolean onLongClick(View v) {
                     Log.d("Payday", "longclick");
-                    budgetItems.remove(currentIndex);
+                    Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    vibrator.vibrate(500);
+                    budget.budgetItems.remove(currentIndex);
+                    budget.saveBudgetItems();
                     updateBudgetItems();
                     return true;
                 }
@@ -165,6 +125,8 @@ public class PaydayActivity extends FragmentActivity {
 
         }
 
+        FontUtils.setRobotoFont(this, itemsTable);
+        update();
     }
 
     private void renderBudget(double dailyBudget) {
@@ -182,11 +144,11 @@ public class PaydayActivity extends FragmentActivity {
         TextView daysToPaydayView = (TextView) findViewById(R.id.daysToPaydayNumber);
         TextView spentView = (TextView) findViewById(R.id.spentTodayNumber);
         TextView balanceView = (TextView) findViewById(R.id.balanceNumber);
-        TextView goalView = (TextView) findViewById(R.id.goalNumber);
+        //TextView goalView = (TextView) findViewById(R.id.goalNumber);
 
         balanceView.setText(budget.formatter.format(budget.balance));
         spentView.setText(budget.formatter.format(budget.spentToday));
-        goalView.setText(budget.formatter.format(budget.savingsGoal));
+        // goalView.setText(budget.formatter.format(budget.savingsGoal));
         daysToPaydayView.setText(Integer.toString(budget.daysUntilPayday) + " ");
         budgetView.setText(budget.formatter.format(dailyBudget));
     }
@@ -241,8 +203,6 @@ public class PaydayActivity extends FragmentActivity {
         LayoutInflater inflater = this.getLayoutInflater();
 
         final View dialogView = inflater.inflate(R.layout.payday_dialog_add_budget_item, null);
-        final Context context = this.getApplicationContext();
-
 
         builder.setTitle("Add new budget item");
         builder.setPositiveButton(R.string.add_budget_item, new DialogInterface.OnClickListener() {
@@ -251,16 +211,21 @@ public class PaydayActivity extends FragmentActivity {
 
                 EditText amountEdit = (EditText) dialogView.findViewById(R.id.new_budget_item_amount);
                 EditText titleEdit = (EditText) dialogView.findViewById(R.id.new_budget_item_title);
+                Spinner itemType = (Spinner) dialogView.findViewById(R.id.new_budget_item_type);
+
+
 
                 int amount = Integer.parseInt(amountEdit.getText().toString());
+
+                if (itemType.getSelectedItemId() == 0) amount = -amount;
+
                 String title = titleEdit.getText().toString();
 
                 BudgetItem newItem = new BudgetItem(title, amount);
 
-                budgetItems.add(newItem);
-                saveBudgetItems();
+                budget.budgetItems.add(newItem);
+                budget.saveBudgetItems();
                 updateBudgetItems();
-
             }
         });
 

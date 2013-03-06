@@ -67,8 +67,13 @@
     <string name="setup_done">Done</string>
 
     <!-- Budget entry dialog-->
-    <string name="new_budget_entry_hint">New shoes</string>
+    <string name="new_budget_entry_hint">Title</string>
     <string name="new_budget_entry_amount">500</string>
     <string name="cancel_add_budget_item">Cancel</string>
+
+    <string-array name="budget_item_type">
+        <item>Expense</item>
+        <item>Income</item>
+    </string-array>
 
 </resources>

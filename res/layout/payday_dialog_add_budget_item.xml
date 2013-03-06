@@ -5,7 +5,9 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-     <EditText
+
+
+    <EditText
         android:id="@+id/new_budget_item_title"
         android:inputType="text"
         android:layout_width="match_parent"
@@ -16,16 +18,26 @@
         android:layout_marginBottom="4dp"
         android:hint="@string/new_budget_entry_hint" />
 
+    <Spinner
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/new_budget_item_type"
+            android:entries="@array/budget_item_type"
+
+            />
+
     <EditText
-        android:id="@+id/new_budget_item_amount"
-        android:inputType="number"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginBottom="16dp"
-        android:fontFamily="sans-serif"
-        android:hint="@string/new_budget_entry_amount"/>
+            android:id="@+id/new_budget_item_amount"
+            android:inputType="number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="sans-serif"
+            android:hint="@string/new_budget_entry_amount"/>
+
+
 
 </LinearLayout>

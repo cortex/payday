@@ -73,6 +73,7 @@
                     android:layout_margin="1dp" >
                 </TableRow>
 
+<!--
                 <TableRow
                     android:id="@+id/tableRow2"
                     android:layout_width="match_parent"
@@ -86,8 +87,9 @@
                     <TextView
                         android:id="@+id/goalNumber"
                         style="@style/paydayNumber"
-                        android:text="--" />
+                        android:text="-" />
                 </TableRow>
+  -->
 
                 <TableRow
                     android:id="@+id/spentTodayRow"

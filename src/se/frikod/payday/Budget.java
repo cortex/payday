@@ -1,10 +1,16 @@
 package se.frikod.payday;
 
+import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.StringCharacterIterator;
-import java.util.Currency;
 
+import java.util.Currency;
+import java.util.LinkedList;
+
+import android.util.Log;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
@@ -29,17 +35,20 @@ public class Budget {
 	double balance;
 	double savingsGoal;
 	double spentToday;
+
 	BankdroidProvider bank;
 	SharedPreferences prefs;
 	DecimalFormat formatter;
 	Holidays holidays;
-	
-	Budget(BankdroidProvider bank, SharedPreferences prefs, Holidays holidays) {
+
+    LinkedList<BudgetItem> budgetItems;
+
+    Budget(BankdroidProvider bank, SharedPreferences prefs, Holidays holidays) {
 		
 		this.bank = bank;
 		this.prefs = prefs;
 		this.holidays = holidays;
-		
+
 
 		Currency currency = Currency.getInstance("SEK");
         DecimalFormatSymbols dfs = new DecimalFormatSymbols();
@@ -50,10 +59,46 @@ public class Budget {
 		
 		formatter = new DecimalFormat("#,###,### ¤", dfs);
 		formatter.setMaximumFractionDigits(0);
-		
+        loadBudgetItems();
 	}
 
-	public void update() throws WrongAPIKeyException, AccountNotFoundException {
+
+
+    public void saveBudgetItems(){
+        SharedPreferences.Editor e = prefs.edit();
+
+        GsonBuilder gsonb = new GsonBuilder();
+        Gson gson = gsonb.create();
+
+        String newJson = gson.toJson(budgetItems);
+
+        Log.d("Payday", newJson);
+        e.putString(PreferenceKeys.KEY_PREF_BUDGET_ITEMS, newJson);
+        e.commit();
+
+    }
+
+    public void loadBudgetItems(){
+
+        String budgetItemsJson = prefs.getString(PreferenceKeys.KEY_PREF_BUDGET_ITEMS, null);
+
+        GsonBuilder gsonb = new GsonBuilder();
+        Gson gson = gsonb.create();
+
+        Type collectionType = new TypeToken<LinkedList<BudgetItem>>() {
+        }.getType();
+        LinkedList<BudgetItem> items = gson.fromJson(budgetItemsJson, collectionType);
+
+        if (items == null) {
+            items = new LinkedList<BudgetItem>();
+        }
+
+        budgetItems = items;
+
+    }
+
+
+    public void update() throws WrongAPIKeyException, AccountNotFoundException {
 
 		double balance;
 		double spentToday;
@@ -96,6 +141,14 @@ public class Budget {
 
 		this.balance = balance;
 		this.daysUntilPayday = Days.daysBetween(now, nextPayday).getDays();
+
+        double budgetItemsSum = 0;
+
+        for(BudgetItem bi: budgetItems ){
+            budgetItemsSum += bi.amount;
+        }
+
+
 		this.savingsGoal = savingsGoal;
 
 		if (this.prefs.getBoolean(PreferenceKeys.KEY_PREF_USE_SPENT_TODAY, true)){
@@ -106,7 +159,7 @@ public class Budget {
 			spentToday = 0;
 		}
 		
-		this.dailyBudget = (balance + spentToday - savingsGoal)
+		this.dailyBudget = (balance + spentToday - savingsGoal + budgetItemsSum)
 				/ this.daysUntilPayday;
 
 	}
