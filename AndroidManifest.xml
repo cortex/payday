@@ -9,7 +9,7 @@
             android:targetSdkVersion="16"/>
 
     <uses-permission android:name="com.liato.bankdroid.permission.READ_ACCESS_BANK_TRANSACTIONS"/>
-
+    <uses-permission android:name="android.permission.VIBRATE"/>
     <permission
             android:name="com.liato.bankdroid.permission.READ_ACCESS_BANK_TRANSACTIONS"
             android:description="@string/bankdroid_permission_provider_desc"
