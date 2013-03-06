@@ -70,6 +70,7 @@
     <string name="new_budget_entry_hint">Title</string>
     <string name="new_budget_entry_amount">500</string>
     <string name="cancel_add_budget_item">Cancel</string>
+    <string name="add_budget_item_dialog_title">Add new budget item</string>
 
     <string-array name="budget_item_type">
         <item>Expense</item>

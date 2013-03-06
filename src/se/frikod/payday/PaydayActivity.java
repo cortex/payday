@@ -204,7 +204,7 @@ public class PaydayActivity extends FragmentActivity {
 
         final View dialogView = inflater.inflate(R.layout.payday_dialog_add_budget_item, null);
 
-        builder.setTitle("Add new budget item");
+        builder.setTitle(getString(R.string.add_budget_item_dialog_title));
         builder.setPositiveButton(R.string.add_budget_item, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
 
