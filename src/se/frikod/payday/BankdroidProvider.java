@@ -1,7 +1,10 @@
 package se.frikod.payday;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
+import android.text.TextUtils;
 import org.joda.time.DateTime;
 
 import se.frikod.payday.exceptions.AccountNotFoundException;
@@ -120,21 +123,38 @@ OnSharedPreferenceChangeListener{
 				+ "/bankaccounts/API_KEY=" + apiKey);
 		ContentResolver r = context.getContentResolver();
 		String[] fields = { "id", "name", "balance" };
-		String name = prefs.getString(PreferenceKeys.KEY_PREF_BANKDROID_ACCOUNT, "");
-		try {
-			Cursor c = r.query(uri, fields, "id = '" + name + "'", null, null);
-			if (c == null) {
-				throw new WrongAPIKeyException();
-			}
-			if (c.getCount() == 0) {
-				throw new AccountNotFoundException();
-			}
-			c.moveToNext();
-			return c.getDouble(2);
-		} catch (IllegalArgumentException e) {
-			throw new WrongAPIKeyException();
-		}
 
+		String defaultAccount = prefs.getString(PreferenceKeys.KEY_PREF_BANKDROID_ACCOUNT, "");
+        Set<String> accounts = prefs.getStringSet(PreferenceKeys.KEY_PREF_BANKDROID_ACCOUNTS, new HashSet<String>());
+
+        if (accounts.isEmpty()) accounts.add(defaultAccount);
+
+        String namesIn = "(\"" + TextUtils.join("\", \"", accounts) + "\")";
+        Log.e(TAG, defaultAccount);
+        Log.e(TAG, accounts.toString());
+
+
+        Cursor c;
+
+		try {
+            c = r.query(uri, fields, "id in " + namesIn, null, null);
+        } catch (IllegalArgumentException e) {
+            throw new WrongAPIKeyException();
+        }
+
+        if (c == null) {
+            throw new WrongAPIKeyException();
+        }
+        if (c.getCount() == 0) {
+            throw new AccountNotFoundException();
+        }
+
+        double balance = 0.0;
+        while(c.moveToNext()){
+            balance += c.getDouble(2);
+        }
+
+        return balance;
 	}
 
 	public double getSpentToday() {

@@ -7,12 +7,12 @@
     <!--  Main activity labels -->
     <string name="details">Detaljer</string>
     <string name="days_until_payday_title">dagar till löning</string>
-    <string name="daily_budget_title">DAGENS BUDGET</string>
+    <string name="daily_budget_title">Dagens budget</string>
     <string name="spentToday_title">Använt idag</string>
     <string name="balance_title">Saldo</string>
     <string name="goal_label">Sparmål</string>
 
-    <string name="pick_account">Välj konto</string>
+
     <string name="bankdroid_is_not_installed">Med Bankdroid kan du ansluta till din internetbank, så att Löning kan se
         ditt saldo.
     </string>
@@ -70,6 +70,12 @@
     <string name="setup_pair_with_bankdroid_button">Koppla ihop med Bankdroid</string>
     <string name="setup_pick_account">Välj konto</string>
     <string name="setup_done">Klart</string>
+
+    <!-- Settings -->
+
+    <string name="no_accounts_selected_warning">Du måste välja minst ett konto. Dina tidigare inställningar behölls.</string>
+    <string name="pick_account">Välj konton</string>
+    <string name="pick_account_description">Om du väljer flera konton kommer saldona summeras.</string>
 
     <!-- Budget entry dialog-->
     <string name="new_budget_entry_hint">Titel</string>

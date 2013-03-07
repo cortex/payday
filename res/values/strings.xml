@@ -71,6 +71,10 @@
     <string name="new_budget_entry_amount">500</string>
     <string name="cancel_add_budget_item">Cancel</string>
     <string name="add_budget_item_dialog_title">Add new budget item</string>
+    <string name="no_accounts_selected_warning">You need to pick at least one account. Your previous settings will be
+        kept.
+    </string>
+    <string name="pick_account_description">If you choose multiple accounts, the balance will be summed.</string>
 
     <string-array name="budget_item_type">
         <item>Expense</item>

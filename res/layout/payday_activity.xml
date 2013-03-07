@@ -12,38 +12,34 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >        
         
-        <LinearLayout
+        <!-- <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="80dp"
             android:background="@drawable/title_bg"
             android:orientation="vertical"
             android:padding="8dp" >
 
             <TextView
-                android:id="@+id/budgetLabel"
-                style="@style/paydayBudgetLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/daily_budget_title" />
-
-            <TextView
-                android:id="@+id/budgetNumber"
-                style="@style/budgetNumber"
-                android:layout_marginBottom="0dp"
-                android:text="--" />
+                    android:id="@+id/budgetLabel"
+                    style="@style/budgetNumber"
+                    android:textSize="36dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/daily_budget_title" />
 
         </LinearLayout>
-
+             -->
         <LinearLayout style="@style/card">
-
             <TextView
-                android:id="@+id/detailsLabel"
-                style="@style/paydayLabel"
-                android:layout_gravity="center"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="0dp"
-                android:text="@string/details"
-                android:textSize="22sp" />
+                    android:id="@+id/budgetLabel"
+                    style="@style/paydayLabel"
+                    android:textSize="24dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="24dp"
+                    android:textStyle="bold"
+                    android:text="@string/daily_budget_title" />
 
             <TableLayout
                 android:layout_width="match_parent"
@@ -58,10 +54,12 @@
                     <TextView
                         android:id="@+id/balanceLabel"
                         style="@style/paydayLabel"
+                        android:textSize="22dp"
                         android:text="@string/balance_title" />
 
                     <TextView
                         android:id="@+id/balanceNumber"
+                        android:textSize="22dp"
                         style="@style/paydayNumber"
                         android:layout_gravity="right|end"
                         android:text="--" />
@@ -115,43 +113,84 @@
                     android:stretchColumns="0,1" >
             </TableLayout>
 
-            <TextView
-                    android:id="@+id/addBudgetItem"
-                    style="@style/paydayLabel"
-                    android:text="@string/add_budget_item"
-                    android:layout_gravity="center_horizontal"
-                    android:textStyle="italic"
-                    android:clickable="true"
-                    android:onClick="addBudgetItem"
+            <TableLayout
+                    android:id="@+id/budgetItems"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stretchColumns="0,1" >
+            <TableRow>
+                <TextView
+                        android:id="@+id/addBudgetItem"
+                        style="@style/paydayLabel"
+                        android:text=" +"
+                        android:textSize="22dp"
+                        android:layout_gravity="bottom"/>
 
-                    />
+
+                <TextView
+                        android:id="@+id/addBudgetItem"
+                        style="@style/paydayLabel"
+                        android:text="@string/add_budget_item"
+                        android:textStyle="italic"
+                        android:textColor="#aaa"
+                        android:clickable="true"
+                        android:onClick="addBudgetItem"
+
+                        android:layout_gravity="bottom|right"/>
+            </TableRow>
+
+            </TableLayout>
+
+            <View android:layout_width="fill_parent"
+                  android:layout_height="1dip"
+                  android:background="#eee" />
 
 
-            <LinearLayout
-                android:layout_width="fill_parent"
+            <TableLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:gravity="center"
-                android:orientation="horizontal" >
+                android:layout_marginTop="48dp"
+                android:stretchColumns="0,1" >
+                >
+            <TableRow>
+                <TextView
+                        style="@style/paydayNumber"
+                        android:layout_height="32dp"
+                        android:textSize="22dp"
+                        android:layout_gravity="left"
+                        android:text=" ÷" />
+
 
                 <TextView
                     android:id="@+id/daysToPaydayNumber"
                     style="@style/paydayNumber"
                     android:layout_height="32dp"
                     android:textSize="22dp"
-                    android:layout_gravity="bottom"
+                    android:layout_gravity="right"
                     android:text="--" />
 
                 <TextView
                     android:id="@+id/daysToPaydayLabel"
                     style="@style/paydayLabel"
-                    android:layout_gravity="bottom"
                     android:textSize="22dp"
-                    android:text="@string/days_until_payday_title" />
-            </LinearLayout>
-        </LinearLayout>
+                    android:layout_gravity="right"
 
+                    android:text="@string/days_until_payday_title" />
+
+            </TableRow>
+            </TableLayout>
+            <View android:layout_width="fill_parent"
+                  android:layout_height="1dip"
+                  android:background="#eee" />
+
+            <TextView
+                    android:id="@+id/budgetNumber"
+                    style="@style/paydayNumber"
+                    android:textSize="48dp"
+                    android:layout_marginBottom="0dp"
+                    android:text="--" />
+
+        </LinearLayout>
     </LinearLayout>
 
 </ScrollView>

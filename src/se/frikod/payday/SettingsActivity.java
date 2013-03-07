@@ -1,42 +1,34 @@
-	package se.frikod.payday;
+package se.frikod.payday;
 
 import java.util.ArrayList;
+import java.util.Set;
 
-import com.liato.bankdroid.provider.IBankTransactionsProvider;
-
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.pm.PackageManager;
+import android.preference.*;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.Preference.OnPreferenceClickListener;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
-import se.frikod.payday.R;
 import android.util.Log;
+import android.widget.Toast;
 
 public class SettingsActivity extends PreferenceActivity {
     private BankdroidProvider bank;
-	
-	private static final String TAG = "Payday.settings";
 
-	@Override
+	private static final String TAG = "Payday.settings";
+    private SharedPreferences prefs;
+
+    @Override
 	public void onCreate(Bundle savedInstanceState) {
 		bank = new BankdroidProvider(this);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
 		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(R.xml.preferences);
+		addPreferencesFromResource(R.xml.preferences);//deprecated
         getAccounts();
 	}
 
-
 	private void getAccounts() {
-		ListPreference lp = (ListPreference) findPreference(PreferenceKeys.KEY_PREF_BANKDROID_ACCOUNT);
+
+        String defaultAccount = prefs.getString(PreferenceKeys.KEY_PREF_BANKDROID_ACCOUNT, null);
+        MultiSelectListPreference mlp = (MultiSelectListPreference ) findPreference(PreferenceKeys.KEY_PREF_BANKDROID_ACCOUNTS);
 
         ArrayList<Account> accounts = bank.getAccounts();
         if (accounts.size() > 0) {
@@ -47,11 +39,39 @@ public class SettingsActivity extends PreferenceActivity {
                 accountNames[i] = accounts.get(i).name;
                 accountIds[i] = accounts.get(i).id;
             }
-            lp.setEntries(accountNames);
-            lp.setEntryValues(accountIds);
-            lp.setEnabled(true);
+            mlp.setEntries(accountNames);
+            mlp.setEntryValues(accountIds);
+
+
+            Set<String> current = mlp.getValues();
+            Log.e("Payday", current.toString());
+
+            if(current.isEmpty()){
+                Log.e("Payday", defaultAccount);
+                current.add(defaultAccount);
+                mlp.setValues(current);
+            }
+
+            mlp.setEnabled(true);
+
+            mlp.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                    Set<String> v = (Set) newValue;
+
+                    if (v.size() == 0) {
+                        Toast.makeText(getApplicationContext(),
+                                getString(R.string.no_accounts_selected_warning),
+                                Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                    return true;
+                }
+            }
+            );
+
         } else {
-            lp.setEnabled(false);
+            mlp.setEnabled(false);
         }
     }
 }

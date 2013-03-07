@@ -213,8 +213,6 @@ public class PaydayActivity extends FragmentActivity {
                 EditText titleEdit = (EditText) dialogView.findViewById(R.id.new_budget_item_title);
                 Spinner itemType = (Spinner) dialogView.findViewById(R.id.new_budget_item_type);
 
-
-
                 int amount = Integer.parseInt(amountEdit.getText().toString());
 
                 if (itemType.getSelectedItemId() == 0) amount = -amount;

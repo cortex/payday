@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
     <PreferenceCategory android:title="@string/your_budget_section" >
+        <!--
         <ListPreference
             android:key="pref_account"
             android:summary="@string/pick_account"
             android:title="@string/pick_account"
-            ></ListPreference>
+            />
+            -->
+        <MultiSelectListPreference
+            android:key="pref_accounts"
+            android:summary="@string/pick_account_description"
+            android:title="@string/pick_account"
+            />
 
         <CheckBoxPreference
             android:key="pref_use_spent_today"
