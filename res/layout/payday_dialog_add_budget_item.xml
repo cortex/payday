@@ -5,8 +5,6 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-
-
     <EditText
         android:id="@+id/new_budget_item_title"
         android:inputType="text"
@@ -37,7 +35,5 @@
             android:layout_marginBottom="16dp"
             android:fontFamily="sans-serif"
             android:hint="@string/new_budget_entry_amount"/>
-
-
 
 </LinearLayout>

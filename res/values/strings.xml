@@ -6,7 +6,7 @@
     <string name="menu_settings">Settings</string>
     <string name="title_activity_budget">Payday</string>
     <string name="days_until_payday_title">days until payday</string>
-    <string name="daily_budget_title">TODAY\'S BUDGET</string>
+    <string name="daily_budget_title">Today\'s Budget</string>
     <string name="balance_title">Balance</string>
     <string name="goal_label">Savings goal</string>
     <string name="spentToday_title">Spent today</string>
