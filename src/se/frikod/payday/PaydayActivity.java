@@ -27,7 +27,7 @@ public class PaydayActivity extends FragmentActivity {
 
         BankdroidProvider bank = new BankdroidProvider(this);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        budget = new Budget(bank, prefs, new Holidays(this));
+        budget = new Budget(bank, this, new Holidays(this));
 
         super.onCreate(savedInstanceState);
 

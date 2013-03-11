@@ -7,6 +7,8 @@ import java.text.DecimalFormatSymbols;
 import java.util.Currency;
 import java.util.LinkedList;
 
+import android.content.Context;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -40,13 +42,14 @@ public class Budget {
 	SharedPreferences prefs;
 	DecimalFormat formatter;
 	Holidays holidays;
+    Context context;
 
     LinkedList<BudgetItem> budgetItems;
 
-    Budget(BankdroidProvider bank, SharedPreferences prefs, Holidays holidays) {
-		
+    Budget(BankdroidProvider bank, Context ctx, Holidays holidays) {
+        this.context = ctx;
 		this.bank = bank;
-		this.prefs = prefs;
+		this.prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
 		this.holidays = holidays;
 
 
@@ -60,9 +63,27 @@ public class Budget {
 		formatter = new DecimalFormat("#,###,### ¤", dfs);
 		formatter.setMaximumFractionDigits(0);
         loadBudgetItems();
+        deprecateSavingsGoal();
 	}
 
 
+    private void deprecateSavingsGoal(){
+        String goalStr = prefs.getString(PreferenceKeys.KEY_PREF_GOAL, null);
+        if (goalStr != null){
+            try {
+                int savingsGoal = Integer.parseInt(goalStr);
+                BudgetItem savingsGoalItem = new BudgetItem(context.getString(R.string.savings_goal_title), savingsGoal);
+                this.budgetItems.add(savingsGoalItem);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.remove(PreferenceKeys.KEY_PREF_GOAL);
+                editor.commit();
+                this.saveBudgetItems();
+            } catch (NumberFormatException e) {
+
+            }
+        }
+
+    }
 
     public void saveBudgetItems(){
         SharedPreferences.Editor e = prefs.edit();
@@ -110,7 +131,9 @@ public class Budget {
 
 		String paydayStr = prefs.getString(PreferenceKeys.KEY_PREF_PAYDAY,
 				"25");
-		String goalStr = prefs.getString(PreferenceKeys.KEY_PREF_GOAL, "0");
+
+
+
 
 		try {
 			payday = Integer.parseInt(paydayStr);
@@ -118,11 +141,6 @@ public class Budget {
 			payday = 25;
 		}
 
-		try {
-			savingsGoal = Integer.parseInt(goalStr);
-		} catch (NumberFormatException e) {
-			savingsGoal = 0;
-		}
 
 		DateTime now = new DateTime();
 		DateTime nextPayday;
@@ -149,8 +167,6 @@ public class Budget {
         }
 
 
-		this.savingsGoal = savingsGoal;
-
 		if (this.prefs.getBoolean(PreferenceKeys.KEY_PREF_USE_SPENT_TODAY, true)){
 			this.spentToday = spentToday;	
 		}else
@@ -159,7 +175,7 @@ public class Budget {
 			spentToday = 0;
 		}
 		
-		this.dailyBudget = (balance + spentToday - savingsGoal + budgetItemsSum)
+		this.dailyBudget = (balance + spentToday + budgetItemsSum)
 				/ this.daysUntilPayday;
 
 	}

@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
     <PreferenceCategory android:title="@string/your_budget_section" >
-        <!--
-        <ListPreference
-            android:key="pref_account"
-            android:summary="@string/pick_account"
-            android:title="@string/pick_account"
-            />
-            -->
+
         <MultiSelectListPreference
             android:key="pref_accounts"
             android:summary="@string/pick_account_description"
@@ -25,12 +19,7 @@
             android:key="pref_payday"
             android:numeric="integer"
             android:title="@string/payday_title" />
-        <EditTextPreference
-            android:dialogMessage="@string/savings_goal_description"
-            android:dialogTitle="@string/savings_goal_title"
-            android:key="pref_goal"
-            android:numeric="integer"
-            android:title="@string/savings_goal_title" />
+
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/about_title" >
         <Preference android:title="@string/about_button" >

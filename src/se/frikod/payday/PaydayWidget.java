@@ -41,7 +41,7 @@ public class PaydayWidget extends AppWidgetProvider {
 
         Holidays holidays = new Holidays(context);
 
-        Budget budget = new Budget(bank, prefs, holidays);
+        Budget budget = new Budget(bank, context, holidays);
         try {
             budget.update();
         } catch (WrongAPIKeyException e) {
