@@ -8,40 +8,41 @@
         android:background="@drawable/widgetbg"
         >
 
-<RelativeLayout
-        android:id="@+id/widgetLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="6dp"
-        android:padding="8dp"
-
-        >
-    <TextView
-            android:id="@+id/textView1"
-            style="@style/paydayLabelWidget"
-            android:text="@string/daily_budget_title"
-            android:layout_marginLeft="4dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            />
-
-    <ImageView
-            android:id="@+id/widgetIcon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_launcher"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentBottom="true"/>
-
-    <TextView
-            android:id="@+id/paydayWidgetBudget"
+    <LinearLayout
+            android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/budgetNumberWidget"
-            android:text="-- kr"
-            android:layout_alignRight="@+id/textView1"
-            android:layout_below="@+id/textView1"/>
-</RelativeLayout>
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:gravity="center|center_horizontal">
+
+        <TextView
+                android:id="@+id/textView1"
+                style="@style/paydayLabelWidget"
+                android:text="@string/daily_budget_title"
+                android:layout_marginLeft="4dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                />
+
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/widgetLayout">
+
+            <TextView
+                    android:id="@+id/paydayWidgetBudget"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/budgetNumberWidget"
+                    android:text="-- kr"
+                    android:layout_alignRight="@+id/textView1"
+                    android:layout_below="@+id/textView1"
+                    android:layout_marginLeft="8dp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
 
 </FrameLayout>
