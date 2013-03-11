@@ -205,41 +205,53 @@ public class PaydayActivity extends FragmentActivity {
         final View dialogView = inflater.inflate(R.layout.payday_dialog_add_budget_item, null);
 
         builder.setTitle(getString(R.string.add_budget_item_dialog_title));
-        builder.setPositiveButton(R.string.add_budget_item, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
+        builder.setPositiveButton(R.string.add_budget_item, null);
+        builder.setNegativeButton(R.string.cancel_add_budget_item, null);
 
+        final AlertDialog d = builder.create();
 
-                EditText amountEdit = (EditText) dialogView.findViewById(R.id.new_budget_item_amount);
-                EditText titleEdit = (EditText) dialogView.findViewById(R.id.new_budget_item_title);
-                Spinner itemType = (Spinner) dialogView.findViewById(R.id.new_budget_item_type);
+        d.setOnShowListener(new DialogInterface.OnShowListener() {
 
-                int amount = Integer.parseInt(amountEdit.getText().toString());
+            @Override
+            public void onShow(DialogInterface dialog) {
 
-                if (itemType.getSelectedItemId() == 0) amount = -amount;
+                Button b = d.getButton(AlertDialog.BUTTON_POSITIVE);
+                b.setOnClickListener(new View.OnClickListener() {
 
-                String title = titleEdit.getText().toString();
+                    @Override
+                    public void onClick(View view) {
+                        EditText amountEdit = (EditText) dialogView.findViewById(R.id.new_budget_item_amount);
+                        EditText titleEdit = (EditText) dialogView.findViewById(R.id.new_budget_item_title);
+                        Spinner itemType = (Spinner) dialogView.findViewById(R.id.new_budget_item_type);
 
-                BudgetItem newItem = new BudgetItem(title, amount);
+                        int amount;
+                        try{
+                            amount = Integer.parseInt(amountEdit.getText().toString());
+                            if (itemType.getSelectedItemId() == 0) amount = -amount;
+                        }catch (NumberFormatException e) {
 
-                budget.budgetItems.add(newItem);
-                budget.saveBudgetItems();
-                updateBudgetItems();
+                            Toast.makeText(getApplicationContext(),
+                                    getString(R.string.new_budget_item_no_amount_specified),
+                                    Toast.LENGTH_SHORT).show();
+
+                            return;
+                        }
+
+                        String title = titleEdit.getText().toString();
+
+                        BudgetItem newItem = new BudgetItem(title, amount);
+
+                        budget.budgetItems.add(newItem);
+                        budget.saveBudgetItems();
+                        updateBudgetItems();
+                        d.dismiss();
+                    }
+                });
             }
         });
 
-        builder.setNegativeButton(R.string.cancel_add_budget_item, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // FIRE ZE MISSILES!
-            }
-        });
-
-        AlertDialog dialog = builder.create();
-
-
-        dialog.setView(dialogView);
-
-
-        dialog.show();
+        d.setView(dialogView);
+        d.show();
 
 
     }

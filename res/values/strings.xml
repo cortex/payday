@@ -75,6 +75,7 @@
         kept.
     </string>
     <string name="pick_account_description">If you choose multiple accounts, the balance will be summed.</string>
+    <string name="new_budget_item_no_amount_specified">You have to specify an amount</string>
 
     <string-array name="budget_item_type">
         <item>Expense</item>
