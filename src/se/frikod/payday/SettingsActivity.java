@@ -31,66 +31,102 @@ import android.widget.Toast;
 public class SettingsActivity extends PreferenceActivity {
     private BankdroidProvider bank;
 
-	private static final String TAG = "Payday.settings";
+    private static final String TAG = "Payday.settings";
     private SharedPreferences prefs;
 
     @Override
-	public void onCreate(Bundle savedInstanceState) {
-		bank = new BankdroidProvider(this);
+    public void onCreate(Bundle savedInstanceState) {
+        bank = new BankdroidProvider(this);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(R.xml.preferences);//deprecated
-        getAccounts();
-	}
+        super.onCreate(savedInstanceState);
 
-	private void getAccounts() {
+        if (android.os.Build.VERSION.SDK_INT >= 11) {
+            addPreferencesFromResource(R.xml.preferences_v11);
+        }
+        else{
+            addPreferencesFromResource(R.xml.preferences);
+        }
+        getAccounts();
+    }
+
+    private void getAccounts() {
 
         String defaultAccount = prefs.getString(PreferenceKeys.KEY_PREF_BANKDROID_ACCOUNT, null);
-        MultiSelectListPreference mlp = (MultiSelectListPreference ) findPreference(PreferenceKeys.KEY_PREF_BANKDROID_ACCOUNTS);
-
         ArrayList<Account> accounts = bank.getAccounts();
+
+        String[] accountNames = null;
+        String[] accountIds = null;
+
         if (accounts.size() > 0) {
-            String[] accountNames = new String[accounts.size()];
-            String[] accountIds = new String[accounts.size()];
+            accountNames = new String[accounts.size()];
+            accountIds = new String[accounts.size()];
 
             for (int i = 0; i < accounts.size(); i++) {
                 accountNames[i] = accounts.get(i).name;
                 accountIds[i] = accounts.get(i).id;
             }
-            mlp.setEntries(accountNames);
-            mlp.setEntryValues(accountIds);
+        }
 
 
-            Set<String> current = mlp.getValues();
-            Log.e("Payday", current.toString());
+        if (android.os.Build.VERSION.SDK_INT >= 11) {
+            MultiSelectListPreference mlp = (MultiSelectListPreference ) findPreference(PreferenceKeys.KEY_PREF_BANKDROID_ACCOUNTS);
+            if (accounts.size() > 0) {
 
-            if(current.isEmpty()){
-                Log.e("Payday", defaultAccount);
-                current.add(defaultAccount);
-                mlp.setValues(current);
-            }
+                mlp.setEntries(accountNames);
+                mlp.setEntryValues(accountIds);
 
-            mlp.setEnabled(true);
+                Set<String> current = mlp.getValues();
 
-            mlp.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-
-                    Set<String> v = (Set) newValue;
-
-                    if (v.size() == 0) {
-                        Toast.makeText(getApplicationContext(),
-                                getString(R.string.no_accounts_selected_warning),
-                                Toast.LENGTH_SHORT).show();
-                        return false;
-                    }
-                    return true;
+                if(current.isEmpty()){
+                    current.add(defaultAccount);
+                    mlp.setValues(current);
                 }
-            }
-            );
 
-        } else {
-            mlp.setEnabled(false);
+                mlp.setEnabled(true);
+
+                mlp.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                        Set<String> v = (Set) newValue;
+
+                        if (v.size() == 0) {
+                            Toast.makeText(getApplicationContext(),
+                                    getString(R.string.no_accounts_selected_warning),
+                                    Toast.LENGTH_SHORT).show();
+                            return false;
+                        }
+                        return true;
+                    }
+                }
+                );
+
+            } else {
+                mlp.setEnabled(false);
+            }
+        }
+        else{
+            ListPreference lp = (ListPreference ) findPreference(PreferenceKeys.KEY_PREF_BANKDROID_ACCOUNT);
+            if (accounts.size() > 0) {
+                lp.setEntries(accountNames);
+                lp.setEntryValues(accountIds);
+
+                String current = lp.getValue();
+
+                if(current.isEmpty()){
+                    lp.setValue(defaultAccount);
+                }
+
+                lp.setEnabled(true);
+
+            } else {
+                lp.setEnabled(false);
+            }
+
+
         }
     }
+
+
+
 }

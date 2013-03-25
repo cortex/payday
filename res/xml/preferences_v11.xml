@@ -2,10 +2,10 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
     <PreferenceCategory android:title="@string/your_budget_section" >
 
-        <ListPreference
-            android:key="pref_account"
-            android:summary="@string/pick_account_description"
-            android:title="@string/pick_account"
+        <MultiSelectListPreference
+            android:key="pref_accounts"
+            android:summary="@string/pick_accounts_description"
+            android:title="@string/pick_accounts"
             />
 
         <CheckBoxPreference

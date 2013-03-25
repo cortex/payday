@@ -125,14 +125,20 @@ OnSharedPreferenceChangeListener{
 		String[] fields = { "id", "name", "balance" };
 
 		String defaultAccount = prefs.getString(PreferenceKeys.KEY_PREF_BANKDROID_ACCOUNT, "");
-        Set<String> accounts = prefs.getStringSet(PreferenceKeys.KEY_PREF_BANKDROID_ACCOUNTS, new HashSet<String>());
+
+
+        Set<String> accounts;
+        if (android.os.Build.VERSION.SDK_INT >= 11) {
+            accounts = prefs.getStringSet(PreferenceKeys.KEY_PREF_BANKDROID_ACCOUNTS, new HashSet<String>());
+
+        } else {
+            accounts = new HashSet<String>();
+            accounts.add(defaultAccount);
+        }
 
         if (accounts.isEmpty()) accounts.add(defaultAccount);
 
         String namesIn = "(\"" + TextUtils.join("\", \"", accounts) + "\")";
-        Log.e(TAG, defaultAccount);
-        Log.e(TAG, accounts.toString());
-
 
         Cursor c;
 

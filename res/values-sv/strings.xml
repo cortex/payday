@@ -74,8 +74,12 @@
     <!-- Settings -->
 
     <string name="no_accounts_selected_warning">Du måste välja minst ett konto. Dina tidigare inställningar behölls.</string>
-    <string name="pick_account">Välj konton</string>
-    <string name="pick_account_description">Om du väljer flera konton kommer saldona summeras.</string>
+
+    <string name="pick_account">Välj konto</string>
+    <string name="pick_account_description">Saldot används för att beräkna dagens budget.</string>
+
+    <string name="pick_accounts">Välj konton</string>
+    <string name="pick_accounts_description">Om du väljer flera konton kommer saldona summeras.</string>
 
     <!-- Budget entry dialog-->
     <string name="new_budget_entry_hint">Titel</string>

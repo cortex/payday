@@ -124,15 +124,12 @@ public class Budget {
 		double balance;
 		double spentToday;
 		int payday;
-		int savingsGoal;
-		
+
         balance = this.bank.getBalance();
 		spentToday = this.bank.getSpentToday();
 
 		String paydayStr = prefs.getString(PreferenceKeys.KEY_PREF_PAYDAY,
 				"25");
-
-
 
 
 		try {

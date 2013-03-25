@@ -74,7 +74,8 @@
     <string name="no_accounts_selected_warning">You need to pick at least one account. Your previous settings will be
         kept.
     </string>
-    <string name="pick_account_description">If you choose multiple accounts, the balance will be summed.</string>
+    <string name="pick_account_description">The balance of this account will be used for calculating your daily budget.</string>
+    <string name="pick_accounts_description">If you choose multiple accounts, the balance will be summed.</string>
     <string name="new_budget_item_no_amount_specified">You have to specify an amount</string>
 
     <string-array name="budget_item_type">
