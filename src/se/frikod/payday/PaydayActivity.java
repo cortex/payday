@@ -25,6 +25,7 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.appwidget.AppWidgetManager;
 import android.content.*;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
@@ -40,6 +41,7 @@ public class PaydayActivity extends FragmentActivity {
 
     SharedPreferences prefs;
     private Budget budget;
+    private double currentBudget = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -126,13 +128,36 @@ public class PaydayActivity extends FragmentActivity {
 
             title.setText(bi.title);
 
+            if (bi.exclude){
+                  amount.setTextColor(0xffCCCCCC);
+                  amount.setPaintFlags(amount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+
+                  title.setTextColor(0xffCCCCCC);
+                  title.setPaintFlags(title.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            }
+
+
+            budgetItemView.setClickable(true);
+            budgetItemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    vibrator.vibrate(10);
+
+                    BudgetItem bi = budget.budgetItems.get(currentIndex);
+                    bi.exclude = !bi.exclude;
+                    budget.saveBudgetItems();
+                    updateBudgetItems();
+                }
+            });
+
+
             budgetItemView.setLongClickable(true);
             budgetItemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    Log.d("Payday", "longclick");
                     Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                    vibrator.vibrate(500);
+                    vibrator.vibrate(100);
                     budget.budgetItems.remove(currentIndex);
                     budget.saveBudgetItems();
                     updateBudgetItems();
@@ -174,7 +199,7 @@ public class PaydayActivity extends FragmentActivity {
 
     @TargetApi(11)
     private void renderBudgetAnimated() {
-        ValueAnimator animation = ValueAnimator.ofFloat(0f,
+        ValueAnimator animation = ValueAnimator.ofFloat((float) currentBudget,
                 (float) budget.dailyBudget);
         animation.setDuration(500);
 
@@ -213,6 +238,7 @@ public class PaydayActivity extends FragmentActivity {
         } else {
             renderBudget(budget.dailyBudget);
         }
+        currentBudget = budget.dailyBudget;
 
     }
 

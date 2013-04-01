@@ -24,18 +24,19 @@ import android.content.SharedPreferences;
 class BudgetItem{
     String title;
     double amount;
+    boolean exclude;
+
     public BudgetItem(String mTitle, double mAmount){
         title = mTitle;
         amount = mAmount;
+        exclude = false;
     }
-
 }
 
 public class Budget {
 	int daysUntilPayday;
 	double dailyBudget;
 	double balance;
-	double savingsGoal;
 	double spentToday;
 
 	BankdroidProvider bank;
@@ -160,7 +161,9 @@ public class Budget {
         double budgetItemsSum = 0;
 
         for(BudgetItem bi: budgetItems ){
-            budgetItemsSum += bi.amount;
+            if (!bi.exclude){
+                budgetItemsSum += bi.amount;
+            }
         }
 
 
