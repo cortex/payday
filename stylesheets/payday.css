@@ -1,0 +1,28 @@
+#phone_image {
+	position: absolute;
+	top: -1000px;
+	left: -1000px;
+	-webkit-transform-style: preserve-3d;
+	-webkit-backface-visibility: hidden;
+	-webkit-transform:  rotate(20deg) translate3d( 0, 0, 0);;
+	-moz-transform: rotate(20deg);
+	
+
+}
+
+#shelf_background {
+	padding-top: 48px;
+	margin-bottom: 10px;
+	background: url('../images/wood-bg.png') top left repeat;
+}
+
+#shelf_background p, h1, h2, h3, h4, h5, h6 {
+	color: #fff;
+	text-shadow: 1px 1px 0.1px #333;
+        filter: dropshadow(color=#333, offx=1, offy=1);
+}
+
+
+body, h1, h2, h3, h4, h5, h6, p {
+	font-family: 'Open Sans', sans-serif;
+}
