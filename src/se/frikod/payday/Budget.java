@@ -9,7 +9,6 @@ import java.util.LinkedList;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -88,13 +87,9 @@ public class Budget {
 
     public void saveBudgetItems(){
         SharedPreferences.Editor e = prefs.edit();
-
         GsonBuilder gsonb = new GsonBuilder();
         Gson gson = gsonb.create();
-
         String newJson = gson.toJson(budgetItems);
-
-        Log.d("Payday", newJson);
         e.putString(PreferenceKeys.KEY_PREF_BUDGET_ITEMS, newJson);
         e.commit();
 

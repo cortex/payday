@@ -21,7 +21,7 @@
 
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
-                    android:src="@drawable/ic_launcher"
+                    android:src="@drawable/applogo_large"
                     android:layout_gravity="right"/>
 
 

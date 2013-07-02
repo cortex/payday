@@ -155,11 +155,9 @@ public class SetupActivity extends Activity
         if (resultCode == RESULT_OK) {
             final String apiKey = data
                     .getStringExtra(IBankTransactionsProvider.API_KEY);
-            Log.d(TAG, "User accepted pairing. Got an API key back: " + apiKey);
             editor.putString(KEY_PREF_BANKDROID_API_KEY, apiKey);
             editor.putBoolean(KEY_PREF_BANKDROID_PAIRED, true);
         } else if (resultCode == RESULT_CANCELED) {
-            Log.d(TAG, "User did not accept pairing.");
             editor.putString(KEY_PREF_BANKDROID_API_KEY, null);
             editor.putBoolean(KEY_PREF_BANKDROID_PAIRED, false);
         }

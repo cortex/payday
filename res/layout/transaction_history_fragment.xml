@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg"
+        >
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        style="@style/card">
+
+        <TextView
+            android:text="Transaction History"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </TextView>
+
+        <se.frikod.payday.TransactionsGraphViewGL
+                android:id="@+id/transactionGraph"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+        </se.frikod.payday.TransactionsGraphViewGL>
+
+        <se.frikod.payday.TransactionsGraphView
+                android:id="@+id/transactionGraph"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+        </se.frikod.payday.TransactionsGraphView>
+
+    </LinearLayout>
+</FrameLayout>

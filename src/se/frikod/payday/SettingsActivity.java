@@ -25,7 +25,6 @@ import java.util.Set;
 import android.content.SharedPreferences;
 import android.preference.*;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 public class SettingsActivity extends PreferenceActivity {

@@ -1,12 +1,16 @@
 package se.frikod.payday;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import android.text.TextUtils;
 import org.joda.time.DateTime;
 
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import se.frikod.payday.exceptions.AccountNotFoundException;
 import se.frikod.payday.exceptions.WrongAPIKeyException;
 
@@ -18,7 +22,6 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.liato.bankdroid.provider.IBankTransactionsProvider;
 
@@ -26,13 +29,30 @@ class Account {
 	String name;
 	String id;
 
-	public Account(String mid, String mname) {
-		name = mname;
-		id = mid;
+	public Account(String id, String name) {
+		this.name = name;
+		this.id = id;
 	}
 
     public String toString(){
         return name;
+    }
+}
+
+class Transaction{
+    public String date_string;
+    public BigDecimal amount;
+    public String currency;
+    public String description;
+    public DateTime date;
+
+    public Transaction(String date, BigDecimal amount, String currency, String description){
+        this.date_string = date;
+        this.amount = amount;
+        this.currency = currency;
+        this.description = description;
+        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd");
+        this.date = format.parseDateTime(date_string);
     }
 }
 
@@ -74,9 +94,7 @@ OnSharedPreferenceChangeListener{
         if (apiKey == null){
             return false;
         }
-		Log.i("se.frikod.payday", "API KEY:" + apiKey);
-		final Uri uri = Uri.parse("content://" + AUTHORITY
-				+ "/bankaccounts/API_KEY=" + apiKey);
+        Uri uri = getUri(BANK_ACCOUNTS_CAT);
 		ContentResolver r = context.getContentResolver();
 		String[] fields = { "name", "balance" };
 		Cursor c = null;
@@ -103,9 +121,7 @@ OnSharedPreferenceChangeListener{
 	public ArrayList<Account> getAccounts() {
         ArrayList<Account> accounts = new ArrayList<Account>();
         if (apiKey == null) return accounts;
-		final Uri uri = Uri.parse("content://" + AUTHORITY
-				+ "/bankaccounts/API_KEY=" + apiKey);
-
+        Uri uri = getUri(BANK_ACCOUNTS_CAT);
 		ContentResolver r = context.getContentResolver();
 		String[] fields = { "id", "name", "balance" };
 		Cursor c = r.query(uri, fields, null, null, null);
@@ -117,15 +133,13 @@ OnSharedPreferenceChangeListener{
 		return accounts;
 	}
 
-	public double getBalance() throws WrongAPIKeyException,
-			AccountNotFoundException {
-		final Uri uri = Uri.parse("content://" + AUTHORITY
-				+ "/bankaccounts/API_KEY=" + apiKey);
-		ContentResolver r = context.getContentResolver();
-		String[] fields = { "id", "name", "balance" };
+    private Uri getUri(String category){
+        Uri uri = Uri.parse("content://" + AUTHORITY + "/" + category + "/" + API_KEY + apiKey);
+        return uri;
+    }
 
-		String defaultAccount = prefs.getString(PreferenceKeys.KEY_PREF_BANKDROID_ACCOUNT, "");
-
+    private String getChosenAccountsFilter(String field){
+        String defaultAccount = prefs.getString(PreferenceKeys.KEY_PREF_BANKDROID_ACCOUNT, "");
 
         Set<String> accounts;
         if (android.os.Build.VERSION.SDK_INT >= 11) {
@@ -140,10 +154,20 @@ OnSharedPreferenceChangeListener{
 
         String namesIn = "(\"" + TextUtils.join("\", \"", accounts) + "\")";
 
+        return field + " IN " + namesIn;
+
+    }
+
+	public double getBalance() throws WrongAPIKeyException, AccountNotFoundException {
+
+        ContentResolver r = context.getContentResolver();
+		Uri uri = getUri(BANK_ACCOUNTS_CAT);
+        String[] fields = {ACC_ID, ACC_NAME, ACC_BALANCE};
+        String chosenAccounts = getChosenAccountsFilter(ACC_ID);
         Cursor c;
 
 		try {
-            c = r.query(uri, fields, "id in " + namesIn, null, null);
+            c = r.query(uri, fields, chosenAccounts, null, null);
         } catch (IllegalArgumentException e) {
             throw new WrongAPIKeyException();
         }
@@ -151,6 +175,7 @@ OnSharedPreferenceChangeListener{
         if (c == null) {
             throw new WrongAPIKeyException();
         }
+
         if (c.getCount() == 0) {
             throw new AccountNotFoundException();
         }
@@ -163,9 +188,32 @@ OnSharedPreferenceChangeListener{
         return balance;
 	}
 
+
+    public List<Transaction> getTransactions(){
+        Uri uri = getUri(TRANSACTIONS_CAT);
+
+        ContentResolver r = context.getContentResolver();
+
+        String[] fields = { TRANS_DATE, TRANS_AMT, TRANS_CUR, TRANS_DESC };
+        String chosenAccounts = getChosenAccountsFilter(TRANS_ACCNT);
+
+        Cursor c = r.query(uri, fields, chosenAccounts, null, TRANS_DATE);
+
+        List<Transaction> transactions = new ArrayList<Transaction>(c.getCount());
+        while (!c.isLast()) {
+            c.moveToNext();
+            transactions.add(new Transaction(
+                    c.getString(0),
+                    new BigDecimal(c.getDouble(1)),
+                    c.getString(2),
+                    c.getString(3)));
+        }
+        return transactions;
+    }
+
+
 	public double getSpentToday() {
-		final Uri uri = Uri.parse("content://" + AUTHORITY + '/'
-				+ TRANSACTIONS_CAT + '/' + "API_KEY=" + apiKey);
+        Uri uri = getUri(TRANSACTIONS_CAT);
 		ContentResolver r = context.getContentResolver();
 		String[] fields = { "amount" };
 		String name = prefs.getString(PreferenceKeys.KEY_PREF_BANKDROID_ACCOUNT, "");

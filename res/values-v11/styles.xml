@@ -8,10 +8,10 @@
         <item name="android:actionBarTabTextStyle">@style/PaydayActionStyle</item>
         <item name="android:actionMenuTextColor">#fff</item>
 
-        <!-- other activity and action bar styles here -->
+        <!-- other activity and action rectangle styles here -->
     </style>
 
-    <!-- style for the action bar backgrounds -->
+    <!-- style for the action rectangle backgrounds -->
     <style name="PaydayActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:titleTextStyle">@style/PaydayActionStyle</item>
         <item name="android:background">#ff222222</item>

@@ -1,0 +1,187 @@
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg"
+        android:fillViewport="true">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <LinearLayout
+                style="@style/card"
+                android:layout_weight="1">
+
+            <TextView
+                    android:id="@+id/budgetLabel"
+                    style="@style/paydayLabel"
+                    android:textSize="24dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="24dp"
+                    android:textStyle="bold"
+                    android:text="@string/daily_budget_title"/>
+
+            <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stretchColumns="0,1">
+
+                <TableRow
+                        android:id="@+id/tableRow1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    <TextView
+                            android:id="@+id/balanceLabel"
+                            style="@style/paydayLabel"
+                            android:textSize="22dp"
+                            android:text="@string/balance_title"/>
+
+                    <TextView
+                            android:id="@+id/balanceNumber"
+                            android:textSize="22dp"
+                            style="@style/paydayNumber"
+                            android:layout_gravity="right|end"
+                            android:text="--"/>
+                </TableRow>
+
+                <TableRow
+                        style="@style/tableLine"
+                        android:layout_height="1dp"
+                        android:layout_margin="1dp">
+                </TableRow>
+
+                <!--
+                                <TableRow
+                                    android:id="@+id/tableRow2"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content" >
+
+                                    <TextView
+                                        android:id="@+id/goalLabel"
+                                        style="@style/paydayLabel"
+                                        android:text="@string/goal_label" />
+
+                                    <TextView
+                                        android:id="@+id/goalNumber"
+                                        style="@style/paydayNumber"
+                                        android:text="-" />
+                                </TableRow>
+                  -->
+
+                <TableRow
+                        android:id="@+id/spentTodayRow"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    <TextView
+                            android:id="@+id/spentTodayLabel"
+                            style="@style/paydayLabel"
+                            android:text="@string/spentToday_title"/>
+
+                    <TextView
+                            android:id="@+id/spentTodayNumber"
+                            style="@style/paydayNumber"
+                            android:text="--"/>
+                </TableRow>
+            </TableLayout>
+
+            <TableLayout
+                    android:id="@+id/budgetItems"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stretchColumns="0,1">
+            </TableLayout>
+
+            <TableLayout
+                    android:id="@+id/budgetItems"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stretchColumns="0,1">
+
+                <TableRow>
+
+                    <TextView
+                            android:id="@+id/addBudgetItem"
+                            style="@style/paydayLabel"
+                            android:text=" +"
+                            android:textSize="22dp"
+                            android:layout_gravity="bottom"/>
+
+
+                    <TextView
+                            android:id="@+id/addBudgetItem"
+                            style="@style/paydayLabel"
+                            android:text="@string/add_budget_item"
+                            android:textStyle="italic"
+                            android:textColor="#aaa"
+                            android:clickable="true"
+                            android:layout_gravity="bottom|right"/>
+                </TableRow>
+
+            </TableLayout>
+
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dip"
+                    android:background="#eee"/>
+
+
+            <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="48dp"
+                    android:stretchColumns="0,1">
+                >
+
+                <TableRow>
+
+                    <TextView
+                            style="@style/paydayNumber"
+                            android:layout_height="32dp"
+                            android:textSize="22dp"
+                            android:layout_gravity="left"
+                            android:text=" ÷"/>
+
+
+                    <TextView
+                            android:id="@+id/daysToPaydayNumber"
+                            style="@style/paydayNumber"
+                            android:layout_height="32dp"
+                            android:textSize="22dp"
+                            android:layout_gravity="right"
+                            android:text="--"/>
+
+                    <TextView
+                            android:id="@+id/daysToPaydayLabel"
+                            style="@style/paydayLabel"
+                            android:textSize="22dp"
+                            android:layout_gravity="right"
+
+                            android:text="@string/days_until_payday_title"/>
+
+                </TableRow>
+            </TableLayout>
+
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dip"
+                    android:background="#eee"/>
+
+            <TextView
+                    android:id="@+id/budgetNumber"
+                    style="@style/paydayNumber"
+                    android:textSize="48dp"
+                    android:layout_marginBottom="0dp"
+                    android:text="--"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>
