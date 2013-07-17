@@ -23,11 +23,9 @@ public class GraphRenderer implements GLSurfaceView.Renderer {
 
     private static final String TAG = "Payday.GraphRenderer";
 
-    private static final float MIN_F = 0.0000000001f / 1000f;
-    private static final float MAX_VEL = 100f / 1000f;
-
+    private static final float MIN_F = 0.000000000001f / 1000f;
+    private static final float MAX_VEL = 1000000f / 1000f;
     private static final float MAX_X_MARGIN = 10f;
-
 
     Context context;
 
@@ -42,32 +40,34 @@ public class GraphRenderer implements GLSurfaceView.Renderer {
     int barWidth = 100;
     int barMargin = 10;
     float mxOffset = 0;
-    double mxVel = 0;
+    float mxVelMod = 0;
 
     long mPreviousTime;
 
     float mScale = 1.0f;
 
-    float mFriction = 0.03f / 1000f;
-    float mKs = 0.0000005f / 1000f;
+    float mFriction = 30f / 1000f;
+    float mKs = 5f / 1000f;
 
-    boolean kinetics = false;
+    boolean kinetics = true;
 
     float yBarScale = 0.5f;
 
     private int width = 100;
     private int height = 100;
 
-    private final float[] mMVPMatrix = new float[16];
     private final float[] mMVPInvMatrix = new float[16];
     private final float[] mProjMatrix = new float[16];
     private final float[] mVMatrix = new float[16];
 
     private final float[] mScreenSpace = new float[16];
-    private final float[] mModelSpace= new float[16];
+    private final float[] mModelSpace2 = new float[16];
 
-    private final float[] mCursorPos = {0, 0f, 0f, 1f};
-    private final float[] mCursorPosTrans = new float[4];
+    private final float[] mModelSpace = new float[16];
+
+    private final float[] mCursorPosMod = {0, 0f, 0f, 1f};
+    private final float[] mCursorPosDev = new float[4];
+
     private Text transactionDescription;
     private Text transactionDate;
     private Rectangle l;
@@ -80,11 +80,7 @@ public class GraphRenderer implements GLSurfaceView.Renderer {
 
     public static int loadShader(int type, String shaderCode) {
 
-        // create a vertex shader type (GLES20.GL_VERTEX_SHADER)
-        // or a fragment shader type (GLES20.GL_FRAGMENT_SHADER)
         int shader = GLES20.glCreateShader(type);
-
-        // add the source code to the shader and compile it
         GLES20.glShaderSource(shader, shaderCode);
         GLES20.glCompileShader(shader);
 
@@ -147,7 +143,8 @@ public class GraphRenderer implements GLSurfaceView.Renderer {
             x += xoff;
         }
         Util.checkGlError();
-        text = new Text("Hello World!", 0, 0);
+        transactionDate = new Text("x", 0, 0);
+        transactionDescription = new Text("x", 0, 0);
 
     }
 
@@ -156,17 +153,16 @@ public class GraphRenderer implements GLSurfaceView.Renderer {
         GLES20.glViewport(0, 0, width, height);
         Matrix.orthoM(mProjMatrix, 0, 0, width, 0, height, 3, 7);
         Matrix.setLookAtM(mVMatrix, 0, 0, 0, 3, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
-        Matrix.multiplyMM(mScreenSpace, 0, mProjMatrix, 0, mVMatrix, 0);
-
-        initGraph();
 
         this.width = width;
         this.height = height;
 
+        initGraph();
+
         this.mPreviousTime = SystemClock.uptimeMillis();
         l = new Rectangle(width / 2-50, 100, 100, height - 100);
         l.setColor(0.95f, 0.95f, 0.95f, .7f);
-
+        updateMatrices();
     }
 
     @Override
@@ -177,7 +173,7 @@ public class GraphRenderer implements GLSurfaceView.Renderer {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         //GLES20.glBlendFunc(GLES20.GL_ONE, GLES20.GL_ONE_MINUS_SRC_ALPHA);
         GLES20.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-
+        updateMatrices();
 
     }
 
@@ -186,45 +182,93 @@ public class GraphRenderer implements GLSurfaceView.Renderer {
 
     }
 
+    public void updateMatrices(){
+        Matrix.multiplyMM(mScreenSpace, 0, mProjMatrix, 0, mVMatrix, 0);
+        Matrix.scaleM(mModelSpace2, 0, mScreenSpace, 0, mScale, mScale, 1f);
+        Matrix.translateM(mModelSpace, 0, mModelSpace2, 0, mxOffset, height / 2, 0);
+
+        Matrix.invertM(mMVPInvMatrix, 0, mModelSpace, 0);
+        Matrix.multiplyMV(mCursorPosDev, 0, mMVPInvMatrix, 0, mCursorPosMod, 0);
+
+    }
+
+
+    public float[] mod2scr(float[] modVec){
+        float[] devVec = new float[4];
+        Matrix.multiplyMV(devVec, 0, mModelSpace2, 0, modVec, 0);
+        return devVec;
+    }
+
+    public float[] mod2dev(float[] modVec){
+        float[] devVec = new float[4];
+        Matrix.multiplyMV(devVec, 0, mModelSpace, 0, modVec, 0);
+        return devVec;
+    }
+
+    public float[] dev2mod(float[] screenVec){
+        float[] modVec = new float[4];
+        Matrix.multiplyMV(modVec, 0, mMVPInvMatrix, 0, screenVec, 0);
+        return modVec;
+    }
+
+    public float[] x2vec4f(float x){
+        float[] xv = {x,0,0,1};
+        return xv;
+    }
+
+    public void setXVelDev(float xVelDev){
+        mxVelMod = dev2mod(x2vec4f(xVelDev))[0];
+        Log.i(TAG, String.format("Setting velocity %s %s", xVelDev, mxVelMod));
+
+    }
+
     public void onDrawFrame(GL10 gl) {
+        updateMatrices();
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
         if (kinetics) {
             long dt = SystemClock.uptimeMillis() - mPreviousTime;
 
-            double mindx = Float.MAX_VALUE;
+            float mindx = Float.MAX_VALUE;
             Rectangle closest = rectangles.get(0);
-            for (Rectangle r : rectangles) {
-                double  dx = Math.abs(mCursorPosTrans[0] - (r.mx + r.mw / 2f));
+            /*for (Rectangle r : rectangles) {
+                float  dx = Math.abs(mCursorPosDev[0] - (r.mx + r.mw / 2f));
                 if (dx < mindx) {
                     mindx = dx;
                     closest = r;
                 }
-            }
+            }*/
 
-            double F = 0.0f;
-            F += -((closest.mx + closest.mw/2f) - mCursorPosTrans[0]) * mKs;
-            F += -(mFriction * mxVel);
+            float F = 0.0f;
 
-            double OldVel = mxVel;
-            mxVel = mxVel + (F) * dt;
+            float[] closestPosMod = x2vec4f((closest.mx + closest.mw/2f));
+            //F += (mCursorPosMod[0] - closestPosMod[0]) * mKs;
+            F += -(mFriction * mxVelMod);
 
+            float OldVelMod = mxVelMod;
+            mxVelMod = mxVelMod + F * dt;
 
-            if (Math.abs(F) < MIN_F) {
+            /*if (Math.abs(F) < MIN_F) {
                 Log.i(TAG, "" + F);
                 kinetics = false;
+            }*/
+
+            if (Math.abs(mxVelMod) > MAX_VEL) {
+                mxVelMod = Math.signum(mxVelMod) * MAX_VEL;
             }
 
-            if (Math.abs(mxVel) > MAX_VEL) {
-                mxVel = Math.signum(mxVel) * MAX_VEL;
-            }
-            mxOffset += (OldVel + mxVel) * 0.5f * dt;
-            //Text nt = new Text(String.format("Offset: %s Vel: %s F: %s", mxOffset, mxVel, F), 0, height - 50);
-            //nt.draw(mScreenSpace);
+            float[] offsetDeltaDev = mod2scr(x2vec4f((OldVelMod + mxVelMod) * 0.5f * dt));
+            float[] offsetDeltaDev2 = mod2scr(x2vec4f(0.0f));
 
+            Text nt = new Text(String.format("Offset: %.2f Vel: %.2f F: %.2f O: %.2f",
+                    mxOffset, mxVelMod, F, offsetDeltaDev[0]), 0, height - 50);
+            nt.draw(mScreenSpace);
 
+            mxOffset += offsetDeltaDev[0];
         }
+        this.mPreviousTime = SystemClock.uptimeMillis();
+
 
         //RESTRICTIONS
 //
@@ -237,12 +281,8 @@ public class GraphRenderer implements GLSurfaceView.Renderer {
 //            mxOffset = rectangles.get(0).mx - MAX_X_MARGIN;
 //        }
 
+         updateMatrices();
 
-        Matrix.translateM(mModelSpace, 0, mScreenSpace, 0, mxOffset, height / 2, 0);
-        Matrix.scaleM(mModelSpace, 0, mScale, mScale, 1f);
-
-        Matrix.invertM(mMVPInvMatrix, 0, mModelSpace, 0);
-        Matrix.multiplyMV(mCursorPosTrans, 0, mMVPInvMatrix, 0, mCursorPos, 0);
 
         for (Rectangle tick : ticks) {
             tick.draw(mModelSpace);
@@ -258,7 +298,7 @@ public class GraphRenderer implements GLSurfaceView.Renderer {
                 r.setColor(0xFFFF80B2);
             }
 
-            if (r.isInX(mCursorPosTrans[0])) {
+            if (r.isInX(mCursorPosDev[0])) {
 
                 if (i != mSelected){
 

@@ -91,10 +91,10 @@ public class TransactionsGraphViewGL extends GLSurfaceView {
             scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
-                    Log.i(TAG, "Checking render mode");
+                    //Log.i(TAG, "Checking render mode");
                     if (mRenderer.kinetics == false){
-                        Log.i(TAG, "Shutting down kinetics");
-                        stopKineticts();
+                       // Log.i(TAG, "Shutting down kinetics");
+                        //stopKineticts();
                         scheduleTaskExecutor.shutdown();
                     }
                 }
@@ -111,7 +111,7 @@ public class TransactionsGraphViewGL extends GLSurfaceView {
     private class GestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, final float velocityX, final float velocityY){
-            mRenderer.mxVel = velocityX / 100000f;
+            mRenderer.setXVelDev(velocityX / 1000f);
             startKineticts();
             return true;
         }
