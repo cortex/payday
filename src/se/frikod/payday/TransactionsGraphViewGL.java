@@ -111,14 +111,15 @@ public class TransactionsGraphViewGL extends GLSurfaceView {
     private class GestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, final float velocityX, final float velocityY){
-            mRenderer.setXVelDev(velocityX / 1000f);
+            mRenderer.setXVelDev(velocityX / 100f);
             startKineticts();
             return true;
         }
         
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY){
-            mRenderer.mxOffset += -distanceX;
+            //mRenderer.mxOffset += -distanceX;
+            mRenderer.translateModel(-distanceX, 0, 0);
             stopKineticts();
             return true;
 
@@ -129,9 +130,12 @@ public class TransactionsGraphViewGL extends GLSurfaceView {
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
+            /*
             mScaleFactor *= detector.getScaleFactor();
             mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 5.0f));
             mRenderer.mScale = mScaleFactor;
+            */
+            mRenderer.scaleModel(detector.getScaleFactor());
             startKineticts();
             return true;
         }

@@ -1,6 +1,7 @@
 package se.frikod.payday;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -32,6 +33,7 @@ public class GraphRenderer implements GLSurfaceView.Renderer {
     List<Transaction> transactions;
     List<Rectangle> rectangles = new ArrayList<Rectangle>();
     List<Rectangle> ticks = new ArrayList<Rectangle>();
+    List<Rectangle> bounds = new ArrayList<Rectangle>();
 
     int mSelected = -1;
 
@@ -39,7 +41,7 @@ public class GraphRenderer implements GLSurfaceView.Renderer {
 
     int barWidth = 100;
     int barMargin = 10;
-    float mxOffset = 0;
+    //float mxOffset = 0;
     float mxVelMod = 0;
 
     long mPreviousTime;
@@ -56,14 +58,17 @@ public class GraphRenderer implements GLSurfaceView.Renderer {
     private int width = 100;
     private int height = 100;
 
-    private final float[] mMVPInvMatrix = new float[16];
-    private final float[] mProjMatrix = new float[16];
-    private final float[] mVMatrix = new float[16];
+    private final float[] mModelSpaceInv = new float[16];
 
+    //Screenspace = 0,0 at upper left, MAXX, MAXY
     private final float[] mScreenSpace = new float[16];
-    private final float[] mModelSpace2 = new float[16];
 
+    //Modelspace = 0,0 at lower left, 100,l at screen width
     private final float[] mModelSpace = new float[16];
+
+
+    private final float [] mMVPMatrix = new float[16];
+
 
     private final float[] mCursorPosMod = {0, 0f, 0f, 1f};
     private final float[] mCursorPosDev = new float[4];
@@ -72,6 +77,7 @@ public class GraphRenderer implements GLSurfaceView.Renderer {
     private Text transactionDate;
     private Rectangle l;
     private Vibrator v;
+    private Rectangle modelRect;
 
     public GraphRenderer(Context context) {
         super();
@@ -149,20 +155,50 @@ public class GraphRenderer implements GLSurfaceView.Renderer {
     }
 
     public void onSurfaceChanged(GL10 unused, int width, int height) {
+        float[] mProjMatrix = new float[16];
+        float[] mVMatrix = new float[16];
 
         GLES20.glViewport(0, 0, width, height);
         Matrix.orthoM(mProjMatrix, 0, 0, width, 0, height, 3, 7);
         Matrix.setLookAtM(mVMatrix, 0, 0, 0, 3, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+        Matrix.multiplyMM(mScreenSpace, 0, mProjMatrix, 0, mVMatrix, 0);
+        Matrix.translateM(mModelSpace, 0, mScreenSpace, 0, 0, height / 2, 0);
 
         this.width = width;
         this.height = height;
+        updateMatrices();
 
         initGraph();
 
         this.mPreviousTime = SystemClock.uptimeMillis();
         l = new Rectangle(width / 2-50, 100, 100, height - 100);
         l.setColor(0.95f, 0.95f, 0.95f, .7f);
-        updateMatrices();
+
+        float w = 100f;
+        Rectangle r = new Rectangle(-w, -w, 10.0f, 10.0f);
+        r.setColor(Color.RED);
+        bounds.add(r);
+
+        r = new Rectangle(-w, w, 10.0f, 10.0f);
+        r.setColor(Color.BLUE);
+        bounds.add(r);
+
+        r = new Rectangle(0, w, 10.0f, 10.0f);
+        r.setColor(Color.CYAN);
+        bounds.add(r);
+
+        r = new Rectangle(w, -w, 10.0f, 10.0f);
+        r.setColor(Color.GREEN);
+        bounds.add(r);
+
+        r = new Rectangle(w, w, 10.0f, 10.0f);
+        r.setColor(Color.YELLOW);
+        bounds.add(r);
+
+        r = new Rectangle(0, 0, 10.0f, 10.0f);
+        r.setColor(Color.MAGENTA);
+        bounds.add(r);
+
     }
 
     @Override
@@ -171,7 +207,6 @@ public class GraphRenderer implements GLSurfaceView.Renderer {
         Util.checkGlError();
         GLES20.glClearColor(1, 1, 1, 1.0f);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-        //GLES20.glBlendFunc(GLES20.GL_ONE, GLES20.GL_ONE_MINUS_SRC_ALPHA);
         GLES20.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
         updateMatrices();
 
@@ -183,21 +218,21 @@ public class GraphRenderer implements GLSurfaceView.Renderer {
     }
 
     public void updateMatrices(){
-        Matrix.multiplyMM(mScreenSpace, 0, mProjMatrix, 0, mVMatrix, 0);
-        Matrix.scaleM(mModelSpace2, 0, mScreenSpace, 0, mScale, mScale, 1f);
-        Matrix.translateM(mModelSpace, 0, mModelSpace2, 0, mxOffset, height / 2, 0);
+        //Matrix.multiplyMM(mScreenSpace, 0, mProjMatrix, 0, mVMatrix, 0);
+        //Matrix.scaleM(mModelSpace, 0, mScreenSpace, 0, mScale, mScale, 1f);
+        //Matrix.translateM(mModelSpace, 0, mModelSpace, 0, mxOffset, height / 2, 0);
 
-        Matrix.invertM(mMVPInvMatrix, 0, mModelSpace, 0);
-        Matrix.multiplyMV(mCursorPosDev, 0, mMVPInvMatrix, 0, mCursorPosMod, 0);
+        Matrix.invertM(mModelSpaceInv, 0, mModelSpace, 0);
+        Matrix.multiplyMV(mCursorPosDev, 0, mModelSpaceInv, 0, mCursorPosMod, 0);
 
     }
 
 
-    public float[] mod2scr(float[] modVec){
+    /*public float[] mod2scr(float[] modVec){
         float[] devVec = new float[4];
         Matrix.multiplyMV(devVec, 0, mModelSpace2, 0, modVec, 0);
         return devVec;
-    }
+    }*/
 
     public float[] mod2dev(float[] modVec){
         float[] devVec = new float[4];
@@ -207,25 +242,53 @@ public class GraphRenderer implements GLSurfaceView.Renderer {
 
     public float[] dev2mod(float[] screenVec){
         float[] modVec = new float[4];
-        Matrix.multiplyMV(modVec, 0, mMVPInvMatrix, 0, screenVec, 0);
+        Matrix.multiplyMV(modVec, 0, mModelSpaceInv, 0, screenVec, 0);
         return modVec;
     }
 
-    public float[] x2vec4f(float x){
+    public float[] x2abs4f(float x){
         float[] xv = {x,0,0,1};
         return xv;
     }
 
+    public float[] x2dis4f(float x){
+        float[] xv = {x,0,0,0};
+        return xv;
+    }
+
+    public void translateModel(float xd, float yd, float zd){
+        //float [] translateVectorDevice = {xd, yd, zd, 0};
+        //float [] translateVectorModel = dev2mod(translateVectorDevice);
+        //Log.i(TAG, String.format("Before: %2f After: %2f", xd, translateVectorModel[0]));
+        //Matrix.translateM(mModelSpace, 0,
+        //        translateVectorModel[0],
+        //        translateVectorModel[1],
+        //        translateVectorModel[2]);
+        Matrix.translateM(mModelSpace, 0, xd,yd,zd);
+        updateMatrices();
+    }
+
     public void setXVelDev(float xVelDev){
-        mxVelMod = dev2mod(x2vec4f(xVelDev))[0];
+        mxVelMod = dev2mod(x2dis4f(xVelDev))[0];
         Log.i(TAG, String.format("Setting velocity %s %s", xVelDev, mxVelMod));
+    }
+
+    public void scaleModel(float scaleFactorDeviceSpace){
+        //float scaleFactorModelSpace = x2dis4f(scaleFactorDeviceSpace)[0];
+        Matrix.scaleM(mModelSpace, 0, scaleFactorDeviceSpace, scaleFactorDeviceSpace, 1f);
+        updateMatrices();
 
     }
 
     public void onDrawFrame(GL10 gl) {
         updateMatrices();
-
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+
+        for (Rectangle rect: bounds){
+            rect.draw(mScreenSpace);
+            rect.draw(mModelSpace);
+        }
+
 
         if (kinetics) {
             long dt = SystemClock.uptimeMillis() - mPreviousTime;
@@ -242,8 +305,8 @@ public class GraphRenderer implements GLSurfaceView.Renderer {
 
             float F = 0.0f;
 
-            float[] closestPosMod = x2vec4f((closest.mx + closest.mw/2f));
-            //F += (mCursorPosMod[0] - closestPosMod[0]) * mKs;
+            float[] closestPosMod = x2abs4f((closest.mx + closest.mw/2f));
+            //F += (mCursorPosMod[0] - closestPosMod[0]) * mKs;mCursorPosDev
             F += -(mFriction * mxVelMod);
 
             float OldVelMod = mxVelMod;
@@ -258,14 +321,14 @@ public class GraphRenderer implements GLSurfaceView.Renderer {
                 mxVelMod = Math.signum(mxVelMod) * MAX_VEL;
             }
 
-            float[] offsetDeltaDev = mod2scr(x2vec4f((OldVelMod + mxVelMod) * 0.5f * dt));
-            float[] offsetDeltaDev2 = mod2scr(x2vec4f(0.0f));
+            float[] offsetDeltaDev = mod2dev(x2dis4f((OldVelMod + mxVelMod) * 0.5f * dt));
+            float[] offsetDeltaDev2 = mod2dev(x2dis4f(0.0f));
 
             Text nt = new Text(String.format("Offset: %.2f Vel: %.2f F: %.2f O: %.2f",
-                    mxOffset, mxVelMod, F, offsetDeltaDev[0]), 0, height - 50);
+                    mModelSpace[3], mxVelMod, F, offsetDeltaDev[0]), 0, height - 50);
             nt.draw(mScreenSpace);
 
-            mxOffset += offsetDeltaDev[0];
+            Matrix.translateM(mModelSpace, 0, offsetDeltaDev[0], 0, 0);
         }
         this.mPreviousTime = SystemClock.uptimeMillis();
 
