@@ -56,8 +56,8 @@
 
     <!-- Setup screen -->
     <string name="setup_activity_title">Welcome to Payday</string>
-    <string name="setup_intro">We need to set up a few things before you can start using Payday</string>
-    <string name="setup_title">Welcome</string>
+    <string name="setup_intro">We need to set up a few things before you can start</string>
+    <string name="setup_title">Welcome!</string>
     <string name="setup_install_bankdroid">Install Bankdroid</string>
     <string name="setup_install_bankdroid_button">Install Bankdroid</string>
     <string name="setup_bankdroid_account">Set up the account you want to use in Bankdroid</string>
@@ -65,6 +65,10 @@
     <string name="setup_pair_with_bankdroid_button">Connect to Bankdroid</string>
     <string name="setup_pick_account">Pick account</string>
     <string name="setup_done">Done</string>
+    <string name="setup_nomarket_title">Play store not found</string>
+    <string name="setup_nomarket_description">
+        Payday cannot work without Bankdroid installed. Please install Bankdroid using some other method.
+    </string>
 
     <!-- Budget entry dialog-->
     <string name="new_budget_entry_hint">Title</string>
@@ -81,6 +85,7 @@
     <string name="delete_budget_item_message">Are you sure you want to delete this budget item?</string>
     <string name="delete_budget_item_yes">Delete</string>
     <string name="delete_budget_item_no">Cancel</string>
+
 
     <string-array name="budget_item_type">
         <item>Expense</item>

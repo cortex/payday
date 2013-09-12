@@ -20,8 +20,12 @@
 package se.frikod.payday;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -31,6 +35,7 @@ import android.widget.*;
 import com.liato.bankdroid.provider.IBankTransactionsProvider;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.widget.AdapterView.OnItemSelectedListener;
 
@@ -141,7 +146,24 @@ public class SetupActivity extends Activity
         Intent goToMarket = new Intent(
                 Intent.ACTION_VIEW).setData(Uri
                 .parse("market://details?id=com.liato.bankdroid"));
-        startActivity(goToMarket);
+        PackageManager packageManager = getPackageManager();
+
+        if (packageManager.queryIntentActivities(goToMarket, 0).size() > 0){
+            startActivity(goToMarket);
+        }else{
+            AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+            alertDialog.setTitle(getString(R.string.setup_nomarket_title));
+            alertDialog.setMessage(getString(R.string.setup_nomarket_description));
+            alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+
+            // Set the Icon for the Dialog
+            //alertDialog.setIcon(R.drawable.icon);
+            alertDialog.show();
+        }
+
 
     }
 

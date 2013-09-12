@@ -61,19 +61,29 @@
 
     <!-- Setup -->
     <string name="setup_activity_title">Löning</string>
-    <string name="setup_title">Välkommen</string>
-    <string name="setup_intro">Slutför följande steg innan du kan börja använda Löning  </string>
+    <string name="setup_title">Välkommen!</string>
+    <string name="setup_intro">Vi måste ordna några saker innan du kan sätta igång </string>
+
     <string name="setup_install_bankdroid">Installera Bankdroid</string>
     <string name="setup_install_bankdroid_button">Installera Bankdroid</string>
+
     <string name="setup_bankdroid_account">Ställ in kontot du vill använda i Bankdroid</string>
+
     <string name="setup_pair_with_bankdroid">Koppla ihop med Bankdroid</string>
     <string name="setup_pair_with_bankdroid_button">Koppla ihop med Bankdroid</string>
+
     <string name="setup_pick_account">Välj konto</string>
     <string name="setup_done">Klart</string>
 
-    <!-- Settings -->
+    <string name="setup_nomarket_title">Play store saknas</string>
+    <string name="setup_nomarket_description">
+        Löning fungerar inte utan Bankdroid. Installera Bankdroid på något annat sätt.
+    </string>
 
-    <string name="no_accounts_selected_warning">Du måste välja minst ett konto. Dina tidigare inställningar behölls.</string>
+    <!-- Settings -->
+    <string name="no_accounts_selected_warning">
+        Du måste välja minst ett konto. Dina tidigare inställningar behölls.
+    </string>
 
     <string name="pick_account">Välj konto</string>
     <string name="pick_account_description">Saldot används för att beräkna dagens budget.</string>
