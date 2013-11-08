@@ -61,7 +61,7 @@ public class SetupActivity extends Activity
         accountSpinner = (Spinner) findViewById(R.id.setupAccountSpinner);
         accountSpinner.setOnItemSelectedListener(this);
 
-        FontUtils.setRobotoFont(this, this.getWindow().getDecorView());
+        //FontUtils.setRobotoFont(this, this.getWindow().getDecorView());
         check();
 
     }
@@ -158,9 +158,6 @@ public class SetupActivity extends Activity
                 public void onClick(DialogInterface dialog, int which) {
                 }
             });
-
-            // Set the Icon for the Dialog
-            //alertDialog.setIcon(R.drawable.icon);
             alertDialog.show();
         }
 

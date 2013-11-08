@@ -26,6 +26,7 @@ import android.app.AlertDialog;
 import android.appwidget.AppWidgetManager;
 import android.content.*;
 import android.graphics.Paint;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.Fragment;
@@ -43,24 +44,33 @@ public class DailyBudgetFragment extends Fragment implements OnClickListener {
     private View V;
     private PaydayActivity activity;
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        V = inflater.inflate(R.layout.daily_budget_fragment, container, false);
+        V = inflater.inflate(R.layout.daily_budget_fragment2, container, false);
+        //V.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+
         activity =  (PaydayActivity) this.getActivity();
         Context ctx = activity.getApplicationContext();
 
-        FontUtils.setRobotoFont(ctx, activity.getWindow().getDecorView());
+        //FontUtils.setRobotoFont(ctx, activity.getWindow().getDecorView());
+
 
         prefs = activity.getPreferences(Context.MODE_MULTI_PROCESS);
         TextView bv = (TextView)V.findViewById(R.id.budgetNumber);
-        bv.setOnClickListener(new OnClickListener() {
+        /*bv.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 updateBudget();
             }
         });
-
+*/
         budget = new Budget(activity.bank, ctx, new Holidays(ctx));
-        updateBudget();
+        //updateBudget();
+
+        if(prefs.getBoolean(PreferenceKeys.KEY_PREF_USE_HW_ACCEL, true) == false){
+            V.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        }
+
         return V;
     }
 
@@ -157,7 +167,7 @@ public class DailyBudgetFragment extends Fragment implements OnClickListener {
 
         }
 
-        FontUtils.setRobotoFont(activity, itemsTable);
+        //FontUtils.setRobotoFont(activity, itemsTable);
         updateBudget();
     }
 
@@ -174,8 +184,7 @@ public class DailyBudgetFragment extends Fragment implements OnClickListener {
         }
 
         AppWidgetManager man = AppWidgetManager.getInstance(activity);
-        int[] ids = man.getAppWidgetIds(
-                new ComponentName(activity, PaydayWidget.class));
+        int[] ids = man.getAppWidgetIds(new ComponentName(activity, PaydayWidget.class));
 
         Intent updateIntent = new Intent();
         updateIntent.setClass(activity, PaydayWidget.class);
@@ -183,11 +192,11 @@ public class DailyBudgetFragment extends Fragment implements OnClickListener {
         updateIntent.putExtra(PaydayWidget.WIDGET_IDS_KEY, ids);
         activity.sendBroadcast(updateIntent);
 
-        if (android.os.Build.VERSION.SDK_INT >= 11) {
+        /*if (android.os.Build.VERSION.SDK_INT >= 11) {
             renderBudgetAnimated();
-        } else {
+        } else {*/
             renderBudget(budget.dailyBudget);
-        }
+        //}
         currentBudget = budget.dailyBudget;
 
     }

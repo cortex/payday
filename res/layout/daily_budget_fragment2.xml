@@ -16,7 +16,6 @@
 
         <TextView
             android:id="@+id/budgetLabel"
-            style="@style/paydayLabel"
             android:textSize="24sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -37,14 +36,12 @@
 
                 <TextView
                     android:id="@+id/balanceLabel"
-                    style="@style/paydayLabel"
                     android:textSize="22sp"
                     android:text="@string/balance_title"/>
 
                 <TextView
                         android:id="@+id/balanceNumber"
                         android:textSize="22sp"
-                        style="@style/paydayNumber"
                         android:layout_gravity="right|end"
                         android:text="@string/emptyAmount"/>
             </TableRow>
@@ -80,13 +77,13 @@
 
                 <TextView
                         android:id="@+id/spentTodayLabel"
-                        style="@style/paydayLabel"
                         android:text="@string/spentToday_title"/>
 
                 <TextView
                         android:id="@+id/spentTodayNumber"
-                        style="@style/paydayNumber"
-                        android:text="@string/emptyAmount"/>
+                    android:layout_gravity="right|end"
+
+                    android:text="@string/emptyAmount"/>
             </TableRow>
         </TableLayout>
 
@@ -100,7 +97,6 @@
 
                 <TextView
                         android:id="@+id/addBudgetItem"
-                        style="@style/paydayLabel"
                         android:text=" +"
                         android:textSize="22sp"
                         android:layout_gravity="bottom"/>
@@ -108,7 +104,6 @@
 
                 <TextView
                         android:id="@+id/addBudgetItemButton"
-                        style="@style/paydayLabel"
                         android:text="@string/add_budget_item"
                         android:textStyle="italic"
                         android:textColor="#aaa"
@@ -131,7 +126,7 @@
             <TableRow>
 
                 <TextView
-                        style="@style/paydayNumber"
+
                         android:layout_height="32dp"
                         android:textSize="22sp"
                         android:layout_gravity="left"
@@ -140,7 +135,7 @@
 
                 <TextView
                         android:id="@+id/daysToPaydayNumber"
-                        style="@style/paydayNumber"
+
                         android:layout_height="32dp"
                         android:textSize="22sp"
                         android:layout_gravity="right"
@@ -148,7 +143,6 @@
 
                 <TextView
                         android:id="@+id/daysToPaydayLabel"
-                        style="@style/paydayLabel"
                         android:textSize="22sp"
                         android:layout_gravity="right"
                         android:text="@string/days_until_payday_title"/>
@@ -163,7 +157,9 @@
 
         <TextView
             android:id="@+id/budgetNumber"
-            style="@style/paydayNumber"
+            android:layout_gravity="right|end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textSize="48sp"
             android:layout_marginBottom="0dp"
             android:text="@string/emptyAmount"/>

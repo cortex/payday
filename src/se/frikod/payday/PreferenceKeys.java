@@ -26,4 +26,5 @@ public class PreferenceKeys{
     public static final String KEY_PREF_BANKDROID_ACCOUNT = "pref_account";
     public static final String KEY_PREF_BANKDROID_ACCOUNTS = "pref_accounts";
     public static final String KEY_PREF_BUDGET_ITEMS = "pref_budget_items";
+    public static final String KEY_PREF_USE_HW_ACCEL = "pref_use_hw_accel";
 }

@@ -1,57 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="se.frikod.payday"
-          android:versionCode="13"
-          android:versionName="1.12">
+    package="se.frikod.payday"
+    android:versionCode="13"
+    android:versionName="1.12">
 
     <uses-sdk
-            android:minSdkVersion="10"
-            android:targetSdkVersion="16"/>
+        android:minSdkVersion="10"
+        android:targetSdkVersion="14" />
 
-    <uses-permission android:name="com.liato.bankdroid.permission.READ_ACCESS_BANK_TRANSACTIONS"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="com.liato.bankdroid.permission.READ_ACCESS_BANK_TRANSACTIONS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!--
+        <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+        <supports-gl-texture android:name="GL_OES_compressed_ETC1_RGB8_texture" />
+        <supports-gl-texture android:name="GL_OES_compressed_paletted_texture" />
+        -->
 
-    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
-    <supports-gl-texture android:name="GL_OES_compressed_ETC1_RGB8_texture" />
-    <supports-gl-texture android:name="GL_OES_compressed_paletted_texture" />
     <permission
-            android:name="com.liato.bankdroid.permission.READ_ACCESS_BANK_TRANSACTIONS"
-            android:description="@string/bankdroid_permission_provider_desc"
-            android:label="@string/bankdroid_permission_provider_label"
-            android:protectionLevel="dangerous"/>
+        android:name="com.liato.bankdroid.permission.READ_ACCESS_BANK_TRANSACTIONS"
+        android:description="@string/bankdroid_permission_provider_desc"
+        android:label="@string/bankdroid_permission_provider_label"
+        android:protectionLevel="dangerous" />
 
     <application
-            android:icon="@drawable/ic_launcher"
-            android:label="@string/app_name"
-            android:theme="@style/PaydayTheme">
-        <activity
-                android:name=".PaydayActivity"
-                android:label="@string/title_activity_budget">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/PaydayTheme"
+        >
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+        <activity
+            android:name=".PaydayActivity"
+            android:label="@string/title_activity_budget"
+            android:hardwareAccelerated="false"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SettingsActivity">
-        </activity>
+        <activity android:name=".SettingsActivity"/>
 
         <receiver android:name=".PaydayWidget">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
 
             <meta-data
-                    android:name="android.appwidget.provider"
-                    android:resource="@xml/payday_widget"/>
+                android:name="android.appwidget.provider"
+                android:resource="@xml/payday_widget" />
         </receiver>
 
-        <activity android:name=".AboutPaydayActivity">
-        </activity>
-        <activity
-                android:name=".SetupActivity"
-                android:label="@string/setup_activity_title">
-        </activity>
+        <activity android:name=".AboutPaydayActivity"/>
+        <activity android:name=".SetupActivity" android:label="@string/setup_activity_title"/>
 
     </application>
 

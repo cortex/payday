@@ -72,13 +72,7 @@
     </style>
 
 	<style name="card">
-		<item name="android:layout_width">match_parent</item>
-		<item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_margin">16dp</item>
-        <!-- item name="android:background">@drawable/card</item> -->
         <item name="android:background">@drawable/card9</item>
-        <item name="android:orientation">vertical</item>
-        <item name="android:padding">24dp</item>
 	</style>
 	
 	<style name="setupLabel" parent="@android:style/TextAppearance.Medium">

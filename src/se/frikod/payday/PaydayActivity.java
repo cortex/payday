@@ -19,7 +19,11 @@
 
 package se.frikod.payday;
 
+import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.Fragment;
@@ -29,6 +33,9 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import java.util.prefs.Preferences;
 
 public class PaydayActivity extends FragmentActivity {
     private static final int NUM_PAGES = 2;
@@ -37,6 +44,7 @@ public class PaydayActivity extends FragmentActivity {
     private PagerAdapter mPagerAdapter;
     BankdroidProvider bank;
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,12 +56,16 @@ public class PaydayActivity extends FragmentActivity {
             runSetup();
         }
 
-        FontUtils.setRobotoFont(this, this.getWindow().getDecorView());
+        //FontUtils.setRobotoFont(this, this.getWindow().getDecorView());
 
         // Instantiate a ViewPager and a PagerAdapter.
         mPager = (ViewPager) findViewById(R.id.pager);
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
+        SharedPreferences prefs = this.getPreferences(Context.MODE_MULTI_PROCESS);
+        if(prefs.getBoolean(PreferenceKeys.KEY_PREF_USE_HW_ACCEL, true) == false){
+            mPager.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        }
     }
 
     public void runSetup() {

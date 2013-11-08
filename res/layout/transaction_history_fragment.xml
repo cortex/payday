@@ -4,13 +4,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bg"
-        >
+        android:padding="16dp"
+    >
+
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        style="@style/card">
+        style="@style/card"
+        >
 
         <TextView
             android:text="Transaction History"
@@ -18,18 +21,12 @@
             android:layout_height="wrap_content">
 
         </TextView>
-
-        <se.frikod.payday.TransactionsGraphViewGL
-                android:id="@+id/transactionGraph"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-        </se.frikod.payday.TransactionsGraphViewGL>
-
+<!--
         <se.frikod.payday.TransactionsGraphView
                 android:id="@+id/transactionGraph"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-        </se.frikod.payday.TransactionsGraphView>
+        </se.frikod.payday.TransactionsGraphView>-->
 
     </LinearLayout>
 </FrameLayout>

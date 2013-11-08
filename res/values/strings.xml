@@ -32,7 +32,7 @@
     <string name="add_budget_item">Add budget item </string>
 
     <!-- About screen -->
-    <string name="about_title">Information</string>
+            <string name="about_title">Information</string>§§§
     <string name="about_button">About Payday</string>
     <string name="about_text">Bankdroid and Payday are handling your bank account information.\n\n
 	     
@@ -85,6 +85,11 @@
     <string name="delete_budget_item_message">Are you sure you want to delete this budget item?</string>
     <string name="delete_budget_item_yes">Delete</string>
     <string name="delete_budget_item_no">Cancel</string>
+    <string name="emptyAmount">--</string>
+    <string name="preference_section_advanced">Advanced</string>
+    <string name="use_hw_accel_title" >Use hardware acceleration</string>
+    <string name="use_hw_accel_summary" >This is slow on some devices</string>
+
 
 
     <string-array name="budget_item_type">

@@ -35,8 +35,8 @@ public class AboutPaydayActivity extends Activity {
 		
 		Linkify.addLinks(noteView, Linkify.ALL);
 
-        FontUtils.setRobotoFont(this, this.getWindow()
-                .getDecorView());
+        //FontUtils.setRobotoFont(this, this.getWindow()
+        //        .getDecorView());
 
     }
 

@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-    <PreferenceCategory android:title="@string/your_budget_section" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/your_budget_section">
 
         <MultiSelectListPreference
             android:key="pref_accounts"
             android:summary="@string/pick_accounts_description"
-            android:title="@string/pick_accounts"
-            />
+            android:title="@string/pick_accounts" />
 
         <CheckBoxPreference
             android:key="pref_use_spent_today"
             android:summary="@string/use_spent_today_summary"
             android:title="@string/use_spent_today" />
-        
+
         <EditTextPreference
             android:dialogMessage="@string/payday_description"
             android:dialogTitle="@string/payday_title"
@@ -21,8 +20,16 @@
             android:title="@string/payday_title" />
 
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/about_title" >
-        <Preference android:title="@string/about_button" >
+
+    <PreferenceCategory android:title="@string/preference_section_advanced">
+        <CheckBoxPreference
+            android:key="pref_use_hw_accel"
+            android:summary="@string/use_hw_accel_summary"
+            android:title="@string/use_hw_accel_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/about_title">
+        <Preference android:title="@string/about_button">
             <intent
                 android:action="android.intent.action.VIEW"
                 android:targetClass="se.frikod.payday.AboutPaydayActivity"

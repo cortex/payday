@@ -21,6 +21,15 @@
             android:title="@string/payday_title" />
 
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/preference_section_advanced">
+        <CheckBoxPreference
+            android:key="pref_use_hw_accel"
+            android:summary="@string/use_hw_accel_summary"
+            android:title="@string/use_hw_accel_title" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/about_title" >
         <Preference android:title="@string/about_button" >
             <intent
