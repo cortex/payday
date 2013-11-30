@@ -89,7 +89,7 @@
     <string name="preference_section_advanced">Advanced</string>
     <string name="use_hw_accel_title" >Use hardware acceleration</string>
     <string name="use_hw_accel_summary" >This is slow on some devices</string>
-
+    <string name="transaction_history_title">Transaction History</string>
 
 
     <string-array name="budget_item_type">

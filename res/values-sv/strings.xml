@@ -105,6 +105,7 @@
     <string name="preference_section_advanced">Avancerat</string>
     <string name="use_hw_accel_title" >Använd hårdvaruaccelerering</string>
     <string name="use_hw_accel_summary" >Långsamt på vissa enheter</string>
+    <string name="transaction_history_title">Transaktioner</string>
 
     <string-array name="budget_item_type">
         <item>Utgift</item>
