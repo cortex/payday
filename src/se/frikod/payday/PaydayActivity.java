@@ -62,10 +62,6 @@ public class PaydayActivity extends FragmentActivity {
         mPager = (ViewPager) findViewById(R.id.pager);
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
-        SharedPreferences prefs = this.getPreferences(Context.MODE_MULTI_PROCESS);
-        if(prefs.getBoolean(PreferenceKeys.KEY_PREF_USE_HW_ACCEL, true) == false){
-            mPager.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        }
     }
 
     public void runSetup() {
