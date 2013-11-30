@@ -32,7 +32,6 @@
         <activity
             android:name=".PaydayActivity"
             android:label="@string/title_activity_budget"
-            android:hardwareAccelerated="false"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
