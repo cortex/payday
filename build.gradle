@@ -8,12 +8,39 @@ buildscript {
 }
 apply plugin: 'android'
 
-dependencies {
-    compile fileTree(dir: 'libs', include: '*.jar')
-}
-
 android {
     compileSdkVersion 18
     buildToolsVersion "18.0.1"
-
 }
+
+sourceSets {
+    unitTest {
+        java.srcDir file('src/test/java')
+        resources.srcDir file('src/test/resources')
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    unitTestCompile.extendsFrom runtime
+    unitTestRuntime.extendsFrom unitTestCompile
+}
+
+dependencies {
+    compile 'com.google.android:support-v4:r7'
+    compile 'com.google.code.gson:gson:2.2.4'
+    compile 'joda-time:joda-time:2.3'
+    unitTestCompile files("$project.buildDir/classes/release")
+    unitTestCompile 'junit:junit:4.11'
+}
+
+task unitTest(type:Test, dependsOn: assemble) {
+    description = "run unit tests"
+    testClassesDir = project.sourceSets.unitTest.output.classesDir
+    classpath = project.sourceSets.unitTest.runtimeClasspath
+}
+
+check.dependsOn unitTest
