@@ -16,17 +16,23 @@
         >
 
         <TextView
-            android:text="Transaction History"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            style="@style/paydayLabel"
+            android:textSize="24sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="24dp"
+            android:textStyle="bold"
+            android:text="@string/transaction_history_title"
+>
 
         </TextView>
-<!--
+
         <se.frikod.payday.TransactionsGraphView
                 android:id="@+id/transactionGraph"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-        </se.frikod.payday.TransactionsGraphView>-->
+        </se.frikod.payday.TransactionsGraphView>
 
     </LinearLayout>
 </FrameLayout>

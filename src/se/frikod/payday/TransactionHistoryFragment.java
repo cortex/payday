@@ -40,10 +40,10 @@ public class TransactionHistoryFragment extends Fragment {
 
         View mainView = inflater.inflate(R.layout.transaction_history_fragment, container, false);
         assert mainView != null;
-/*        TransactionsGraphView tv = (TransactionsGraphView) mainView.findViewById(R.id.transactionGraph);
+        TransactionsGraphView tv = (TransactionsGraphView) mainView.findViewById(R.id.transactionGraph);
 
         tv.invalidate();
-        tv.setTransactions(transactions);*/
+        tv.setTransactions(transactions);
         return mainView;
     }
 }
