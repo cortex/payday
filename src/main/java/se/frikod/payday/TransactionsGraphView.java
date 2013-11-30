@@ -118,13 +118,12 @@ public class TransactionsGraphView extends View {
         float graphHeight = canvas.getHeight() / 2f;
         float y = graphHeight / 2f;
 
-        yScale.recalc(minTrans, maxTrans, -graphHeight / 4f, graphHeight / 4f);
+        yScale.update(minTrans, maxTrans, -graphHeight / 4f, graphHeight / 4f);
         barWidth = canvas.getWidth() / (days.getDays() +1 );
         captionFontSize = graphHeight / 20f;
         captionStyle.setTextSize(captionFontSize);
         canvas.drawRect(mxOffset - 10, 0, mxOffset + 10, graphHeight, tickPaint);
 
-        
         List<Transaction> selectedTransactions = null;
         DateTime selectedDay = null;
 
@@ -144,7 +143,7 @@ public class TransactionsGraphView extends View {
                 for(Transaction t:dayTransactions){
                     //Log.i(TAG, day.toString() + " " + x + " " + t.amount);
                     Paint barPaint;
-                    double val = yScale.transform(t.amount);
+                    double val = yScale.apply(t.amount);
 
                     if (val < 0){
                         barPaint = negativeBar;

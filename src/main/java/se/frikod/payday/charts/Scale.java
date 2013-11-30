@@ -8,7 +8,7 @@ public class Scale{
     private double k;
     private double m;
 
-    public void recalc(Number inMin, Number inMax, double outMin, double outMax){
+    public void update(Number inMin, Number inMax, double outMin, double outMax){
         k = (outMax - outMin) / (inMax.doubleValue() - inMin.doubleValue());
         m = outMin - k*inMin.doubleValue();
         //Log.i("Payday.Scale", String.format("inMin:%f inMax:%f", inMin.doubleValue(), inMax.doubleValue()));
@@ -16,7 +16,7 @@ public class Scale{
         //Log.i("Payday.Scale", String.format("k:%f m:%f", k, m));
     }
 
-    public double transform(Number value){
+    public double apply(Number value){
         return value.doubleValue()* k + m;
     }
 }
