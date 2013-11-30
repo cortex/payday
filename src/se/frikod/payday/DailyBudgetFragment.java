@@ -47,7 +47,7 @@ public class DailyBudgetFragment extends Fragment implements OnClickListener {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        V = inflater.inflate(R.layout.daily_budget_fragment2, container, false);
+        V = inflater.inflate(R.layout.daily_budget_fragment, container, false);
         //V.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         activity =  (PaydayActivity) this.getActivity();
