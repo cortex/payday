@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -16,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 
 public class TransactionsGraphViewGL extends GLSurfaceView {
-    GraphRenderer mRenderer;
+    GraphRendererGL mRenderer;
 
     private float mPreviousX;
     private float mPreviousY;
@@ -45,7 +44,7 @@ public class TransactionsGraphViewGL extends GLSurfaceView {
         getHolder().setFormat(PixelFormat.TRANSLUCENT);
         setDebugFlags(DEBUG_CHECK_GL_ERROR | DEBUG_LOG_GL_CALLS);
 
-        mRenderer = new GraphRenderer(context);
+        mRenderer = new GraphRendererGL(context);
         setEGLContextClientVersion(2);
         setRenderer(mRenderer);
         setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);

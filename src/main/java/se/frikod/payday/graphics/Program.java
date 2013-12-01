@@ -3,7 +3,7 @@ package se.frikod.payday.graphics;
 
 import android.opengl.GLES20;
 import android.util.Log;
-import se.frikod.payday.GraphRenderer;
+import se.frikod.payday.GraphRendererGL;
 
 public class Program {
     public final int handle;
@@ -11,9 +11,9 @@ public class Program {
     public Program(String vertexShaderCode, String fragmentShaderCode){
         handle = GLES20.glCreateProgram();
 
-        int vertexShader = GraphRenderer.loadShader(GLES20.GL_VERTEX_SHADER,
+        int vertexShader = GraphRendererGL.loadShader(GLES20.GL_VERTEX_SHADER,
                 vertexShaderCode);
-        int fragmentShader = GraphRenderer.loadShader(GLES20.GL_FRAGMENT_SHADER,
+        int fragmentShader = GraphRendererGL.loadShader(GLES20.GL_FRAGMENT_SHADER,
                 fragmentShaderCode);
 
         GLES20.glAttachShader(handle, vertexShader);   // add the vertex shader to program

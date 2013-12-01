@@ -20,9 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GraphRenderer implements GLSurfaceView.Renderer {
+public class GraphRendererGL implements GLSurfaceView.Renderer {
 
-    private static final String TAG = "Payday.GraphRenderer";
+    private static final String TAG = "Payday.GraphRendererGL";
 
     private static final float MIN_F = 0.000000000001f / 1000f;
     private static final float MAX_VEL = 1000000f / 1000f;
@@ -79,7 +79,7 @@ public class GraphRenderer implements GLSurfaceView.Renderer {
     private Vibrator v;
     private Rectangle modelRect;
 
-    public GraphRenderer(Context context) {
+    public GraphRendererGL(Context context) {
         super();
         this.context = context;
     }
