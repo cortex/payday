@@ -29,21 +29,28 @@ import android.view.ViewGroup;
 import java.util.List;
 
 public class TransactionHistoryFragment extends Fragment {
-
-    private String TAG ="TransactionHistoryFragment";
-    private BankdroidProvider bank;
-
+    private static final String TAG = TransactionHistoryFragment .class.getName();
+    private TransactionsGraphView tv;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        bank = ((PaydayActivity) this.getActivity()).bank;
-        List<Transaction> transactions = bank.getTransactions();
-
         View mainView = inflater.inflate(R.layout.transaction_history_fragment, container, false);
         assert mainView != null;
-        TransactionsGraphView tv = (TransactionsGraphView) mainView.findViewById(R.id.transactionGraph);
-
-        tv.invalidate();
-        tv.setTransactions(transactions);
+        tv = (TransactionsGraphView) mainView.findViewById(R.id.transactionGraph);
+        update();
         return mainView;
     }
+
+    private void update(){
+        BankdroidProvider bank = ((PaydayActivity) this.getActivity()).bank;
+        List<Transaction> transactions = bank.getTransactions();
+        tv.setTransactions(transactions);
+        tv.invalidate();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        update();
+    }
+
 }
