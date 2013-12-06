@@ -2,10 +2,16 @@ package se.frikod.payday.charts;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.util.Log;
+import android.view.View;
+
+import com.nineoldandroids.animation.ValueAnimator;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -18,6 +24,57 @@ import java.util.Map;
 
 import se.frikod.payday.Transaction;
 
+enum Direction {POSITIVE, NEGATIVE}
+
+class Bar{
+    private final Direction direction;
+    private Paint fill;
+    private Paint selectedFill;
+    private Paint border;
+    public RectF targetRect;
+    public RectF rect;
+    public boolean selected;
+    public List<Transaction> dayTransactions;
+
+    DateTime date;
+
+    Bar(RectF rect, Paint fill, Paint selectedFill,Direction direction, Paint border){
+        this.targetRect = rect;
+        this.rect = new RectF(targetRect);
+        if (direction == Direction.POSITIVE)
+            this.rect = new RectF(rect.left, rect.bottom, rect.right,rect.bottom);
+        if (direction == Direction.NEGATIVE)
+            this.rect = new RectF(rect.left, rect.top, rect.right,rect.top);
+
+        this.fill = fill;
+        this.border = border;
+        this.selectedFill = selectedFill;
+        this.direction = direction;
+    }
+
+    public void scaleHeight(float value){
+
+        if (direction == Direction.POSITIVE)
+            rect.top = targetRect.bottom +  (targetRect.top-targetRect.bottom) * value;
+
+         if (direction == Direction.NEGATIVE)
+            rect.bottom = targetRect.top + (targetRect.bottom-targetRect.top) * value;
+
+    }
+
+    public void draw(Canvas canvas){
+        if (selected)
+            canvas.drawRect(rect, selectedFill);
+        else
+            canvas.drawRect(rect, fill);
+
+        if (direction == Direction.POSITIVE)
+            canvas.drawLine(rect.left, rect.top, rect.right, rect.top, border);
+        if (direction == Direction.NEGATIVE)
+            canvas.drawLine(rect.left, rect.bottom , rect.right, rect.bottom, border);
+    }
+}
+
 public class TransactionsChart {
 
     private static final String TAG = "Payday.TransactionsChart";
@@ -26,7 +83,7 @@ public class TransactionsChart {
     public float translateX = 0;
 
     int barWidth = 100;
-    int barMargin = 10                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ;
+    int barMargin = 10;
 
     float captionFontSize = 24f;
     private Map<DateTime, List<Transaction>> transactionsPerDate;
@@ -37,33 +94,45 @@ public class TransactionsChart {
 
     private Paint tickStyle;
     private Paint positiveBarStyle;
+    private Paint positiveBarBorderStyle;
+    private Paint positiveBarSelectedStyle;
+
     private Paint negativeBarStyle;
-    private Paint barDividerStyle;
+    private Paint negativeBarBorderStyle;
+    private Paint negativeBarSelectedStyle;
 
     private Days days;
     private Scale yScale;
     private DateTime startDate;
     private DateTime endDate;
     private List<Transaction> transactions;
+    private List<Bar> bars;
 
-    public TransactionsChart(List<Transaction> transactions) {
+    private View view;
+
+    public TransactionsChart(View view, List<Transaction> transactions) {
+        this.view = view;
         this.transactions = transactions;
 
         positiveBarStyle = new Paint();
-        positiveBarStyle.setColor(Color.HSVToColor(new float[]{150f, 0.6f, 1f}));
+        positiveBarStyle.setColor(Color.HSVToColor(new float[]{150f, 0.4f, 1f}));
+        positiveBarBorderStyle = new Paint();
+        positiveBarBorderStyle.setStrokeWidth(10.0f);
+        positiveBarBorderStyle.setColor(Color.HSVToColor(new float[]{150f, 0.6f, 1f}));
+        positiveBarSelectedStyle= new Paint();
+        positiveBarSelectedStyle.setColor(Color.HSVToColor(new float[]{150f, 0.2f, 1f}));
 
         negativeBarStyle = new Paint();
-        negativeBarStyle.setColor(Color.HSVToColor(new float[]{340f, 0.6f, 1f}));
+        negativeBarStyle.setColor(Color.HSVToColor(new float[]{340f, 0.4f, 1f}));
+        negativeBarBorderStyle = new Paint();
+        negativeBarBorderStyle.setStrokeWidth(10.0f);
+        negativeBarBorderStyle.setColor(Color.HSVToColor(new float[]{340f, 0.6f, 1f}));
+        negativeBarSelectedStyle= new Paint();
+        negativeBarSelectedStyle.setColor(Color.HSVToColor(new float[]{340f, 0.2§§§f, 1f}));
 
         tickStyle = new Paint();
         tickStyle.setColor(Color.HSVToColor(new float[]{0f, 0.0f, .95f}));
-
-        barDividerStyle = new Paint();
-        barDividerStyle.setColor(Color.HSVToColor(new float[]{0f, 0.0f, .95f}));
-        barDividerStyle.setStyle(Paint.Style.STROKE);
-        barDividerStyle.setStrokeWidth(10.0f);
-        barDividerStyle.setPathEffect(new DashPathEffect(new float[]{10.0f, 20.0f}, 0));
-
+        tickStyle.setAlpha(128);
         captionStyle = new Paint();
         captionStyle.setColor(Color.BLACK);
         captionStyle.setTextSize(captionFontSize);
@@ -102,93 +171,152 @@ public class TransactionsChart {
 
         Log.i(TAG, String.format("%f, %f", maxTrans.doubleValue(), minTrans.doubleValue()));
         yScale = new Scale();
+
+        makeBars();
     }
 
-    public void render(Canvas canvas) {
-
-        if (transactions.size() == 0) {
-            return;
-        }
-
+    public void makeBars(){
         float x = 0;
-        float graphHeight = canvas.getHeight() / 2f;
 
-        yScale.update(0, Math.max(Math.abs(minTrans.doubleValue()), maxTrans.doubleValue()), 0, graphHeight / 2.0f);
-
-        //barWidth = canvas.getWidth() / (days.getDays() + 1);
+        //yScale.update(0, Math.max(Math.abs(minTrans.doubleValue()), maxTrans.doubleValue()), 0, scale * graphHeight / 2.0f);
+        yScale.update(0, Math.max(Math.abs(minTrans.doubleValue()), maxTrans.doubleValue()), 0, scale * 100.0f);
+        //barWidth = canas.getWidth() / (days.getDays() + 1);l
         //barWidth = 100;
-        captionFontSize = graphHeight / 20f;
-        captionStyle.setTextSize(captionFontSize);
-        canvas.drawRect(mxOffset - 10, 0, mxOffset + 10, graphHeight, tickStyle);
 
-        List<Transaction> selectedTransactions = null;
-        DateTime selectedDay = null;
+        //canvas.drawRect(mxOffset - 10, 0, mxOffset + 10, graphHeight, tickStyle);
+        bars = new ArrayList<Bar>();
 
-        canvas.save();
-
-        canvas.translate(translateX, graphHeight / 2.0f);
-        canvas.scale(1, scale);
-        canvas.scale(1, -1);
-
+        Path p = new Path();
         for (int i = 0; i < days.getDays(); i++) {
             DateTime day = startDate.plus(Days.days(i));
             List<Transaction> dayTransactions = transactionsPerDate.get(day);
-            canvas.drawLine(x, (graphHeight / 2f), x, -(graphHeight / 2f), tickStyle);
 
             float positiveHeight = 0;
             float negativeHeight = 0;
-
+            Bar bar;
             if (dayTransactions != null) {
-                double top, bottom;
-                if (mxOffset > x && mxOffset < x + barWidth) {
-                    selectedTransactions = dayTransactions;
-                    selectedDay = day;
-                }
-                for (Transaction t : dayTransactions) {
-                    Paint barPaint;
-                    double val = yScale.apply(t.amount);
 
-                    if (val < 0) {
-                        barPaint = negativeBarStyle;
-                        top = negativeHeight;
-                        bottom = val + negativeHeight;
-                        negativeHeight += val;
+                for (Transaction t : dayTransactions) {
+                    p.reset();
+
+                    float val = (float) yScale.apply(t.amount);
+
+                    if (val > 0) {
+                        bar = new Bar(
+                                new RectF(
+                                        x, positiveHeight - val,
+                                        x + barWidth, positiveHeight),
+                                positiveBarStyle,
+                                positiveBarSelectedStyle,
+                                Direction.POSITIVE,
+                                positiveBarBorderStyle);
+                        positiveHeight -= val;
                     } else {
-                        barPaint = positiveBarStyle;
-                        top = val + positiveHeight;
-                        bottom = positiveHeight;
-                        positiveHeight += val;
+                        bar = new Bar(
+                                new RectF(
+                                        x,  negativeHeight,
+                                        x + barWidth, negativeHeight - val),
+                                negativeBarStyle,
+                                negativeBarSelectedStyle,
+                                Direction.NEGATIVE,
+                                negativeBarBorderStyle);
+                        negativeHeight -= val;
                     }
 
-                    //Log.i(TAG, String.format("%f %f |  %f, %f", t.amount.doubleValue(),
-                    //            val, top, bottom));
-                    //Log.i(TAG, String.format("%f", bw));
-
-
-                    canvas.drawRect(
-                            x, (float) bottom,
-                            x + barWidth, (float) top,
-                            barPaint);
-
-
-                    canvas.drawLine(x, (float) bottom,x + barWidth, (float) bottom, barDividerStyle);
-                    canvas.drawLine(x, (float) top,x + barWidth, (float) top, barDividerStyle);
+                    bar.dayTransactions = dayTransactions;
+                    bar.date = day;
+                    bars.add(bar);
                 }
                 x += (barWidth + barMargin);
             }
 
         }
 
-        canvas.restore();
 
+    }
+
+    public void findSelected(){
+        List<Transaction> selectedTransactions = null;
+        DateTime selectedDay = null;
+/*
+        if (mxOffset > x && mxOffset < x + barWidth) {
+            selectedTransactions = dayTransactions;
+  l          selectedDay = day;
+        }*/
+    }
+
+
+
+    public void drawCaption(Canvas canvas, float height, Bar selected){
         int captionRow = 0;
-        if (selectedDay != null) {
-            canvas.drawText(String.format("%tF", selectedDay.toDate()), 10, captionRow * 1.5f * captionFontSize + graphHeight, captionStyle);
+        captionFontSize = height / 15f;
+        captionStyle.setTextSize(captionFontSize);
+        float top = height + 300;
+        String format = "%-32s %10.2f";
+        if (selected != null) {
+            Rect rowBound = new Rect();
+            String str = String.format(format, 0f,0f);
+            captionStyle.getTextBounds(str, 0, str.length(), rowBound);
+
+            canvas.drawRect(
+                    5, top,
+                    5+ rowBound.width(),
+                    captionStyle.getFontSpacing() * 15,
+                    tickStyle);
+
+            canvas.drawText(String.format("%tF", selected.date.toDate()),
+                    10, captionRow * 1.5f * captionFontSize + top, captionStyle);
             captionRow++;
-            for (Transaction t : selectedTransactions) {
-                canvas.drawText(String.format("%-32s %10.2f", t.description, t.amount), 10, captionRow * 1.5f * captionFontSize + graphHeight, captionStyle);
+            for (Transaction t : selected.dayTransactions) {
+                canvas.drawText(String.format(format, t.description, t.amount),
+                        10, captionRow * 1.5f * captionFontSize + top,
+                        captionStyle);
                 captionRow++;
             }
         }
+    }
+
+    public void initialAnimation(){
+        int i = 0;
+        for (final Bar bar: bars){
+            ValueAnimator animation = ValueAnimator.ofFloat(0f, 10f);
+            animation.setStartDelay(i);
+            i+=50;
+            animation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    bar.scaleHeight((Float) valueAnimator.getAnimatedValue());
+                    view.invalidate();
+                }
+            });
+            animation.setDuration(300);
+            animation.start();
+        }
+    }
+
+    public void render(Canvas canvas) {
+        float graphHeight = canvas.getHeight() / 2f;
+
+        canvas.save();
+
+        canvas.translate(translateX, graphHeight / 2.0f);
+        canvas.scale(scale, scale);
+        Matrix m = canvas.getMatrix();
+        if (transactions.size() == 0) {
+            return;
+        }
+
+        Bar selected = null;
+
+        for (Bar bar:bars){
+            RectF localRect = new RectF();
+            m.mapRect(localRect, bar.rect);
+            bar.selected = localRect.contains(mxOffset, localRect.centerY());
+            if (bar.selected) selected = bar;
+            bar.draw(canvas);
+        }
+
+        canvas.restore();
+        drawCaption(canvas, graphHeight/2,  selected);
     }
 }

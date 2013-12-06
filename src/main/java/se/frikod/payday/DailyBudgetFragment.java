@@ -53,7 +53,7 @@ public class DailyBudgetFragment extends Fragment implements OnClickListener {
         activity =  (PaydayActivity) this.getActivity();
         Context ctx = activity.getApplicationContext();
 
-        //FontUtils.setRobotoFont(ctx, activity.getWindow().getDecorView());
+        FontUtils.setRobotoFont(ctx, activity.getWindow().getDecorView());
 
 
         prefs = activity.getPreferences(Context.MODE_MULTI_PROCESS);
@@ -74,13 +74,11 @@ public class DailyBudgetFragment extends Fragment implements OnClickListener {
         return V;
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
         updateBudget();
     }
-
 
     private void updateBudgetItems() {
 

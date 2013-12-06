@@ -1,5 +1,6 @@
 package se.frikod.payday;
 
+import com.nineoldandroids.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
@@ -37,7 +38,7 @@ public class TransactionsGraphView extends View {
 
     public void setTransactions(List<Transaction> transactions) {
         this.transactions = transactions;
-        this.mRenderer = new TransactionsChart(transactions);
+        this.mRenderer = new TransactionsChart(this, transactions);
         invalidate();
     }
 
@@ -51,7 +52,9 @@ public class TransactionsGraphView extends View {
         mScaleDetector.onTouchEvent(event);
         mGestureDetector.onTouchEvent(event);
         mRenderer.mxOffset = event.getX();
+
         invalidate();
+
         this.getParent().requestDisallowInterceptTouchEvent(true);
         return true;
     }
@@ -73,6 +76,12 @@ public class TransactionsGraphView extends View {
 
         }
 
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            mRenderer.initialAnimation();
+            invalidate();
+            return true;
+        }
     }
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
