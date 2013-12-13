@@ -32,6 +32,7 @@ configurations {
 dependencies {
     compile 'com.google.android:support-v4:r7'
     compile 'com.google.code.gson:gson:2.2.4'
+    compile 'com.google.guava:guava:15.0'
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'joda-time:joda-time:2.3'
     unitTestCompile files("$project.buildDir/classes/release")

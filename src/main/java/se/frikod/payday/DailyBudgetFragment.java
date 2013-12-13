@@ -1,21 +1,21 @@
- /*
- *
- *   Copyright (C) 2012-2013 Joakim Lundborg <joakim,lundborg@gmail.com>
- *
- *     This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+/*
+*
+*   Copyright (C) 2012-2013 Joakim Lundborg <joakim,lundborg@gmail.com>
+*
+*     This program is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   This program is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*/
 
 package se.frikod.payday;
 
@@ -30,46 +30,46 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.*;
+
 import se.frikod.payday.exceptions.AccountNotFoundException;
 import se.frikod.payday.exceptions.WrongAPIKeyException;
 
-public class DailyBudgetFragment extends Fragment implements OnClickListener {
+public class DailyBudgetFragment extends Fragment{
 
     SharedPreferences prefs;
     private Budget budget;
     private double currentBudget = 0;
     private View V;
     private PaydayActivity activity;
+    private String TAG = "Payday.DailyBudgetFragment";
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         V = inflater.inflate(R.layout.daily_budget_fragment, container, false);
-        //V.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
-        activity =  (PaydayActivity) this.getActivity();
+        activity = (PaydayActivity) this.getActivity();
         Context ctx = activity.getApplicationContext();
 
         FontUtils.setRobotoFont(ctx, activity.getWindow().getDecorView());
-
-
+        FontUtils.setRobotoFont(ctx, activity.getWindow().getDecorView());
         prefs = activity.getPreferences(Context.MODE_MULTI_PROCESS);
-        TextView bv = (TextView)V.findViewById(R.id.budgetNumber);
-        /*bv.setOnClickListener(new OnClickListener() {
+
+        TextView addBudgetItem = (TextView) V.findViewById(R.id.addBudgetItemButton);
+        addBudgetItem.setOnClickListener(new OnClickListener() {
+            @Override
             public void onClick(View v) {
-                updateBudget();
+                addBudgetItem(v);
             }
         });
-*/
-        budget = new Budget(activity.bank, ctx, new Holidays(ctx));
-        //updateBudget();
 
-        if(prefs.getBoolean(PreferenceKeys.KEY_PREF_USE_HW_ACCEL, true) == false){
-            V.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        }
+        budget = new Budget(activity.bank, ctx, new Holidays(ctx));
+        updateBudget();
+        updateBudgetItems();
 
         return V;
     }
@@ -99,12 +99,12 @@ public class DailyBudgetFragment extends Fragment implements OnClickListener {
 
             title.setText(bi.title);
 
-            if (bi.exclude){
-                  amount.setTextColor(0xffCCCCCC);
-                  amount.setPaintFlags(amount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            if (bi.exclude) {
+                amount.setTextColor(0xffCCCCCC);
+                amount.setPaintFlags(amount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
-                  title.setTextColor(0xffCCCCCC);
-                  title.setPaintFlags(title.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                title.setTextColor(0xffCCCCCC);
+                title.setPaintFlags(title.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             }
 
 
@@ -160,12 +160,10 @@ public class DailyBudgetFragment extends Fragment implements OnClickListener {
                     return true;
                 }
             });
-
             itemsTable.addView(budgetItemView);
-
         }
 
-        //FontUtils.setRobotoFont(activity, itemsTable);
+        FontUtils.setRobotoFont(activity, itemsTable);
         updateBudget();
     }
 
@@ -190,11 +188,11 @@ public class DailyBudgetFragment extends Fragment implements OnClickListener {
         updateIntent.putExtra(PaydayWidget.WIDGET_IDS_KEY, ids);
         activity.sendBroadcast(updateIntent);
 
-        /*if (android.os.Build.VERSION.SDK_INT >= 11) {
+        if (android.os.Build.VERSION.SDK_INT >= 11) {
             renderBudgetAnimated();
-        } else {*/
+        } else {
             renderBudget(budget.dailyBudget);
-        //}
+        }
         currentBudget = budget.dailyBudget;
 
     }
@@ -239,17 +237,8 @@ public class DailyBudgetFragment extends Fragment implements OnClickListener {
 
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.addBudgetItem:
-                addBudgetItem(v);
-                break;
-        }
-    }
-
     public void addBudgetItem(final View view) {
-
+        Log.i(TAG, "click");
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         LayoutInflater inflater = activity.getLayoutInflater();
 
@@ -267,8 +256,8 @@ public class DailyBudgetFragment extends Fragment implements OnClickListener {
             public void onShow(DialogInterface dialog) {
 
                 Button b = d.getButton(AlertDialog.BUTTON_POSITIVE);
-        assert b != null;
-                        b.setOnClickListener(new View.OnClickListener() {
+                assert b != null;
+                b.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View view) {
@@ -277,10 +266,10 @@ public class DailyBudgetFragment extends Fragment implements OnClickListener {
                         Spinner itemType = (Spinner) dialogView.findViewById(R.id.new_budget_item_type);
 
                         int amount;
-                        try{
+                        try {
                             amount = Integer.parseInt(amountEdit.getText().toString());
                             if (itemType.getSelectedItemId() == 0) amount = -amount;
-                        }catch (NumberFormatException e) {
+                        } catch (NumberFormatException e) {
 
                             Toast.makeText(activity.getApplicationContext(),
                                     getString(R.string.new_budget_item_no_amount_specified),

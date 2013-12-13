@@ -31,6 +31,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,17 +40,18 @@ import java.util.prefs.Preferences;
 
 public class PaydayActivity extends FragmentActivity {
     private static final int NUM_PAGES = 2;
-
+    private String TAG  = "Payday.PaydayActivity";
     private ViewPager mPager;
     private PagerAdapter mPagerAdapter;
     BankdroidProvider bank;
+    private Context ctx;
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.payday_activity);
-
+        ctx = this.getApplicationContext();
         bank = new BankdroidProvider(this);
 
         if (!bank.verifySetup()) {
@@ -70,8 +72,6 @@ public class PaydayActivity extends FragmentActivity {
         startActivity(intent);
         finish();
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

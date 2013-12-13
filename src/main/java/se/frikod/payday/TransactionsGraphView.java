@@ -1,6 +1,5 @@
 package se.frikod.payday;
 
-import com.nineoldandroids.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
@@ -22,15 +21,19 @@ public class TransactionsGraphView extends View {
     private List<Transaction> transactions;
     private ScaleGestureDetector mScaleDetector;
     private GestureDetector mGestureDetector;
-
+    public Context context;
+    private boolean scrolling = false;
 
     public TransactionsGraphView(Context context) {
         super(context);
+        this.context = context;
         transactions = new ArrayList<Transaction>();
     }
 
     public TransactionsGraphView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.context = context;
+
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         mGestureDetector = new GestureDetector(context, new GestureListener());
         transactions = new ArrayList<Transaction>();
@@ -46,12 +49,18 @@ public class TransactionsGraphView extends View {
         mRenderer.render(canvas);
     }
 
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh){
+        mRenderer.resize(w,h);
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         mScaleDetector.onTouchEvent(event);
         mGestureDetector.onTouchEvent(event);
-        mRenderer.mxOffset = event.getX();
+        if (event.getAction() == MotionEvent.ACTION_UP){
+            mRenderer.snap();
+        }
 
         invalidate();
 
@@ -61,19 +70,25 @@ public class TransactionsGraphView extends View {
 
     private class GestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, final float velocityX, final float velocityY) {
-            //mRenderer.setXVelDev(velocityX / 100f);
-            //startKineticts();
+        public boolean onFling(MotionEvent e1, MotionEvent e2,
+                               final float velocityX, final float velocityY) {
             return true;
         }
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            //mRenderer.mxOffset = -distanceX;
-            mRenderer.translateX -= distanceX;
-            //stopKineticts();
+            //mRenderer.translateX -= distanceX;
+            mRenderer.translateY -= distanceY;
+            scrolling = true;
             return true;
 
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent event){
+            mRenderer.mxOffset = event.getX();
+
+            return true;
         }
 
         @Override

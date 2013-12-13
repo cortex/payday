@@ -67,7 +67,7 @@ public class FontUtils {
 	 * get Roboto-Bold for Typeface.BOLD etc
 	 * 
 	 * @param context
-	 * @param typefaceStyle
+	 * @param originalTypeface
 	 * @return
 	 */
 	private static Typeface getRobotoTypeface(Context context,
