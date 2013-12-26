@@ -15,7 +15,6 @@ import se.frikod.payday.charts.TransactionsChart;
 
 public class TransactionsGraphView extends View {
 
-
     private static final String TAG = "Payday.TransactionsGraphView";
     TransactionsChart mRenderer;
     private List<Transaction> transactions;
@@ -42,6 +41,7 @@ public class TransactionsGraphView extends View {
     public void setTransactions(List<Transaction> transactions) {
         this.transactions = transactions;
         this.mRenderer = new TransactionsChart(this, transactions);
+        mRenderer.initialAnimation();
         invalidate();
     }
 
@@ -53,7 +53,6 @@ public class TransactionsGraphView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh){
         mRenderer.resize(w,h);
     }
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         mScaleDetector.onTouchEvent(event);
@@ -103,7 +102,8 @@ public class TransactionsGraphView extends View {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
 
-            mRenderer.scale *= (detector.getScaleFactor());
+            mRenderer.setScale(mRenderer.scale*(detector.getScaleFactor()));
+//            mRenderer.resize();
             /*
             mScaleFactor *= detector.getScaleFactor();
             mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 5.0f));

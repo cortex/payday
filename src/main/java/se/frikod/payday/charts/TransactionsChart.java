@@ -2,17 +2,14 @@ package se.frikod.payday.charts;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
-import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.os.Vibrator;
-import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
@@ -93,6 +90,99 @@ class NegativeBar extends Bar{
 }
 
 
+class Caption{
+
+    private Paint captionTextStyle;
+    private Paint captionAmountStyle;
+    private Paint captionBackgroundStyle;
+    private Paint captionOverlayStyle;
+
+    private ScriptIntrinsicBlur theIntrinsic;
+    private final RenderScript rs;
+
+    Caption(TransactionsGraphView view){
+        float captionFontSize = view.getWidth() / 80f;
+        captionTextStyle = new Paint();
+        captionTextStyle.setColor(Color.DKGRAY);
+        captionTextStyle.setTextSize(captionFontSize);
+        Typeface textFont = Typeface.createFromAsset(view.context.getAssets(), "fonts/Roboto-Regular.ttf");
+
+        captionTextStyle.setTypeface(textFont);
+        captionTextStyle.setAntiAlias(true);
+
+        captionAmountStyle = new Paint();
+        captionAmountStyle.setColor(Color.DKGRAY);
+        captionAmountStyle.setTextSize(captionFontSize);
+        captionAmountStyle.setTypeface(Typeface.createFromAsset(view.context.getAssets(), "fonts/Roboto-Light.ttf"));
+        captionAmountStyle.setAntiAlias(true);
+
+
+        captionBackgroundStyle = new Paint();
+        //captionBackgroundStyle.setColor(Color.HSVToColor(new float[]{220f, 0.1f, .90f}));
+        //captionBackgroundStyle.setAlpha(100);
+        //captionBackgroundStyle.setStrokeWidth(1f);
+
+        captionOverlayStyle = new Paint();
+        captionOverlayStyle.setColor(Color.WHITE);
+        captionOverlayStyle.setColor(0xFFF5F5FF);
+        captionOverlayStyle.setAlpha(190);
+
+        rs = RenderScript.create(view.getContext());
+        theIntrinsic = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
+        theIntrinsic.setRadius(5f);
+
+    }
+
+    public void resize(int w, int h){
+        captionTextStyle.setTextSize(w/24);
+        captionAmountStyle.setTextSize(w/24);
+    }
+
+    public void draw(Canvas canvas, Bitmap bmp, Bar selectedBar, RectF selectedRect){
+
+        int captionRow = 1;
+        float margin = 20f;
+
+        String descriptionFormat = "%s";
+        String amountFormat = " %10.2f";
+        float captionFontSize = captionTextStyle.getTextSize();
+
+        //float textWidth = captionTextStyle.measureText(String.format(format, "test test test test", 10000f));
+        //float textWidth = findMaxFontSize(canvas.getWidth() - 4 * margin , captionTextStyle, );
+
+        float top, bottom;
+        Path path = new Path();
+        float boxHeight = captionTextStyle.getFontSpacing() * (4 +  selectedBar.dayTransactions.size());
+
+        top = canvas.getHeight() / 2f;
+        bottom = canvas.getHeight();
+
+        canvas.drawRoundRect(new RectF(
+                margin, top,
+                (2 * margin) + canvas.getWidth() - 2*margin, bottom),
+                10f, 10f, captionOverlayStyle);
+
+        canvas.drawPath(path, captionBackgroundStyle);
+
+        canvas.drawText(String.format("- %tF -", selectedBar.date.toDate()),
+                canvas.getWidth() / 2.0f - 100, captionRow * 2 * captionFontSize + top, captionTextStyle);
+
+        captionRow += 2;
+        for (Transaction t : selectedBar.dayTransactions) {
+            canvas.drawText(String.format(descriptionFormat, t.description),
+                    2*margin, captionRow * 1.5f * captionFontSize + top,
+                    captionTextStyle);
+            String amount = String.format(amountFormat, t.amount);
+            canvas.drawText(amount,
+                    canvas.getWidth() - 2 * margin - captionAmountStyle.measureText(amount),
+                    captionRow * 1.5f * captionFontSize + top,
+                    captionAmountStyle);
+            captionRow++;
+        }
+
+    }
+
+}
 
 public class TransactionsChart {
 
@@ -102,15 +192,13 @@ public class TransactionsChart {
     public float translateX = 0;
     public float translateY = 0;
 
-    int barWidth = 100;
+    int barWidth = 50;
     int barMargin = 10;
 
-    float captionFontSize = 24f;
     private Map<DateTime, List<Transaction>> transactionsPerDate;
     private BigDecimal maxTrans = BigDecimal.ZERO;
     private BigDecimal minTrans = BigDecimal.ZERO;
 
-    private Paint captionStyle;
 
     private Paint tickStyle;
     private Paint positiveBarStyle;
@@ -121,7 +209,6 @@ public class TransactionsChart {
     private Paint negativeBarBorderStyle;
     private Paint negativeBarSelectedStyle;
 
-    private Paint captionBackgroundStyle;
 
     private Days days;
     private Scale yScale;
@@ -138,8 +225,7 @@ public class TransactionsChart {
     private Bitmap bmp;
     private Canvas bmpCanvas;
     private final Bitmap.Config conf;
-    private final RenderScript rs;
-    private ScriptIntrinsicBlur theIntrinsic;
+    private final Caption caption;
 
     public TransactionsChart(TransactionsGraphView view, List<Transaction> transactions) {
         this.view = view;
@@ -150,7 +236,7 @@ public class TransactionsChart {
         positiveBarStyle = new Paint();
         positiveBarStyle.setColor(Color.HSVToColor(new float[]{150f, 0.2f, 1f}));
         positiveBarBorderStyle = new Paint();
-        positiveBarBorderStyle.setStrokeWidth(5.0f);
+        positiveBarBorderStyle.setStrokeWidth(0.01f);
         positiveBarBorderStyle.setColor(Color.HSVToColor(new float[]{150f, 0.6f, 1f}));
         positiveBarSelectedStyle= new Paint();
         positiveBarSelectedStyle.setColor(Color.HSVToColor(new float[]{150f, 0.4f, 1f}));
@@ -158,26 +244,17 @@ public class TransactionsChart {
         negativeBarStyle = new Paint();
         negativeBarStyle.setColor(Color.HSVToColor(new float[]{340f, 0.2f, 1f}));
         negativeBarBorderStyle = new Paint();
-        negativeBarBorderStyle.setStrokeWidth(5.0f);
+        negativeBarBorderStyle.setStrokeWidth(0.01f);
         negativeBarBorderStyle.setColor(Color.HSVToColor(new float[]{340f, 0.6f, 1f}));
         negativeBarSelectedStyle= new Paint();
         negativeBarSelectedStyle.setColor(Color.HSVToColor(new float[]{340f, 0.4f, 1f}));
 
         tickStyle = new Paint();
-        tickStyle.setColor(Color.HSVToColor(new float[]{220f, 0.0f, .90f}));
+        tickStyle.setColor(Color.HSVToColor(new float[]{220f, 0.0f, .70f}));
         tickStyle.setAlpha(220);
-        tickStyle.setStrokeWidth(1f);
-
-        captionStyle = new Paint();
-        captionStyle.setColor(Color.BLACK);
-        captionStyle.setTextSize(captionFontSize);
-        captionStyle.setTypeface(Typeface.create("monospace", Typeface.NORMAL));
-        captionStyle.setAntiAlias(true);
-
-        captionBackgroundStyle = new Paint();
-        //captionBackgroundStyle.setColor(Color.HSVToColor(new float[]{220f, 0.1f, .90f}));
-        //captionBackgroundStyle.setAlpha(100);
-        //captionBackgroundStyle.setStrokeWidth(1f);
+        tickStyle.setStrokeWidth(2f);
+        tickStyle.setTextSize(20f);
+        tickStyle.setAntiAlias(true);
 
         startDate = transactions.get(0).date;
         endDate = transactions.get(0).date;
@@ -209,18 +286,20 @@ public class TransactionsChart {
 
         days = Days.daysBetween(startDate, endDate);
 
-        Log.i(TAG, String.format("%f, %f", maxTrans.doubleValue(), minTrans.doubleValue()));
+        //Log.i(TAG, String.format("%f, %f", maxTrans.doubleValue(), minTrans.doubleValue()));
         yScale = new Scale();
 
-        makeBars();
         conf = Bitmap.Config.ARGB_8888;
 
         //bmp = Bitmap.createBitmap(view.getWidth(), view.getHeight(), conf);
         //bmpCanvas = new Canvas(bmp);
         selected = null;
         selectedDeviceRect = null;
-        rs = RenderScript.create(this.view.getContext());
-        theIntrinsic = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
+        caption = new Caption(this.view);
+        makeBars();
+        resize(view.getWidth(), view.getHeight());
+        setScale(scale);
+
     }
 
     public void makeBars(){
@@ -281,96 +360,11 @@ public class TransactionsChart {
 
     }
 
-    public float findMaxFontSize(float width, Paint style, String str){
-        int textSize = 14;
-
-        while (style.measureText(str) < width){
-            textSize += 2;
-            style.setTextSize(textSize+2);
-        }
-
-        captionStyle.setTextSize(textSize);
-        return style.measureText(str);
-    }
-
-    public void drawCaption(Canvas canvas, Bar selectedBar, RectF selectedRect){
-
-        String format = "%-24.24s %10.2f";
-
-        int captionRow = 1;
-        float margin = 20f;
-        float arrowWidth = 50f;
-        float arrowHeight= 50f;
-        float textWidth = findMaxFontSize(canvas.getWidth() - 4 * margin , captionStyle, String.format(format, "test", 10000f));
-        float top, bottom;
-        Path path = new Path();
-        float boxHeight = captionStyle.getFontSpacing() * (4 +  selectedBar.dayTransactions.size());
-
-        top = canvas.getHeight() / 2f;
-        bottom = canvas.getHeight();
-        /*if (selectedBar.direction == Direction.POSITIVE){
-            top = selectedDeviceRect.bottom + arrowHeight;
-            bottom = top + boxHeight;
-            path.moveTo(selectedDeviceRect.centerX() - arrowWidth, top);
-            path.lineTo(selectedDeviceRect.centerX(), top - arrowHeight);
-            path.lineTo(selectedDeviceRect.centerX() + arrowWidth, top);
-
-        }
-
-       else{
-            bottom = selectedDeviceRect.top - arrowHeight;
-            top = bottom - boxHeight;
-            path.moveTo(selectedDeviceRect.centerX() - arrowWidth, bottom);
-            path.lineTo(selectedDeviceRect.centerX(), bottom + arrowHeight);
-            path.lineTo(selectedDeviceRect.centerX() + arrowWidth, bottom);
-        }*/
-
-        Bitmap blurBG  = bmp.copy(conf, false);
-        Allocation tmpIn = Allocation.createFromBitmap(rs, bmp);
-        Allocation tmpOut = Allocation.createFromBitmap(rs, blurBG);
-        theIntrinsic.setRadius(25f);
-        theIntrinsic.setInput(tmpIn);
-        theIntrinsic.forEach(tmpOut);
-
-        tmpOut.copyTo(blurBG);
-
-
-
-        //Bitmap blurBG = Bitmap.createScaledBitmap(bmp, bmp.getWidth() / 8, bmp.getHeight() / 8, true);
-        //blurBG = Bitmap.createScaledBitmap(blurBG, bmp.getWidth(), bmp.getHeight(), true);
-        Shader shader = new BitmapShader(blurBG, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-
-
-
-        captionBackgroundStyle.setShader(shader);
-        canvas.drawRoundRect(new RectF(
-                margin, top,
-                (2 * margin) + textWidth, bottom),
-                10f, 10f, tickStyle);
-        canvas.drawRoundRect(new RectF(
-                margin, top,
-                (2 * margin) + textWidth, bottom),
-                10f, 10f,
-                captionBackgroundStyle);
-
-
-        canvas.drawPath(path, captionBackgroundStyle);
-        canvas.drawText(String.format("%24tF", selectedBar.date.toDate()),
-                2*margin, captionRow * 2 * captionFontSize + top, captionStyle);
-        captionRow+=2;
-        for (Transaction t : selectedBar.dayTransactions) {
-            canvas.drawText(String.format(format, t.description, t.amount),
-                    2*margin, captionRow * 2 * captionFontSize + top,
-                    captionStyle);
-            captionRow++;
-        }
-
-    }
 
     public void initialAnimation(){
         int i = 0;
         for (final Bar bar: bars){
-            ValueAnimator animation = ValueAnimator.ofFloat(0f, 10f);
+            ValueAnimator animation = ValueAnimator.ofFloat(0f, 1f);
             animation.setStartDelay(i);
             i+=10;
             animation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -408,18 +402,67 @@ public class TransactionsChart {
     }
 
     public void resize(int w, int h){
+        caption.resize(w,h);
+     }
 
-        bmp = Bitmap.createBitmap(w, h, conf);
-        bmpCanvas = new Canvas(bmp);
+    public void setScale(float scale){
+        this.scale = scale;
+        positiveBarBorderStyle.setStrokeWidth(5f/scale);
+        negativeBarBorderStyle.setStrokeWidth(5f/scale);
     }
 
-    public void render(Canvas ocanvas) {
-        Canvas canvas = bmpCanvas;
-        bmp.eraseColor(0);
+    public void drawScale(Canvas canvas, Matrix m){
+        float h;
+        float val;
+        float lw = (canvas.getWidth()) / scale; //width in local coords
+        float max = 2*lw*100f;
+        int step = 10;
+        if (max >= 1000)
+            step = 100;
+        if (max >= 5000)
+            step = 500;
+        if (max >= 10000)
+            step = 1000;
+        if (max >= 50000)
+            step = 5000;
+        if (max >= 100000)
+            step = 10000;
+        if (max >= 500000)
+            step = 50000;
+        //int step = (int) (Math.ceil(lw / 100f));
+        Log.d(TAG, String.format("Scale: %s MaxG: %s, Max: %s Step: %s Scaled: %s", scale, canvas.getWidth(), max, step, yScale.apply(step) ));
+        for(int i = 0; i<max; i+= step){
+            val = (float)(yScale.apply(i) * scale);
+
+            if (i % (5*step) == 0){
+                h = 30;
+               canvas.drawText(Integer.toString(i),
+                       (canvas.getWidth() / 2.0f) +  val - (tickStyle.measureText(Integer.toString(i))/2f),
+                       h + 25,
+                       tickStyle);
+               if (val!=0)
+                    canvas.drawText("-" + Integer.toString(i),
+                        (canvas.getWidth() / 2.0f) -  val - (tickStyle.measureText("-" + Integer.toString(i))/2f),
+                        h + 25,
+                        tickStyle);
+            }else{
+                h = 15;
+
+
+            }
+            //Log.d(TAG, "Scale " + i + " " + val);
+
+            canvas.drawLine(((float) canvas.getWidth() / 2.0f) +  val, -h, ((float) canvas.getWidth() / 2.0f) +  val, h, tickStyle);
+            canvas.drawLine(((float) canvas.getWidth() / 2.0f) + -val, -h, ((float) canvas.getWidth() / 2.0f) + -val, h, tickStyle);
+        }
+    }
+
+    public void render(Canvas canvas) {
         Matrix m = new Matrix();
         m.preTranslate(canvas.getWidth() / 2f + translateX, translateY);
-        m.preScale(scale, scale);
+        m.preScale(scale, 1);
         m.preRotate(90f);
+
         float tickHeight = 30;
 
         canvas.save();
@@ -433,11 +476,7 @@ public class TransactionsChart {
             RectF deviceRect = new RectF();
             m.mapRect(deviceRect, bar.rect);
 
-            if (deviceRect.contains(deviceRect.centerX(), selectorY)){
-                bar.selected = true;
-            }else{
-                bar.selected = false;
-            }
+            bar.selected  = deviceRect.contains(deviceRect.centerX(), selectorY);
 
             if (bar.selected){
                 selected = bar;
@@ -449,19 +488,20 @@ public class TransactionsChart {
         if (lastSelected != selected){
             Vibrator vibrator = (Vibrator) view.context.getSystemService(Context.VIBRATOR_SERVICE);
             vibrator.vibrate(20);
-            Log.i(TAG, "started animation" + m.mapRadius(selectorY) + " " + selectedDeviceRect.centerY() + " " + translateY);
+            //Log.i(TAG, "started animation" + m.mapRadius(selectorY) + " " + selectedDeviceRect.centerY() + " " + translateY);
 
             lastSelected = selected;
             lastSelectedRect = selectedDeviceRect;
         }
 
         if(lastSelected != null){
-            Log.i(TAG, String.format("%s %s %s",
+            /*Log.i(TAG, String.format("%s %s %s",
                     translateY, selectedDeviceRect.centerY(),
-                    selectorY - selectedDeviceRect.centerY()));
+                    selectorY - selectedDeviceRect.centerY()));*/
         }
 
         canvas.restore();
+        drawScale(canvas, m);
 
         Path p = new Path();
         p.moveTo(0, selectorY - tickHeight);
@@ -477,9 +517,7 @@ public class TransactionsChart {
         canvas.drawLine(0, selectorY, canvas.getWidth(), selectorY, tickStyle);
 
         if (selected != null) {
-            drawCaption(canvas, selected, selectedDeviceRect);
+            caption.draw(canvas, bmp, selected, selectedDeviceRect);
         }
-        ocanvas.drawBitmap(bmp, 0,0, new Paint());
-
     }
 }

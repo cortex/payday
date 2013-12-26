@@ -53,4 +53,8 @@ public class TransactionHistoryFragment extends Fragment {
         update();
     }
 
+    public void onSelected(){
+        tv.mRenderer.initialAnimation();
+    }
+
 }
