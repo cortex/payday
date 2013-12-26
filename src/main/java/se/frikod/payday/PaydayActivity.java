@@ -45,7 +45,7 @@ public class PaydayActivity extends FragmentActivity {
     private PagerAdapter mPagerAdapter;
     BankdroidProvider bank;
     private Context ctx;
-
+    private TransactionHistoryFragment transactionsHistoryFragment;
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,7 +53,6 @@ public class PaydayActivity extends FragmentActivity {
         setContentView(R.layout.payday_activity);
         ctx = this.getApplicationContext();
         bank = new BankdroidProvider(this);
-
         if (!bank.verifySetup()) {
             runSetup();
         }
@@ -64,6 +63,25 @@ public class PaydayActivity extends FragmentActivity {
         mPager = (ViewPager) findViewById(R.id.pager);
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
+        mPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i2) {
+
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                if(i==1){
+                    if (transactionsHistoryFragment != null)
+                        transactionsHistoryFragment.onSelected();
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
     }
 
     public void runSetup() {
@@ -103,7 +121,8 @@ public class PaydayActivity extends FragmentActivity {
                 return new DailyBudgetFragment();
             }
             else{
-                return new TransactionHistoryFragment();
+                transactionsHistoryFragment = new TransactionHistoryFragment();
+                return transactionsHistoryFragment;
             }
         }
 
