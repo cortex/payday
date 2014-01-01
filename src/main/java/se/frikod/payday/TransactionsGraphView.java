@@ -77,7 +77,7 @@ public class TransactionsGraphView extends View {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             //mRenderer.translateX -= distanceX;
-            mRenderer.translateY -= distanceY;
+            mRenderer.setTranslateY(mRenderer.getTranslateY() - distanceY);
             scrolling = true;
             return true;
 
@@ -92,7 +92,8 @@ public class TransactionsGraphView extends View {
 
         @Override
         public boolean onDoubleTap(MotionEvent e) {
-            mRenderer.initialAnimation();
+            //mRenderer.initialAnimation();
+            mRenderer.scaleToFit();
             invalidate();
             return true;
         }
@@ -102,7 +103,7 @@ public class TransactionsGraphView extends View {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
 
-            mRenderer.setScale(mRenderer.scale*(detector.getScaleFactor()));
+            mRenderer.setZoom(mRenderer.getZoom() * (detector.getScaleFactor()));
 //            mRenderer.resize();
             /*
             mScaleFactor *= detector.getScaleFactor();
