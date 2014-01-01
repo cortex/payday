@@ -102,6 +102,8 @@
     <string name="delete_budget_item_message">Vill du ta bort den här budgetposten?</string>
     <string name="delete_budget_item_yes">Ta bort</string>
     <string name="delete_budget_item_no">Avbryt</string>
+    <string name="emptyAmount">--</string>
+
     <string name="preference_section_advanced">Avancerat</string>
     <string name="use_hw_accel_title" >Använd hårdvaruaccelerering</string>
     <string name="use_hw_accel_summary" >Långsamt på vissa enheter</string>

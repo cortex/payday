@@ -20,6 +20,7 @@
 package se.frikod.payday;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -108,6 +109,10 @@ public class PaydayActivity extends FragmentActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void budgetHelpClicked(){
+        AlertDialog
     }
 
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter{

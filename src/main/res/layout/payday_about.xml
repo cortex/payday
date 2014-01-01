@@ -1,20 +1,21 @@
     <ScrollView
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            tools:context=".AboutPaydayActivity"
-            android:layout_height="match_parent"
-            android:layout_width="match_parent"
-            android:fillViewport="true"
-            >
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:payday="http://schemas.android.com/apk/res-auto"
+        tools:context=".AboutPaydayActivity"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:fillViewport="true">
 
         <LinearLayout
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 style="@style/card"
+                android:orientation="vertical"
                 >
 
             <ImageView
-                    android:id="@+id/imageView1"
+                    android:id="@+id/aboutLogo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
@@ -24,19 +25,18 @@
                     android:src="@drawable/applogo_large"
                     android:layout_gravity="right"/>
 
+            <se.frikod.payday.TypefaceTextView
+                android:id="@+id/aboutView"
+                android:textColor="#666"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageView1"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="8dp"
+                android:text="@string/about_text"
+                android:textSize="16sp"
+                payday:typeface="fonts/Roboto-Light.ttf"
+                android:gravity="center_horizontal" />
 
-            <TextView
-                    android:id="@+id/aboutView"
-                    android:textColor="#666"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/imageView1"
-                    android:layout_centerHorizontal="true"
-                    android:layout_margin="8dp"
-                    android:text="@string/about_text"
-                    android:textSize="16sp"
-
-
-                    />
     </LinearLayout>
     </ScrollView>

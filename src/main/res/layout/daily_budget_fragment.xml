@@ -20,11 +20,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="18dp"
             android:textStyle="bold"
             android:text="@string/daily_budget_title"
-            payday:typeface="fonts/Roboto-Light.ttf"
-            />
+            payday:typeface="fonts/Roboto-Light.ttf" />
 
         <LinearLayout
 
@@ -106,7 +105,10 @@
 
                 </TableRow>
             </TableLayout>
-
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dip"
+                android:background="#eee" />
             <TableLayout
                 android:id="@+id/budgetItems"
                 android:layout_width="match_parent"
@@ -115,29 +117,38 @@
 
                 <TableRow>
 
-                    <se.frikod.payday.TypefaceTextView
-                        android:id="@+id/addBudgetItem"
-                        style="@style/paydayLabel"
-                        android:text=" +"
-                        android:textSize="22sp"
-                        android:layout_gravity="bottom"
-                        payday:typeface="fonts/Roboto-Light.ttf"
-                        />
 
-
-                    <se.frikod.payday.TypefaceTextView
-                        android:id="@+id/addBudgetItemButton"
-                        style="@style/paydayLabel"
-                        android:onClick="addBudgetItem"
-                        android:text="@string/add_budget_item"
-                        android:textStyle="italic"
-                        android:textColor="#aaa"
-                        android:clickable="true"
-                        android:layout_gravity="bottom|right"
-                        payday:typeface="fonts/Roboto-Light.ttf"
-                        />
                 </TableRow>
 
+            </TableLayout>
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="0,1">
+            <TableRow>
+
+                <se.frikod.payday.TypefaceTextView
+                    android:id="@+id/addBudgetItem"
+                    style="@style/paydayLabel"
+                    android:text=" +"
+                    android:textSize="22sp"
+                    android:layout_gravity="bottom"
+                    payday:typeface="fonts/Roboto-Light.ttf"
+                    />
+
+
+                <se.frikod.payday.TypefaceTextView
+                    android:id="@+id/addBudgetItemButton"
+                    style="@style/paydayLabel"
+                    android:onClick="addBudgetItem"
+                    android:text="@string/add_budget_item"
+                    android:textStyle="italic"
+                    android:textColor="#aaa"
+                    android:clickable="true"
+                    android:layout_gravity="bottom|right"
+                    payday:typeface="fonts/Roboto-Light.ttf"
+                    />
+            </TableRow>
             </TableLayout>
 
             <View
@@ -201,4 +212,29 @@
 
         </LinearLayout>
     </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" ⚙"
+        android:id="@+id/textView"
+        android:textSize="34dp"
+        android:layout_gravity="left|top"
+        android:layout_margin="16dp"
+        android:textColor="#ddd" />
+
+    <se.frikod.payday.TypefaceTextView
+        payday:typeface="fonts/Roboto-Light.ttf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" ? "
+        android:id="@+id/budgetHelp"
+        android:onClick="budgetHelpClicked"
+        android:textSize="34dp"
+        android:layout_gravity="right|top"
+        android:textColor="#ddd"
+        android:textStyle="bold"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="16dp" />
+
 </FrameLayout>
