@@ -41,7 +41,8 @@ public class TransactionsGraphView extends View {
     public void setTransactions(List<Transaction> transactions) {
         this.transactions = transactions;
         this.mRenderer = new TransactionsChart(this, transactions);
-        mRenderer.initialAnimation();
+        //mRenderer.initialAnimation();
+        //mRenderer.scaleToFit(false);
         invalidate();
     }
 
@@ -76,7 +77,6 @@ public class TransactionsGraphView extends View {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            //mRenderer.translateX -= distanceX;
             mRenderer.setTranslateY(mRenderer.getTranslateY() - distanceY);
             scrolling = true;
             return true;
@@ -92,8 +92,7 @@ public class TransactionsGraphView extends View {
 
         @Override
         public boolean onDoubleTap(MotionEvent e) {
-            //mRenderer.initialAnimation();
-            mRenderer.scaleToFit();
+            mRenderer.scaleToFit(false);
             invalidate();
             return true;
         }

@@ -120,7 +120,7 @@
     <string name="transactions_help_title">Transaktioner</string>
     <string name="transactions_help_message">
         Välj en dag genom att rulla så att markören är vid den dag du är intresserad av. Transaktioner för den valda dagen visas i transaktionsrutan.\n\n
-        Zooma genom att nypa, duppeltappa för att zooma så att den nuvarande transaktionen får plats på skärmen.
+        Zooma genom att nypa, duppeltappa för att zooma så att alla transaktioner får plats på skärmen.
     </string>
     <string name="transactions_help_ok">OK</string>
 

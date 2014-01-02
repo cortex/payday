@@ -100,7 +100,7 @@
     <string name="transactions_help_title">Transactions</string>
     <string name="transactions_help_message">
     Scroll to select a day by placing the cursor on that day. Transactions will be shown in the listing box.\n\n
-    Zoom by pinching. Auto-zoom the currently selected transaction by double-tapping
+    Zoom by pinching. Double-tap to auto-zoom so all transactions fit on screen.
     </string>
     <string name="transactions_help_ok">OK</string>
 

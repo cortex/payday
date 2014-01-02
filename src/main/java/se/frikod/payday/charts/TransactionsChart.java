@@ -188,17 +188,17 @@ public class TransactionsChart {
         view.invalidate();
     }
 
-    public void scaleToFit(){
+    public void scaleToFit(Boolean scaleSelectedOnly){
         RectF r = new RectF();
         for (final Bar bar: bars){
-            if (bar.selected){
+            if (!scaleSelectedOnly || bar.selected){
                 r.union(bar.rect);
             }
         }
 
         float maxh = Math.max(-r.top, r.bottom);
         if (maxh != 0){
-            float newZoom = (width / 2.0f) / (1.4f * maxh);
+            float newZoom = (width / 2.0f) / (1.2f * maxh);
             Log.d(TAG, (String.format("Max %s", maxh)));
             Log.d(TAG, (String.format("New zoom %s", newZoom)));
             Log.d(TAG, (String.format("Current zoom %s", zoom)));
@@ -217,26 +217,6 @@ public class TransactionsChart {
         });
         animation.setDuration(700);
         animation.start();
-    }
-
-    public void initialAnimation(){
-        int i = 0;
-        for (final Bar bar: bars){
-            bar.scaleHeight(0);
-            ValueAnimator animation = ValueAnimator.ofFloat(0f, 1f);
-            animation.setStartDelay(i);
-            i+=20;
-            animation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    bar.scaleHeight((Float) valueAnimator.getAnimatedValue());
-                    view.invalidate();
-                }
-            });
-            animation.setDuration(700);
-            animation.setInterpolator(new BounceInterpolator());
-            animation.start();
-        }
     }
 
     public void snapAnimation(float targetY){
