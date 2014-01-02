@@ -22,6 +22,7 @@ package se.frikod.payday;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -111,8 +112,32 @@ public class PaydayActivity extends FragmentActivity {
         }
     }
 
-    public void budgetHelpClicked(){
-        AlertDialog
+    public void budgetHelpClicked(View v) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.budget_help_title).setMessage(R.string.budget_help_message)
+                .setPositiveButton(R.string.budget_help_ok,
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        }
+                )
+                .show();
+    }
+
+    public void transactionsHelpClicked(View v) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.transactions_help_title).setMessage(R.string.transactions_help_message)
+                .setPositiveButton(R.string.transactions_help_ok,
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        }
+                )
+                .show();
     }
 
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter{

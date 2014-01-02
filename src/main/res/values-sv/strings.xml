@@ -109,6 +109,21 @@
     <string name="use_hw_accel_summary" >Långsamt på vissa enheter</string>
     <string name="transaction_history_title">Transaktioner</string>
 
+    <string name="budget_help_title">Dagens budget</string>
+    <string name="budget_help_message">
+    Tryck på <i>"Ny budgetpost"</i> för att skapa nya budgetposter.\n\n
+    Tryck på en budgetpost för att tilfälligt ta bort den ur beräkningen. Du kan använda det här för att göra enkel budgetsimulering ("har jag råd med en ny teve om jag skippar skorna?")\n\n
+    Tryck länge på en ny budgetpost för att ta bort den.
+    </string>
+    <string name="budget_help_ok">OK</string>
+
+    <string name="transactions_help_title">Transaktioner</string>
+    <string name="transactions_help_message">
+        Välj en dag genom att rulla så att markören är vid den dag du är intresserad av. Transaktioner för den valda dagen visas i transaktionsrutan.\n\n
+        Zooma genom att nypa, duppeltappa för att zooma så att den nuvarande transaktionen får plats på skärmen.
+    </string>
+    <string name="transactions_help_ok">OK</string>
+
     <string-array name="budget_item_type">
         <item>Utgift</item>
         <item>Intäkt</item>

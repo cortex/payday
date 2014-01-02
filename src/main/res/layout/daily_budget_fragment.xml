@@ -223,18 +223,13 @@
         android:layout_margin="16dp"
         android:textColor="#ddd" />
 
-    <se.frikod.payday.TypefaceTextView
-        payday:typeface="fonts/Roboto-Light.ttf"
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=" ? "
-        android:id="@+id/budgetHelp"
-        android:onClick="budgetHelpClicked"
-        android:textSize="34dp"
+        android:id="@+id/helpButton"
         android:layout_gravity="right|top"
-        android:textColor="#ddd"
-        android:textStyle="bold"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="16dp" />
+        android:src="@drawable/ic_action_about"
+        android:background="@null"
+        android:onClick="budgetHelpClicked" />
 
 </FrameLayout>

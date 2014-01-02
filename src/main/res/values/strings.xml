@@ -87,9 +87,22 @@
     <string name="delete_budget_item_no">Cancel</string>
     <string name="emptyAmount">--</string>
     <string name="preference_section_advanced">Advanced</string>
+
     <string name="use_hw_accel_title" >Use hardware acceleration</string>
     <string name="use_hw_accel_summary" >This is slow on some devices</string>
+
     <string name="transaction_history_title">Transaction History</string>
+
+    <string name="budget_help_title">Budget screen</string>
+    <string name="budget_help_message"> Here is the helpful help text!</string>
+    <string name="budget_help_ok" >OK</string>
+
+    <string name="transactions_help_title">Transactions</string>
+    <string name="transactions_help_message">
+    Scroll to select a day by placing the cursor on that day. Transactions will be shown in the listing box.\n\n
+    Zoom by pinching. Auto-zoom the currently selected transaction by double-tapping
+    </string>
+    <string name="transactions_help_ok">OK</string>
 
 
     <string-array name="budget_item_type">

@@ -16,6 +16,8 @@
         style="@style/card"
         >
 
+
+
         <se.frikod.payday.TypefaceTextView
             style="@style/paydayLabel"
             android:textSize="24sp"
@@ -33,5 +35,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
             />
+
     </LinearLayout>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/helpButton"
+        android:layout_gravity="right|top"
+        android:src="@drawable/ic_action_about"
+        android:background="@null"
+        android:onClick="transactionsHelpClicked"
+        />
 </FrameLayout>
