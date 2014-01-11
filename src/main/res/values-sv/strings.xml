@@ -116,6 +116,7 @@
     Tryck länge på en ny budgetpost för att ta bort den.
     </string>
     <string name="budget_help_ok">OK</string>
+    <string name="budget_help_button_description">Budget hjälp</string>
 
     <string name="transactions_help_title">Transaktioner</string>
     <string name="transactions_help_message">
@@ -123,6 +124,7 @@
         Zooma genom att nypa, duppeltappa för att zooma så att alla transaktioner får plats på skärmen.
     </string>
     <string name="transactions_help_ok">OK</string>
+    <string name="transactions_help_button_description">Transaktioner hjälp</string>
 
     <string-array name="budget_item_type">
         <item>Utgift</item>

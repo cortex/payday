@@ -224,12 +224,10 @@
         android:textColor="#ddd" />
 
     <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/helpButton"
-        android:layout_gravity="right|top"
-        android:src="@drawable/ic_action_about"
-        android:background="@null"
-        android:onClick="budgetHelpClicked" />
+        style="@style/helpButton"
+        android:onClick="budgetHelpClicked"
+        android:contentDescription="@string/budget_help_button_description"
+
+        />
 
 </FrameLayout>

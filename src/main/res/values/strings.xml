@@ -96,6 +96,7 @@
     <string name="budget_help_title">Budget screen</string>
     <string name="budget_help_message"> Here is the helpful help text!</string>
     <string name="budget_help_ok" >OK</string>
+    <string name="budget_help_button_description">Budget help</string>
 
     <string name="transactions_help_title">Transactions</string>
     <string name="transactions_help_message">
@@ -103,8 +104,8 @@
     Zoom by pinching. Double-tap to auto-zoom so all transactions fit on screen.
     </string>
     <string name="transactions_help_ok">OK</string>
-
-
+    <string name="transactions_help_button_description">Transactions help</string>
+    
     <string-array name="budget_item_type">
         <item>Expense</item>
         <item>Income</item>
