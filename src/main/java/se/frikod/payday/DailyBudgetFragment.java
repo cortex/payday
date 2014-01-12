@@ -24,28 +24,42 @@ import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.appwidget.AppWidgetManager;
-import android.content.*;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.*;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.math.BigDecimal;
 
 import se.frikod.payday.exceptions.AccountNotFoundException;
 import se.frikod.payday.exceptions.WrongAPIKeyException;
 
-public class DailyBudgetFragment extends Fragment{
+public class DailyBudgetFragment extends Fragment {
 
+    private static final String TAG = "Payday.DailyBudgetFragment";
+    private static final int NEW_BUDGET_ITEM = -1;
     SharedPreferences prefs;
     private Budget budget;
     private double currentBudget = 0;
     private View V;
     private PaydayActivity activity;
-    private String TAG = "Payday.DailyBudgetFragment";
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
@@ -89,8 +103,7 @@ public class DailyBudgetFragment extends Fragment{
             BudgetItem bi = budget.budgetItems.get(i);
             final int currentIndex = i;
             LayoutInflater inflater = activity.getLayoutInflater();
-            TableRow budgetItemView = (TableRow) inflater.inflate(R.layout.payday_budget_item, itemsTable, false);
-
+            TableRow budgetItemView = (TableRow) inflater.inflate(R.layout.daily_budget_budget_item, itemsTable, false);
 
             TextView amount = (TextView) budgetItemView.findViewById(R.id.budgetItemAmount);
             TextView title = (TextView) budgetItemView.findViewById(R.id.budgetItemLabel);
@@ -127,36 +140,7 @@ public class DailyBudgetFragment extends Fragment{
             budgetItemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-
-                    builder.setTitle(getString(R.string.delete_budget_item_title));
-                    builder.setMessage(getString(R.string.delete_budget_item_message));
-
-                    builder.setPositiveButton(getString(R.string.delete_budget_item_yes), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            Vibrator vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
-                            vibrator.vibrate(100);
-                            budget.budgetItems.remove(currentIndex);
-                            budget.saveBudgetItems();
-                            updateBudgetItems();
-
-                            dialog.dismiss();
-                        }
-
-                    });
-
-                    builder.setNegativeButton(getString(R.string.delete_budget_item_no), new DialogInterface.OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Do nothing
-                            dialog.dismiss();
-                        }
-                    });
-
-                    builder.create().show();
-
+                    editBudgetItem(v, currentIndex);
                     return true;
                 }
             });
@@ -207,16 +191,12 @@ public class DailyBudgetFragment extends Fragment{
             spentTodayRow.setVisibility(View.VISIBLE);
         }
 
-
         TextView budgetView = (TextView) V.findViewById(R.id.budgetNumber);
         TextView daysToPaydayView = (TextView) V.findViewById(R.id.daysToPaydayNumber);
         TextView spentView = (TextView) V.findViewById(R.id.spentTodayNumber);
         TextView balanceView = (TextView) V.findViewById(R.id.balanceNumber);
-        //TextView goalView = (TextView) findViewById(R.id.goalNumber);
-
         balanceView.setText(budget.formatter.format(budget.balance));
         spentView.setText(budget.formatter.format(budget.spentToday));
-        // goalView.setText(budget.formatter.format(budget.savingsGoal));
         daysToPaydayView.setText(Integer.toString(budget.daysUntilPayday) + " ");
         budgetView.setText(budget.formatter.format(dailyBudget));
     }
@@ -237,38 +217,83 @@ public class DailyBudgetFragment extends Fragment{
 
     }
 
-    public void addBudgetItem(final View view) {
-        Log.i(TAG, "click");
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+    public void editBudgetItem(final View v, final int currentIndex) {
+
         LayoutInflater inflater = activity.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.daily_budget_edit_budget_item, null);
 
-        final View dialogView = inflater.inflate(R.layout.payday_dialog_add_budget_item, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+        builder.setTitle(getString(R.string.edit_budget_item_title));
 
-        builder.setTitle(getString(R.string.add_budget_item_dialog_title));
-        builder.setPositiveButton(R.string.add_budget_item, null);
-        builder.setNegativeButton(R.string.cancel_add_budget_item, null);
+        final BudgetItem budgetItem;
+        final EditText titleView = (EditText) dialogView.findViewById(R.id.budget_item_title);
+        final Spinner typeView = (Spinner) dialogView.findViewById(R.id.budget_item_type);
+        final EditText amountView = (EditText) dialogView.findViewById(R.id.budget_item_amount);
+
+        if (currentIndex == NEW_BUDGET_ITEM) {
+            budgetItem = null;
+            builder.setTitle(getString(R.string.add_budget_item_dialog_title));
+            builder.setPositiveButton(R.string.add_budget_item, null);
+        } else {
+            builder.setTitle(getString(R.string.edit_budget_item_title));
+
+            budgetItem = budget.budgetItems.get(currentIndex);
+
+            String title = budgetItem.title;
+            BigDecimal amount = budgetItem.amount;
+            int type;
+            if (amount.signum() < 0) {
+                type = 0;
+                amount = amount.negate();
+            } else {
+                type = 1;
+            }
+
+            titleView.setText(title);
+            typeView.setSelection(type);
+            amountView.setText(amount.toString());
+
+            builder.setNeutralButton(getString(R.string.delete_budget_item_yes), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    Vibrator vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
+                    vibrator.vibrate(100);
+                    budget.budgetItems.remove(currentIndex);
+                    budget.saveBudgetItems();
+                    updateBudgetItems();
+                    dialog.dismiss();
+                }
+
+            });
+            builder.setPositiveButton(R.string.update_budget_item, null);
+        }
+
+        builder.setNegativeButton(getString(R.string.delete_budget_item_no), new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        /* onClick listener for update needs to be setup like this to
+           prevent closing dialog on error
+         */
 
         final AlertDialog d = builder.create();
-
         d.setOnShowListener(new DialogInterface.OnShowListener() {
 
             @Override
             public void onShow(DialogInterface dialog) {
-
                 Button b = d.getButton(AlertDialog.BUTTON_POSITIVE);
                 assert b != null;
                 b.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View view) {
-                        EditText amountEdit = (EditText) dialogView.findViewById(R.id.new_budget_item_amount);
-                        EditText titleEdit = (EditText) dialogView.findViewById(R.id.new_budget_item_title);
-                        Spinner itemType = (Spinner) dialogView.findViewById(R.id.new_budget_item_type);
-
-                        int amount;
+                        BigDecimal amount;
                         try {
-                            amount = Integer.parseInt(amountEdit.getText().toString());
-                            if (itemType.getSelectedItemId() == 0) amount = -amount;
+                            amount = new BigDecimal(amountView.getText().toString());
+                            if (typeView.getSelectedItemId() == 0) amount = amount.negate();
                         } catch (NumberFormatException e) {
 
                             Toast.makeText(activity.getApplicationContext(),
@@ -278,11 +303,15 @@ public class DailyBudgetFragment extends Fragment{
                             return;
                         }
 
-                        String title = titleEdit.getText().toString();
+                        String title = titleView.getText().toString();
 
-                        BudgetItem newItem = new BudgetItem(title, amount);
+                        if (budgetItem != null) {
+                            budgetItem.amount = amount;
+                            budgetItem.title = title;
+                        } else {
+                            budget.budgetItems.add(new BudgetItem(title, amount));
+                        }
 
-                        budget.budgetItems.add(newItem);
                         budget.saveBudgetItems();
                         updateBudgetItems();
                         d.dismiss();
@@ -291,10 +320,13 @@ public class DailyBudgetFragment extends Fragment{
             }
         });
 
+
         d.setView(dialogView);
         d.show();
+    }
 
-
+    public void addBudgetItem(final View view) {
+        editBudgetItem(view, NEW_BUDGET_ITEM);
     }
 
 }

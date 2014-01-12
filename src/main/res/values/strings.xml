@@ -32,7 +32,7 @@
     <string name="add_budget_item">Add budget item </string>
 
     <!-- About screen -->
-            <string name="about_title">Information</string>§§§
+    <string name="about_title">Information</string>
     <string name="about_button">About Payday</string>
     <string name="about_text">Bankdroid and Payday are handling your bank account information.\n\n
 	     
@@ -81,7 +81,7 @@
     <string name="pick_account_description">The balance of this account will be used for calculating your daily budget.</string>
     <string name="pick_accounts_description">If you choose multiple accounts, the balance will be summed.</string>
     <string name="new_budget_item_no_amount_specified">You have to specify an amount</string>
-    <string name="delete_budget_item_title">Confirm deletion</string>
+    <string name="edit_budget_item_title">Edit budget item</string>
     <string name="delete_budget_item_message">Are you sure you want to delete this budget item?</string>
     <string name="delete_budget_item_yes">Delete</string>
     <string name="delete_budget_item_no">Cancel</string>
@@ -105,7 +105,8 @@
     </string>
     <string name="transactions_help_ok">OK</string>
     <string name="transactions_help_button_description">Transactions help</string>
-    
+    <string name="update_budget_item">Save</string>
+
     <string-array name="budget_item_type">
         <item>Expense</item>
         <item>Income</item>

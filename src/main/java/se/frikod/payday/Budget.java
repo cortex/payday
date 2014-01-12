@@ -1,6 +1,7 @@
 package se.frikod.payday;
 
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
@@ -22,10 +23,10 @@ import android.content.SharedPreferences;
 
 class BudgetItem{
     String title;
-    double amount;
+    BigDecimal amount;
     boolean exclude;
 
-    public BudgetItem(String mTitle, double mAmount){
+    public BudgetItem(String mTitle, BigDecimal mAmount){
         title = mTitle;
         amount = mAmount;
         exclude = false;
@@ -71,7 +72,7 @@ public class Budget {
         String goalStr = prefs.getString(PreferenceKeys.KEY_PREF_GOAL, null);
         if (goalStr != null){
             try {
-                int savingsGoal = Integer.parseInt(goalStr);
+                BigDecimal savingsGoal = new BigDecimal(goalStr);
                 BudgetItem savingsGoalItem = new BudgetItem(context.getString(R.string.savings_goal_title), savingsGoal);
                 this.budgetItems.add(savingsGoalItem);
                 SharedPreferences.Editor editor = prefs.edit();
@@ -157,7 +158,7 @@ public class Budget {
 
         for(BudgetItem bi: budgetItems ){
             if (!bi.exclude){
-                budgetItemsSum += bi.amount;
+                budgetItemsSum += bi.amount.floatValue();
             }
         }
 

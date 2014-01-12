@@ -6,7 +6,7 @@
               android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/new_budget_item_title"
+        android:id="@+id/budget_item_title"
         android:inputType="text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,14 +19,14 @@
     <Spinner
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:id="@+id/new_budget_item_type"
+            android:id="@+id/budget_item_type"
             android:entries="@array/budget_item_type"
 
             />
 
     <EditText
-            android:id="@+id/new_budget_item_amount"
-            android:inputType="number"
+            android:id="@+id/budget_item_amount"
+            android:inputType="numberDecimal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
