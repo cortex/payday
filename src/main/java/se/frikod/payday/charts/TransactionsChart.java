@@ -108,6 +108,8 @@ public class TransactionsChart {
         this.caption = new Caption(this.view);
         this.axis = new Axis(zoom, yScale);
         this.graphCoords = new Matrix();
+        this.width = view.getWidth();
+        this.height = view.getHeight();
         resize(width, height);
 
         float x = 0;
