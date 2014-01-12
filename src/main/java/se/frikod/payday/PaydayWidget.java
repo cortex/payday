@@ -78,7 +78,7 @@ public class PaydayWidget extends AppWidgetProvider {
                     intent, 0);
 
             RemoteViews views = new RemoteViews(context.getPackageName(),
-                    R.layout.payday_widget);
+                    R.layout.widget);
             views.setOnClickPendingIntent(R.id.widgetLayout, pendingIntent);
 
             views.setTextViewText(R.id.paydayWidgetBudget,

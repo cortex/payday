@@ -24,7 +24,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -33,12 +32,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
-import java.util.prefs.Preferences;
 
 public class PaydayActivity extends FragmentActivity {
     private static final int NUM_PAGES = 2;
@@ -52,7 +48,7 @@ public class PaydayActivity extends FragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.payday_activity);
+        setContentView(R.layout.main);
         ctx = this.getApplicationContext();
         bank = new BankdroidProvider(this);
         if (!bank.verifySetup()) {

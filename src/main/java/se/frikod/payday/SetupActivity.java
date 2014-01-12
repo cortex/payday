@@ -25,7 +25,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -35,7 +34,6 @@ import android.widget.*;
 import com.liato.bankdroid.provider.IBankTransactionsProvider;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static android.widget.AdapterView.OnItemSelectedListener;
 
@@ -53,7 +51,7 @@ public class SetupActivity extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.payday_setup);
+        setContentView(R.layout.setup);
 
         bank = new BankdroidProvider(this);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);

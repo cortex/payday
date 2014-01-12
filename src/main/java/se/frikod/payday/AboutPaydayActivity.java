@@ -30,7 +30,7 @@ public class AboutPaydayActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.payday_about);
+        setContentView(R.layout.about);
 		TextView noteView = (TextView) findViewById(R.id.aboutView);
 		
 		Linkify.addLinks(noteView, Linkify.ALL);
