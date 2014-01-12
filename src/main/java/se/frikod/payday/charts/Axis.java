@@ -12,6 +12,9 @@ import android.graphics.Path;
  */
 class Axis{
     public float zoom;
+    public int width;
+    public int height;
+
     private Scale yScale;
     private Paint longTickStyle;
     private Paint tickStyle;
@@ -41,7 +44,7 @@ class Axis{
 
             float h;
             float val;
-            float lw = (canvas.getWidth()) / zoom;
+            float lw = width / zoom;
             double max = lw/2.0f / yScale.apply(1);
             int step;
 
@@ -54,7 +57,7 @@ class Axis{
             Paint p = new Paint();
             p.setColor(Color.HSVToColor(new float[]{230f, 0.01f, 1f}));
             p.setAlpha(160);
-            canvas.drawRect(0,0,canvas.getWidth(), 80, p);
+            canvas.drawRect(0, 0, width, 80, p);
 
             //Log.d(TAG, String.format("Max: %s Mx: %s Step: %s", max,  mx, step ));
             for(int i = 0; i<max; i+= step){
@@ -63,19 +66,19 @@ class Axis{
                 if (i % (5*step) == 0){
                     h = 30;
                     canvas.drawText(Integer.toString(i),
-                            (canvas.getWidth() / 2.0f) +  val - (tickStyle.measureText(Integer.toString(i))/2f),
+                            (width / 2.0f) +  val - (tickStyle.measureText(Integer.toString(i))/2f),
                             25,
                             tickStyle);
                     if (val!=0)
                         canvas.drawText("-" + Integer.toString(i),
-                                (canvas.getWidth() / 2.0f) -  val - (tickStyle.measureText("-" + Integer.toString(i))/2f),
+                                (width / 2.0f) -  val - (tickStyle.measureText("-" + Integer.toString(i))/2f),
                                 25,
                                 tickStyle);
                     Path path = new Path();
-                    path.moveTo(((float) canvas.getWidth() / 2.0f) + -val, 30);
-                    path.lineTo( ((float) canvas.getWidth() / 2.0f) + -val, canvas.getHeight());
-                    path.moveTo(((float) canvas.getWidth() / 2.0f) + val, 30);
-                    path.lineTo( ((float) canvas.getWidth() / 2.0f) + val, canvas.getHeight());
+                    path.moveTo(((float)  width / 2.0f) + -val, 30);
+                    path.lineTo( ((float) width / 2.0f) + -val, height);
+                    path.moveTo(((float)  width / 2.0f) + val, 30);
+                    path.lineTo( ((float) width / 2.0f) + val, height);
 
                     canvas.drawPath(path, longTickStyle);
 
@@ -83,8 +86,8 @@ class Axis{
                     h = 15;
                 }
 
-                canvas.drawLine(((float) canvas.getWidth() / 2.0f) +  val, 30, ((float) canvas.getWidth() / 2.0f) +  val, 30 + h, tickStyle);
-                canvas.drawLine(((float) canvas.getWidth() / 2.0f) + -val, 30, ((float) canvas.getWidth() / 2.0f) + -val, 30 + h, tickStyle);
+                canvas.drawLine(((float) width / 2.0f) +  val, 30, ((float) width / 2.0f) +  val, 30 + h, tickStyle);
+                canvas.drawLine(((float) width / 2.0f) + -val, 30, ((float) width / 2.0f) + -val, 30 + h, tickStyle);
 
 
             }

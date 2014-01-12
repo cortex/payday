@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.renderscript.Element;
@@ -23,9 +24,12 @@ class Caption{
     private Paint captionAmountStyle;
     private Paint captionBackgroundStyle;
     private Paint captionOverlayStyle;
+    private Paint captionOverlayBorderStyle;
 
     private ScriptIntrinsicBlur theIntrinsic;
     private final RenderScript rs;
+
+    private Rect rect;
 
     Caption(TransactionsGraphView view){
         float captionFontSize = view.getWidth() / 80f;
@@ -45,16 +49,20 @@ class Caption{
 
 
         captionBackgroundStyle = new Paint();
-        //captionBackgroundStyle.setColor(Color.HSVToColor(new float[]{220f, 0.1f, .90f}));
-        //captionBackgroundStyle.setAlpha(100);
-        //captionBackgroundStyle.setStrokeWidth(1f);
+        captionBackgroundStyle.setColor(Color.HSVToColor(new float[]{220f, 0.1f, .90f}));
+        captionBackgroundStyle.setAlpha(100);
+        captionBackgroundStyle.setStrokeWidth(1f);
 
         captionOverlayStyle = new Paint();
         captionOverlayStyle.setColor(Color.WHITE);
-        //captionOverlayStyle.setColor(0xFFF5F5FF);
-        captionOverlayStyle.setColor(Color.HSVToColor(new float[]{230f, 0.01f, 1f}));
+        captionOverlayStyle.setStyle(Paint.Style.FILL);
+        captionOverlayStyle.setAlpha(200);
 
-        captionOverlayStyle.setAlpha(190);
+        captionOverlayBorderStyle = new Paint();
+        captionOverlayBorderStyle.setColor(Color.LTGRAY);
+        captionOverlayBorderStyle.setAlpha(50);
+        captionOverlayBorderStyle.setStrokeWidth(5f);
+        captionOverlayBorderStyle.setStyle(Paint.Style.STROKE);
 
         rs = RenderScript.create(view.getContext());
         theIntrinsic = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
@@ -62,49 +70,42 @@ class Caption{
 
     }
 
-    public void resize(int w, int h){
-        captionTextStyle.setTextSize(w/24);
-        captionAmountStyle.setTextSize(w/24);
+    public void resize(Rect rect){
+        this.rect = rect;
+        captionTextStyle.setTextSize(rect.width()/24);
+        captionAmountStyle.setTextSize(rect.width()/24);
     }
 
     public void draw(Canvas canvas, Bar selectedBar){
 
         int captionRow = 1;
-        float margin = 20f;
-
+        float margin = 16;
         String descriptionFormat = "%s";
         String amountFormat = " %10.2f";
         float captionFontSize = captionTextStyle.getTextSize();
 
-        //float textWidth = captionTextStyle.measureText(String.format(format, "test test test test", 10000f));
-        //float textWidth = findMaxFontSize(canvas.getWidth() - 4 * margin , captionTextStyle, );
-
-        float top, bottom;
-        Path path = new Path();
-        float boxHeight = captionTextStyle.getFontSpacing() * (4 +  selectedBar.dayTransactions.size());
-
-        top = canvas.getHeight() / 2f;
-        bottom = canvas.getHeight();
-
         canvas.drawRoundRect(new RectF(
-                margin, top,
-                (2 * margin) + canvas.getWidth() - 2*margin, bottom),
+                rect.left, rect.top,
+                rect.right, rect.bottom),
                 10f, 10f, captionOverlayStyle);
 
-        canvas.drawPath(path, captionBackgroundStyle);
+        canvas.drawRoundRect(new RectF(
+                rect.left + 2, rect.top + 2,
+                rect.right - 2, rect.bottom - 2 ),
+                10f, 10f, captionOverlayBorderStyle);
 
         canvas.drawText(String.format("- %tF -", selectedBar.date.toDate()),
-                canvas.getWidth() / 2.0f - 100, captionRow * 2 * captionFontSize + top, captionTextStyle);
+                rect.left + rect.width() / 2.0f - 100, captionRow * 2 * captionFontSize + rect.top, captionTextStyle);
 
         captionRow += 2;
         for (Transaction t : selectedBar.dayTransactions) {
             canvas.drawText(String.format(descriptionFormat, t.description),
-                    2*margin, captionRow * 1.5f * captionFontSize + top,
+                    rect.left + margin, captionRow * 1.5f * captionFontSize + rect.top,
                     captionTextStyle);
             String amount = String.format(amountFormat, t.amount);
             canvas.drawText(amount,
-                    canvas.getWidth() - 2 * margin - captionAmountStyle.measureText(amount),
-                    captionRow * 1.5f * captionFontSize + top,
+                    rect.right - margin - captionAmountStyle.measureText(amount),
+                    captionRow * 1.5f * captionFontSize + rect.top,
                     captionAmountStyle);
             captionRow++;
         }

@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Vibrator;
 import android.util.Log;
@@ -36,7 +37,8 @@ public class TransactionsChart {
     private float zoom = 5f;
     private float translateX = 0;
     private float translateY = 0;
-    private float width;
+    private int width;
+    private int height;
 
     private static Paint selectorStyle;
 
@@ -51,8 +53,9 @@ public class TransactionsChart {
 
     static {
         selectorStyle = new Paint();
-        selectorStyle.setColor(Color.HSVToColor(new float[]{220f, 0.0f, .70f}));
-        selectorStyle.setAlpha(220);
+        //selectorStyle.setColor(Color.HSVToColor(new float[]{220f, 0.0f, .70f}));
+        selectorStyle.setColor(Color.LTGRAY);
+        selectorStyle.setAlpha(100);
         selectorStyle.setStrokeWidth(2f);
         selectorStyle.setTextSize(30f);
         selectorStyle.setAntiAlias(true);
@@ -105,6 +108,7 @@ public class TransactionsChart {
         this.caption = new Caption(this.view);
         this.axis = new Axis(zoom, yScale);
         this.graphCoords = new Matrix();
+        resize(width, height);
 
         float x = 0;
 
@@ -150,7 +154,6 @@ public class TransactionsChart {
             }
 
         }
-        resize(view.getWidth(), view.getHeight());
         setZoom(zoom);
         updateMatrix();
     }
@@ -176,7 +179,7 @@ public class TransactionsChart {
         updateMatrix();
     }
 
-    public void setWidth(float width){
+    public void setWidth(int width){
         this.width = width;
     }
 
@@ -241,9 +244,23 @@ public class TransactionsChart {
     }
 
     public void resize(int w, int h){
-        this.width = w;
-        caption.resize(w, h);
-        this.selectorY = (float) (h / 4.0);
+        Rect captionRect = new Rect();
+
+        if (h > w) {
+            this.width = w;
+            this.height = h;
+            captionRect.set(0, h/2, w, h);
+            this.selectorY = (float) (h / 4.0);
+        }else{
+            this.width = w /2;
+            this.height = h;
+            this.selectorY = (float) (h / 2.0);
+            captionRect.set(w/2, 0, w, h);
+        }
+        this.axis.width = this.width;
+        this.axis.height = this.height;
+        caption.resize(captionRect);
+
         updateMatrix();
      }
 
@@ -291,12 +308,12 @@ public class TransactionsChart {
         canvas.drawPath(p, selectorStyle);
 
         p.reset();
-        p.moveTo(canvas.getWidth(), selectorY - tickHeight);
-        p.lineTo(canvas.getWidth() - tickHeight, selectorY);
-        p.lineTo(canvas.getWidth(), selectorY + tickHeight);
+        p.moveTo(width, selectorY - tickHeight);
+        p.lineTo(width - tickHeight, selectorY);
+        p.lineTo(width, selectorY + tickHeight);
 
         canvas.drawPath(p, selectorStyle);
-        canvas.drawLine(0, selectorY, canvas.getWidth(), selectorY, selectorStyle);
+        canvas.drawLine(tickHeight, selectorY, width- tickHeight, selectorY, selectorStyle);
 
         if (selected != null) {
             caption.draw(canvas, selected);
