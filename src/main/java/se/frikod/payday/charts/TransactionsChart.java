@@ -28,7 +28,7 @@ import se.frikod.payday.TransactionsGraphView;
 public class TransactionsChart {
 
     private static final String TAG = "Payday.TransactionsChart";
-    private final float selectorY = 300f;
+    private float selectorY;
     private final Caption caption;
     public float mxOffset = 0;
     int barWidth = 50;
@@ -243,6 +243,7 @@ public class TransactionsChart {
     public void resize(int w, int h){
         this.width = w;
         caption.resize(w, h);
+        this.selectorY = (float) (h / 4.0);
         updateMatrix();
      }
 
