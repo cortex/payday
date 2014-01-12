@@ -158,6 +158,7 @@ public class TransactionsChart {
         }
         setZoom(zoom);
         updateMatrix();
+        updateSelected();
     }
 
     public float getZoom(){
@@ -257,7 +258,7 @@ public class TransactionsChart {
             this.width = w /2;
             this.height = h;
             this.selectorY = (float) (h / 2.0);
-            captionRect.set(w/2, 0, w, h);
+            captionRect.set(w/2, barWidth, w, h);
         }
         this.axis.width = this.width;
         this.axis.height = this.height;
