@@ -92,7 +92,7 @@ public class TransactionsGraphView extends View {
 
         @Override
         public boolean onDoubleTap(MotionEvent e) {
-            mRenderer.scaleToFit(false);
+            mRenderer.toggleZoom();
             invalidate();
             return true;
         }
@@ -102,15 +102,7 @@ public class TransactionsGraphView extends View {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
 
-            mRenderer.setZoom(mRenderer.getZoom() * (detector.getScaleFactor()));
-//            mRenderer.resize();
-            /*
-            mScaleFactor *= detector.getScaleFactor();
-            mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 5.0f));
-            mRenderer.mScale = mScaleFactor;
-            */
-            //mRenderer.scaleModel(detector.getScaleFactor());
-            //startKineticts();
+            mRenderer.setManualZoom(mRenderer.getZoom() * (detector.getScaleFactor()));
             return true;
         }
     }

@@ -32,9 +32,14 @@ public class TransactionsChart {
     private float selectorY;
     private final Caption caption;
     public float mxOffset = 0;
+
     int barWidth = 50;
     int barMargin = 10;
+
     private float zoom = 5f;
+    private float manualZoom = 5f;
+    private boolean zoomState = true;
+
     private float translateX = 0;
     private float translateY = 0;
     private int width;
@@ -165,11 +170,17 @@ public class TransactionsChart {
         return this.zoom;
     }
 
-    public void setZoom(float zoom){
+    private void setZoom(float zoom){
         this.zoom = zoom;
         this.axis.zoom = zoom;
         Bar.setBorderWidth(5f/zoom);
         updateMatrix();
+    }
+
+    public void setManualZoom(float zoom){
+        this.zoomState = true;
+        this.manualZoom = zoom;
+        this.setZoom(zoom);
     }
 
     public float getTranslateY(){
@@ -192,6 +203,16 @@ public class TransactionsChart {
         graphCoords.preScale(zoom, 1);
         graphCoords.preRotate(90f);
         view.invalidate();
+    }
+
+    public void toggleZoom(){
+        if ( zoomState){
+            zoomState = false;
+            scaleToFit(false);
+        }else{
+            zoomState = true;
+            zoomAnimation(manualZoom);
+        }
     }
 
     public void scaleToFit(Boolean scaleSelectedOnly){
@@ -258,7 +279,7 @@ public class TransactionsChart {
             this.width = w /2;
             this.height = h;
             this.selectorY = (float) (h / 2.0);
-            captionRect.set(w/2, barWidth, w, h);
+            captionRect.set(w / 2, barWidth, w, h);
         }
         this.axis.width = this.width;
         this.axis.height = this.height;
