@@ -36,6 +36,9 @@ public class TransactionsChart {
     int barWidth = 50;
     int barMargin = 10;
 
+    private float minZoom = 0.001f;
+    private float maxZoom = 2000f;
+
     private float zoom = 5f;
     private float manualZoom = 5f;
     private boolean zoomState = true;
@@ -180,7 +183,13 @@ public class TransactionsChart {
     public void setManualZoom(float zoom){
         this.zoomState = true;
         this.manualZoom = zoom;
-        this.setZoom(zoom);
+        if (this.manualZoom > maxZoom){
+            this.manualZoom = maxZoom;
+        }
+        if (this.manualZoom < minZoom){
+            this.manualZoom = minZoom;
+        }
+        this.setZoom(this.manualZoom);
     }
 
     public float getTranslateY(){

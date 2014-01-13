@@ -45,7 +45,7 @@ class Axis{
             float h;
             float val;
             float lw = width / zoom;
-            double max = lw/2.0f / yScale.apply(1);
+            double max = lw / 2.0f / yScale.apply(1);
             int step;
 
             double mx = Math.log10(max) -1;
@@ -63,7 +63,7 @@ class Axis{
             for(int i = 0; i<max; i+= step){
                 val = (float)(yScale.apply(i) * zoom);
                 //TODO: crashes if you zoom in too much
-                if (i % (5*step) == 0){
+                if (i % (5 * step) == 0){
                     h = 30;
                     canvas.drawText(Integer.toString(i),
                             (width / 2.0f) +  val - (tickStyle.measureText(Integer.toString(i))/2f),
