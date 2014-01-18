@@ -37,7 +37,6 @@ public class Budget {
 	int daysUntilPayday;
 	double dailyBudget;
 	double balance;
-	double spentToday;
 
 	BankdroidProvider bank;
 	SharedPreferences prefs;
@@ -57,7 +56,6 @@ public class Budget {
 		Currency currency = Currency.getInstance("SEK");
         DecimalFormatSymbols dfs = new DecimalFormatSymbols();
         dfs.setCurrency(currency);
-		//dfs.setGroupingSeparator('\u2006');
 		dfs.setGroupingSeparator(' ');
 		dfs.setCurrencySymbol("kr");
 		
@@ -119,11 +117,9 @@ public class Budget {
     public void update() throws WrongAPIKeyException, AccountNotFoundException {
 
 		double balance;
-		double spentToday;
 		int payday;
 
         balance = this.bank.getBalance();
-		spentToday = this.bank.getSpentToday();
 
 		String paydayStr = prefs.getString(PreferenceKeys.KEY_PREF_PAYDAY,
 				"25");
@@ -163,15 +159,7 @@ public class Budget {
         }
 
 
-		if (this.prefs.getBoolean(PreferenceKeys.KEY_PREF_USE_SPENT_TODAY, true)){
-			this.spentToday = spentToday;	
-		}else
-		{
-			this.spentToday = 0;
-			spentToday = 0;
-		}
-		
-		this.dailyBudget = (balance + spentToday + budgetItemsSum)
+		this.dailyBudget = (balance + budgetItemsSum)
 				/ this.daysUntilPayday;
 
 	}

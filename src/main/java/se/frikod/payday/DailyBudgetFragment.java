@@ -183,20 +183,10 @@ public class DailyBudgetFragment extends Fragment {
 
     private void renderBudget(double dailyBudget) {
 
-        TableRow spentTodayRow = (TableRow) V.findViewById(R.id.spentTodayRow);
-
-        if (!this.prefs.getBoolean(PreferenceKeys.KEY_PREF_USE_SPENT_TODAY, true)) {
-            spentTodayRow.setVisibility(View.GONE);
-        } else {
-            spentTodayRow.setVisibility(View.VISIBLE);
-        }
-
         TextView budgetView = (TextView) V.findViewById(R.id.budgetNumber);
         TextView daysToPaydayView = (TextView) V.findViewById(R.id.daysToPaydayNumber);
-        TextView spentView = (TextView) V.findViewById(R.id.spentTodayNumber);
         TextView balanceView = (TextView) V.findViewById(R.id.balanceNumber);
         balanceView.setText(budget.formatter.format(budget.balance));
-        spentView.setText(budget.formatter.format(budget.spentToday));
         daysToPaydayView.setText(Integer.toString(budget.daysUntilPayday) + " ");
         budgetView.setText(budget.formatter.format(dailyBudget));
     }

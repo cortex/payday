@@ -7,11 +7,6 @@
             android:summary="@string/pick_accounts_description"
             android:title="@string/pick_accounts" />
 
-        <CheckBoxPreference
-            android:key="pref_use_spent_today"
-            android:summary="@string/use_spent_today_summary"
-            android:title="@string/use_spent_today" />
-
         <EditTextPreference
             android:dialogMessage="@string/payday_description"
             android:dialogTitle="@string/payday_title"
@@ -19,13 +14,6 @@
             android:numeric="integer"
             android:title="@string/payday_title" />
 
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="@string/preference_section_advanced">
-        <CheckBoxPreference
-            android:key="pref_use_hw_accel"
-            android:summary="@string/use_hw_accel_summary"
-            android:title="@string/use_hw_accel_title" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/about_title">

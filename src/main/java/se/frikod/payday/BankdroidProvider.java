@@ -7,10 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import android.text.TextUtils;
-import org.joda.time.DateTime;
-
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import se.frikod.payday.exceptions.AccountNotFoundException;
 import se.frikod.payday.exceptions.WrongAPIKeyException;
 
@@ -193,34 +189,6 @@ OnSharedPreferenceChangeListener{
         }
         return transactions;
     }
-
-
-	public double getSpentToday() {
-        Uri uri = getUri(TRANSACTIONS_CAT);
-		ContentResolver r = context.getContentResolver();
-		String[] fields = { "amount" };
-		String name = prefs.getString(PreferenceKeys.KEY_PREF_BANKDROID_ACCOUNT, "");
-
-		DateTime now = new DateTime();
-		String today = now.toString("YYYY-MM-dd");
-		String tomorrow = now.plusDays(1).toString("YYYY-MM-dd");
-		Cursor c = r.query(uri, fields, String.format(
-				"account = '%s' and transdate >= '%s' and transdate < '%s'",
-				name, today, tomorrow), null, "transdate");
-		float total = 0;
-		if (c.getCount() == 0) {
-			return 0.0;
-		}
-		while (!c.isLast()) {
-			c.moveToNext();
-			float amount = c.getFloat(0);
-			if (amount < 0) {
-				total -= amount;
-			}
-		}
-		return total;
-
-	}
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
