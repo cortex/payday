@@ -1,194 +1,187 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:payday="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/bg"
-    android:padding="16dp">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/bg">
 
-    <LinearLayout
-        style="@style/card"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/scrollView"
+        android:fillViewport="true">
 
-        <se.frikod.payday.TypefaceTextView
-            android:id="@+id/budgetLabel"
-            style="@style/paydayLabel"
-            android:textSize="24sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="18dp"
-            android:textStyle="bold"
-            android:text="@string/daily_budget_title"
-            payday:typeface="fonts/Roboto-Light.ttf" />
-
-        <LinearLayout
-
+        <FrameLayout
             android:padding="16dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
 
-
-            <TableLayout
-                android:layout_width="match_parent"
+            <LinearLayout
+                style="@style/card"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:stretchColumns="0,1">
+                android:orientation="vertical">
 
-                <TableRow
-                    android:id="@+id/tableRow1"
+                <se.frikod.payday.TypefaceTextView
+                    android:id="@+id/budgetLabel"
+                    style="@style/paydayLabel"
+                    android:textSize="24sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="18dp"
+                    android:textStyle="bold"
+                    android:text="@string/daily_budget_title"
+                    payday:typeface="fonts/Roboto-Light.ttf" />
+
+                <LinearLayout
+                    android:padding="16dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:stretchColumns="0,1">
+
+                        <TableRow
+                            android:id="@+id/tableRow1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <se.frikod.payday.TypefaceTextView
+                                android:id="@+id/balanceLabel"
+                                style="@style/paydayLabel"
+                                android:textSize="22sp"
+                                android:text="@string/balance_title"
+                                payday:typeface="fonts/Roboto-Light.ttf" />
+
+                            <se.frikod.payday.TypefaceTextView
+                                android:id="@+id/balanceNumber"
+                                android:textSize="22sp"
+                                style="@style/paydayNumber"
+                                android:layout_gravity="right|end"
+                                android:text="@string/emptyAmount"
+                                payday:typeface="fonts/Roboto-Light.ttf" />
+                        </TableRow>
+
+                        <TableRow
+                            style="@style/tableLine"
+                            android:layout_height="1dp"
+                            android:layout_margin="1dp"></TableRow>
+                    </TableLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dip"
+                        android:background="#eee" />
+
+                    <TableLayout
+                        android:id="@+id/budgetItems"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:stretchColumns="0,1">
+
+                        <TableRow>
+
+
+                        </TableRow>
+
+                    </TableLayout>
+
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:stretchColumns="0,1">
+
+                        <TableRow>
+
+                            <se.frikod.payday.TypefaceTextView
+                                android:id="@+id/addBudgetItem"
+                                style="@style/paydayLabel"
+                                android:text=" +"
+                                android:textSize="22sp"
+                                android:layout_gravity="bottom"
+                                payday:typeface="fonts/Roboto-Light.ttf" />
+
+
+                            <se.frikod.payday.TypefaceTextView
+                                android:id="@+id/addBudgetItemButton"
+                                style="@style/paydayLabel"
+                                android:onClick="addBudgetItem"
+                                android:text="@string/add_budget_item"
+                                android:textStyle="italic"
+                                android:textColor="#aaa"
+                                android:clickable="true"
+                                android:layout_gravity="bottom|right"
+                                payday:typeface="fonts/Roboto-Light.ttf" />
+                        </TableRow>
+                    </TableLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dip"
+                        android:background="#eee" />
+
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="48dp"
+                        android:stretchColumns="0,1">
+
+                        <TableRow>
+
+                            <se.frikod.payday.TypefaceTextView
+                                style="@style/paydayNumber"
+                                android:layout_height="32dp"
+                                android:textSize="22sp"
+                                android:layout_gravity="left"
+                                android:text=" ÷"
+                                payday:typeface="fonts/Roboto-Light.ttf" />
+
+
+                            <se.frikod.payday.TypefaceTextView
+                                android:id="@+id/daysToPaydayNumber"
+                                style="@style/paydayNumber"
+                                android:layout_height="32dp"
+                                android:textSize="22sp"
+                                android:layout_gravity="right"
+                                android:text="@string/emptyAmount"
+                                payday:typeface="fonts/Roboto-Light.ttf" />
+
+                            <se.frikod.payday.TypefaceTextView
+                                android:id="@+id/daysToPaydayLabel"
+                                style="@style/paydayLabel"
+                                android:textSize="22sp"
+                                android:layout_gravity="right"
+                                android:text="@string/days_until_payday_title"
+                                payday:typeface="fonts/Roboto-Light.ttf" />
+
+                        </TableRow>
+                    </TableLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dip"
+                        android:background="#eee" />
 
                     <se.frikod.payday.TypefaceTextView
-                        android:id="@+id/balanceLabel"
-                        style="@style/paydayLabel"
-                        android:textSize="22sp"
-                        android:text="@string/balance_title"
-                        payday:typeface="fonts/Roboto-Light.ttf"
-                        />
-
-                    <se.frikod.payday.TypefaceTextView
-                        android:id="@+id/balanceNumber"
-                        android:textSize="22sp"
+                        android:id="@+id/budgetNumber"
                         style="@style/paydayNumber"
-                        android:layout_gravity="right|end"
+                        android:textSize="48sp"
+                        android:layout_marginBottom="0dp"
                         android:text="@string/emptyAmount"
-                        payday:typeface="fonts/Roboto-Light.ttf"
-                        />
-                </TableRow>
+                        payday:typeface="fonts/Roboto-Light.ttf" />
 
-                <TableRow
-                    style="@style/tableLine"
-                    android:layout_height="1dp"
-                    android:layout_margin="1dp"></TableRow>
-            </TableLayout>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dip"
-                android:background="#eee" />
-            <TableLayout
-                android:id="@+id/budgetItems"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:stretchColumns="0,1">
+                </LinearLayout>
+            </LinearLayout>
 
-                <TableRow>
+            <ImageButton
+                style="@style/helpButton"
+                android:onClick="budgetHelpClicked"
+                android:contentDescription="@string/budget_help_button_description" />
 
-
-                </TableRow>
-
-            </TableLayout>
-            <TableLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:stretchColumns="0,1">
-            <TableRow>
-
-                <se.frikod.payday.TypefaceTextView
-                    android:id="@+id/addBudgetItem"
-                    style="@style/paydayLabel"
-                    android:text=" +"
-                    android:textSize="22sp"
-                    android:layout_gravity="bottom"
-                    payday:typeface="fonts/Roboto-Light.ttf"
-                    />
-
-
-                <se.frikod.payday.TypefaceTextView
-                    android:id="@+id/addBudgetItemButton"
-                    style="@style/paydayLabel"
-                    android:onClick="addBudgetItem"
-                    android:text="@string/add_budget_item"
-                    android:textStyle="italic"
-                    android:textColor="#aaa"
-                    android:clickable="true"
-                    android:layout_gravity="bottom|right"
-                    payday:typeface="fonts/Roboto-Light.ttf"
-                    />
-            </TableRow>
-            </TableLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dip"
-                android:background="#eee" />
-
-            <TableLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="48dp"
-                android:stretchColumns="0,1">
-
-                <TableRow>
-
-                    <se.frikod.payday.TypefaceTextView
-                        style="@style/paydayNumber"
-                        android:layout_height="32dp"
-                        android:textSize="22sp"
-                        android:layout_gravity="left"
-                        android:text=" ÷"
-                        payday:typeface="fonts/Roboto-Light.ttf"
-                        />
-
-
-                    <se.frikod.payday.TypefaceTextView
-                        android:id="@+id/daysToPaydayNumber"
-                        style="@style/paydayNumber"
-                        android:layout_height="32dp"
-                        android:textSize="22sp"
-                        android:layout_gravity="right"
-                        android:text="@string/emptyAmount"
-                        payday:typeface="fonts/Roboto-Light.ttf"
-                        />
-
-                    <se.frikod.payday.TypefaceTextView
-                        android:id="@+id/daysToPaydayLabel"
-                        style="@style/paydayLabel"
-                        android:textSize="22sp"
-                        android:layout_gravity="right"
-                        android:text="@string/days_until_payday_title"
-                        payday:typeface="fonts/Roboto-Light.ttf"
-                        />
-
-                </TableRow>
-            </TableLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dip"
-                android:background="#eee" />
-
-            <se.frikod.payday.TypefaceTextView
-                android:id="@+id/budgetNumber"
-                style="@style/paydayNumber"
-                android:textSize="48sp"
-                android:layout_marginBottom="0dp"
-                android:text="@string/emptyAmount"
-                payday:typeface="fonts/Roboto-Light.ttf"
-                />
-
-        </LinearLayout>
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=" ⚙"
-        android:id="@+id/textView"
-        android:textSize="34dp"
-        android:layout_gravity="left|top"
-        android:layout_margin="16dp"
-        android:textColor="#ddd" />
-
-    <ImageButton
-        style="@style/helpButton"
-        android:onClick="budgetHelpClicked"
-        android:contentDescription="@string/budget_help_button_description"
-
-        />
-
+        </FrameLayout>
+    </ScrollView>
 </FrameLayout>
