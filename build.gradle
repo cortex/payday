@@ -3,14 +3,42 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.7.0'
+        classpath 'com.android.tools.build:gradle:0.7.3'
     }
 }
 apply plugin: 'android'
-
+Properties props = new Properties()
+props.load(new FileInputStream(file("local.properties")))
 android {
     compileSdkVersion 18
     buildToolsVersion "18.0.1"
+    signingConfigs {
+        debug {
+            // storeFile file("debug.keystore")
+        }
+
+        frikod {
+            storeFile file(props['keystore.path'])
+            storePassword props['keystore.password']
+            keyAlias "frikod"
+            keyPassword props['key.password']
+        }
+    }
+
+    buildTypes {
+        release {
+            // runProguard true
+            signingConfig signingConfigs.frikod
+
+        }
+
+        debug {
+            debuggable true
+            jniDebugBuild true
+            //signingConfig signingConfigs.debug
+        }
+    }
+
 }
 
 sourceSets {
