@@ -64,7 +64,6 @@ public class TransactionsGraphView extends View {
 
         invalidate();
 
-        this.getParent().requestDisallowInterceptTouchEvent(true);
         return true;
     }
 
@@ -79,7 +78,7 @@ public class TransactionsGraphView extends View {
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             mRenderer.setTranslateY(mRenderer.getTranslateY() - distanceY);
             scrolling = true;
-            return true;
+            return false;
 
         }
 
