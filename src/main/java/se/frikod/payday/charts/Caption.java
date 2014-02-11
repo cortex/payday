@@ -1,115 +1,147 @@
 package se.frikod.payday.charts;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.renderscript.Element;
-import android.renderscript.RenderScript;
-import android.renderscript.ScriptIntrinsicBlur;
+import android.util.Pair;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import se.frikod.payday.Transaction;
 import se.frikod.payday.TransactionsGraphView;
 
-/**
- * Created by joakim on 12/28/13.
- */
 class Caption{
-
-    private Paint captionTextStyle;
-    private Paint captionAmountStyle;
-    private Paint captionBackgroundStyle;
-    private Paint captionOverlayStyle;
-    private Paint captionOverlayBorderStyle;
-
-    private ScriptIntrinsicBlur theIntrinsic;
-    private final RenderScript rs;
+    private Paint titleStyle;
+    private Paint descriptionStyle;
+    private Paint amountStyle;
+    private Paint backgroundStyle;
+    private Paint overlayStyle;
+    private Paint overlayBorderStyle;
+    private float frameWidth;
+    private float frameHeight;
 
     private Rect rect;
 
     Caption(TransactionsGraphView view){
-        float captionFontSize = view.getWidth() / 80f;
-        captionTextStyle = new Paint();
-        captionTextStyle.setColor(Color.DKGRAY);
-        captionTextStyle.setTextSize(captionFontSize);
-        Typeface textFont = Typeface.createFromAsset(view.context.getAssets(), "fonts/Roboto-Regular.ttf");
+        float captionFontSize = 10  * view.getResources().getDisplayMetrics().density;
 
-        captionTextStyle.setTypeface(textFont);
-        captionTextStyle.setAntiAlias(true);
+        titleStyle = new Paint();
+        titleStyle.setColor(Color.DKGRAY);
+        titleStyle.setTextSize(captionFontSize);
+        titleStyle.setTypeface(Typeface.createFromAsset(view.context.getAssets(), "fonts/Roboto-Regular.ttf"));
+        titleStyle.setTextAlign(Paint.Align.CENTER);
+        titleStyle.setAntiAlias(true);
 
-        captionAmountStyle = new Paint();
-        captionAmountStyle.setColor(Color.DKGRAY);
-        captionAmountStyle.setTextSize(captionFontSize);
-        captionAmountStyle.setTypeface(Typeface.createFromAsset(view.context.getAssets(), "fonts/Roboto-Light.ttf"));
-        captionAmountStyle.setAntiAlias(true);
+        descriptionStyle = new Paint();
+        descriptionStyle.setColor(Color.DKGRAY);
+        descriptionStyle.setTextSize(captionFontSize);
+        descriptionStyle.setTypeface(Typeface.createFromAsset(view.context.getAssets(), "fonts/Roboto-Regular.ttf"));
+        descriptionStyle.setAntiAlias(true);
 
+        amountStyle = new Paint();
+        amountStyle.setColor(Color.DKGRAY);
+        amountStyle.setTextSize(captionFontSize);
+        amountStyle.setTypeface(Typeface.createFromAsset(view.context.getAssets(), "fonts/Roboto-Light.ttf"));
+        amountStyle.setAntiAlias(true);
 
-        captionBackgroundStyle = new Paint();
-        captionBackgroundStyle.setColor(Color.HSVToColor(new float[]{220f, 0.1f, .90f}));
-        captionBackgroundStyle.setAlpha(100);
-        captionBackgroundStyle.setStrokeWidth(1f);
+        backgroundStyle = new Paint();
+        backgroundStyle.setColor(Color.HSVToColor(new float[]{220f, 0.1f, .90f}));
+        backgroundStyle.setAlpha(100);
+        backgroundStyle.setStrokeWidth(1f);
 
-        captionOverlayStyle = new Paint();
-        captionOverlayStyle.setColor(Color.WHITE);
-        captionOverlayStyle.setStyle(Paint.Style.FILL);
-        captionOverlayStyle.setAlpha(200);
+        overlayStyle = new Paint();
+        overlayStyle.setColor(Color.WHITE);
+        overlayStyle.setStyle(Paint.Style.FILL);
+        overlayStyle.setAlpha(200);
 
-        captionOverlayBorderStyle = new Paint();
-        captionOverlayBorderStyle.setColor(Color.LTGRAY);
-        captionOverlayBorderStyle.setAlpha(50);
-        captionOverlayBorderStyle.setStrokeWidth(5f);
-        captionOverlayBorderStyle.setStyle(Paint.Style.STROKE);
-
-        rs = RenderScript.create(view.getContext());
-        theIntrinsic = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
-        theIntrinsic.setRadius(5f);
-
+        overlayBorderStyle = new Paint();
+        overlayBorderStyle.setColor(Color.LTGRAY);
+        overlayBorderStyle.setAlpha(50);
+        overlayBorderStyle.setStrokeWidth(5f);
+        overlayBorderStyle.setStyle(Paint.Style.STROKE);
     }
 
-    public void resize(Rect rect){
-        this.rect = rect;
-        captionTextStyle.setTextSize(rect.width()/24);
-        captionAmountStyle.setTextSize(rect.width()/24);
+    public void resize(float width, float height){
+        frameWidth = width;
+        frameHeight = height;
+        //descriptionStyle.setTextSize(rect.width() / 24);
+        //amountStyle.setTextSize(rect.width() / 24);
+        //titleStyle.setTextSize(rect.width() / 24);
     }
 
-    public void draw(Canvas canvas, Bar selectedBar){
+    public void draw(Canvas canvas, Bar selectedBar, ChartType chartType){
 
         int captionRow = 1;
         float margin = 16;
-        String descriptionFormat = "%s";
-        String amountFormat = " %10.2f";
-        float captionFontSize = captionTextStyle.getTextSize();
+        final String descriptionFormat = "%s";
+        final String amountFormat = " %10.2f";
+        float captionFontSize = descriptionStyle.getTextSize();
+
+        RectF rect = new RectF();
+
+        class TransactionRow{
+            String desc;
+            String amount;
+            float width;
+
+            public TransactionRow(Transaction transaction){
+                desc = transaction.description;
+                amount = String.format(amountFormat, transaction.amount);
+                width = descriptionStyle.measureText(desc) + 30 + amountStyle.measureText(amount);
+            }
+        }
+
+        List<TransactionRow> transactionRows = new LinkedList<TransactionRow>();
+        float maxWidth = 0;
+
+        if (chartType == ChartType.STACKED || chartType == ChartType.STACKED_DATE){
+            for (Transaction t : selectedBar.dayTransactions) {
+                TransactionRow tr = new TransactionRow(t);
+                transactionRows.add(tr);
+                maxWidth = Math.max(maxWidth, tr.width);
+            }
+        }
+
+        if (chartType == ChartType.GROUPED || chartType == ChartType.GROUPED_DATE){
+            TransactionRow tr = new TransactionRow(selectedBar.transaction);
+            transactionRows.add(tr);
+            maxWidth = Math.max(maxWidth, tr.width);
+        }
+
+        rect.left = canvas.getWidth() - maxWidth;
+        rect.right = canvas.getWidth();
+        rect.top = 0;
+        rect.bottom = (3 + transactionRows.size()) * captionRow * 1.5f * captionFontSize;
 
         canvas.drawRoundRect(new RectF(
                 rect.left, rect.top,
                 rect.right, rect.bottom),
-                10f, 10f, captionOverlayStyle);
+                10f, 10f, overlayStyle);
 
         canvas.drawRoundRect(new RectF(
                 rect.left + 2, rect.top + 2,
-                rect.right - 2, rect.bottom - 2 ),
-                10f, 10f, captionOverlayBorderStyle);
-
-        canvas.drawText(String.format("- %tF -", selectedBar.date.toDate()),
-                rect.left + rect.width() / 2.0f - 100, captionRow * 2 * captionFontSize + rect.top, captionTextStyle);
+                rect.right - 2, rect.bottom - 2),
+                10f, 10f, overlayBorderStyle);
+         canvas.drawText(String.format("- %tF -", selectedBar.date.toDate()),
+                rect.left + rect.width() / 2.0f, captionRow * 2 * captionFontSize + rect.top, titleStyle);
 
         captionRow += 2;
-        for (Transaction t : selectedBar.dayTransactions) {
-            canvas.drawText(String.format(descriptionFormat, t.description),
+
+        for (TransactionRow t : transactionRows) {
+            canvas.drawText(String.format(descriptionFormat, t.desc),
                     rect.left + margin, captionRow * 1.5f * captionFontSize + rect.top,
-                    captionTextStyle);
-            String amount = String.format(amountFormat, t.amount);
-            canvas.drawText(amount,
-                    rect.right - margin - captionAmountStyle.measureText(amount),
+                    descriptionStyle);
+            canvas.drawText(t.amount,
+                    rect.right - margin - amountStyle.measureText(t.amount),
                     captionRow * 1.5f * captionFontSize + rect.top,
-                    captionAmountStyle);
+                    amountStyle);
             captionRow++;
         }
+        }
 
-    }
 
 }

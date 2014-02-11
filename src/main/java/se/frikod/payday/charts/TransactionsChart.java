@@ -1,17 +1,13 @@
 package se.frikod.payday.charts;
 
-import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.os.Vibrator;
 import android.util.Log;
 import android.view.animation.BounceInterpolator;
 
+import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.ValueAnimator;
 
 import org.joda.time.DateTime;
@@ -26,15 +22,17 @@ import java.util.Map;
 import se.frikod.payday.Transaction;
 import se.frikod.payday.TransactionsGraphView;
 
+enum ChartType {STACKED, STACKED_DATE, GROUPED, GROUPED_DATE;
+    public ChartType next() {
+        return values()[(ordinal() + 1) % values().length];
+    }
+};
+
 public class TransactionsChart {
 
     private static final String TAG = "Payday.TransactionsChart";
-    private float selectorY;
     private final Caption caption;
     public float mxOffset = 0;
-
-    int barWidth = 50;
-    int barMargin = 10;
 
     private float minZoom = 0.001f;
     private float maxZoom = 2000f;
@@ -45,29 +43,21 @@ public class TransactionsChart {
 
     private float translateX = 0;
     private float translateY = 0;
+
     private int width;
     private int height;
-
-    private static Paint selectorStyle;
 
     private List<Transaction> transactions;
     private List<Bar> bars;
     private Bar lastSelected;
     private TransactionsGraphView view;
     private Bar selected = null;
-    private RectF selectedDeviceRect = null;
-    private Matrix graphCoords;
+    private Matrix frameMatrix;
+    private Matrix plotMatrix;
     private Axis axis;
+    private Selector selector;
 
-    static {
-        selectorStyle = new Paint();
-        //selectorStyle.setColor(Color.HSVToColor(new float[]{220f, 0.0f, .70f}));
-        selectorStyle.setColor(Color.LTGRAY);
-        selectorStyle.setAlpha(100);
-        selectorStyle.setStrokeWidth(2f);
-        selectorStyle.setTextSize(30f);
-        selectorStyle.setAntiAlias(true);
-    }
+    private ChartType chartType;
 
     public TransactionsChart(TransactionsGraphView view, List<Transaction> transactions) {
         this.view = view;
@@ -115,55 +105,51 @@ public class TransactionsChart {
 
         this.caption = new Caption(this.view);
         this.axis = new Axis(zoom, yScale);
-        this.graphCoords = new Matrix();
+        this.selector = new Selector();
+        this.plotMatrix = new Matrix();
+        this.frameMatrix = new Matrix();
         this.width = view.getWidth();
         this.height = view.getHeight();
         resize(width, height);
 
-        float x = 0;
+        float stackedX = 0;
+        float groupedX = 0;
+        float stackedDateX = 0;
+        float groupDateX = 0;
 
         bars = new ArrayList<Bar>();
 
-        Path p = new Path();
-        for (int i = days.getDays(); i >= 0; i--) {
+        for (int i = 0; i<=days.getDays(); i++) {
             DateTime day = startDate.plus(Days.days(i));
             List<Transaction> dayTransactions = transactionsPerDate.get(day);
 
             float positiveHeight = 0;
             float negativeHeight = 0;
+
             Bar bar;
+
             if (dayTransactions != null) {
-
+                assert !dayTransactions.isEmpty();
                 for (Transaction t : dayTransactions) {
-                    p.reset();
-
                     float val = (float) yScale.apply(t.amount);
-
-                    if (val > 0) {
-                        bar = new Bar(
-                                new RectF(
-                                        x, positiveHeight - val,
-                                        x + barWidth, positiveHeight),
-                                Direction.POSITIVE);
-                        positiveHeight -= val;
-                    } else {
-                        bar = new Bar(
-                                new RectF(
-                                        x,  negativeHeight,
-                                        x + barWidth, negativeHeight - val),
-                                Direction.NEGATIVE
-                        );
-                        negativeHeight -= val;
-                    }
-
+                    bar = new Bar(stackedX, groupedX, stackedDateX, groupDateX, val, positiveHeight, negativeHeight);
                     bar.dayTransactions = dayTransactions;
+                    bar.transaction = t;
                     bar.date = day;
+
+                    positiveHeight = Math.min(positiveHeight, bar.rect.top);
+                    negativeHeight = Math.max(negativeHeight, bar.rect.bottom);
                     bars.add(bar);
+                    groupedX += (Bar.width + Bar.margin);
+                    groupDateX += (Bar.width + Bar.margin);
                 }
-                x += (barWidth + barMargin);
+                stackedX += (Bar.width + Bar.margin);
             }
+            stackedDateX += (Bar.width + Bar.margin);
+            groupDateX += (Bar.width + Bar.margin);
 
         }
+        chartType = ChartType.STACKED;
         setZoom(zoom);
         updateMatrix();
         updateSelected();
@@ -195,9 +181,11 @@ public class TransactionsChart {
     public float getTranslateY(){
         return this.translateY;
     }
+    public float getTranslateX() { return this.translateX; }
 
-    public void setTranslateY(float y){
+    public void setTranslate(float x, float y){
         this.translateY = y;
+        this.translateX = x;
         updateSelected();
         updateMatrix();
     }
@@ -207,10 +195,18 @@ public class TransactionsChart {
     }
 
     public void updateMatrix(){
-        graphCoords.reset();
-        graphCoords.preTranslate(width / 2f + translateX, translateY);
-        graphCoords.preScale(zoom, 1);
-        graphCoords.preRotate(90f);
+        frameMatrix.reset();
+        //frameMatrix.postScale(zoom, 1);
+        frameMatrix.postTranslate(0, translateY);
+
+        plotMatrix.reset();
+
+        plotMatrix.postConcat(frameMatrix);
+        plotMatrix.postTranslate(width / 2f + translateX, 0);
+        plotMatrix.preScale(1, zoom);
+
+        //graphMatrix.preScale(zoom, 1);
+        // graphMatrix.preRotate(90f);
         view.invalidate();
     }
 
@@ -255,14 +251,32 @@ public class TransactionsChart {
         animation.start();
     }
 
-    public void snapAnimation(float targetY){
+    public void groupedAnimation(){
+        chartType = chartType.next();
+        for (Bar bar: bars){
+             if (chartType == ChartType.STACKED)
+                bar.animateTo(view, bar.stackedPos).start();
 
-        ValueAnimator animation = ValueAnimator.ofFloat(translateY, targetY);
+             if (chartType == ChartType.GROUPED)
+                 bar.animateTo(view, bar.groupedPos).start();
+
+            if (chartType == ChartType.STACKED_DATE)
+                bar.animateTo(view, bar.stackedDatePos).start();
+
+            if (chartType == ChartType.GROUPED_DATE)
+                bar.animateTo(view, bar.groupedDatePos).start();
+        }
+
+    }
+
+    public void snapAnimation(float targetX){
+
+        ValueAnimator animation = ValueAnimator.ofFloat(translateX, targetX);
 
         animation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                setTranslateY((Float) valueAnimator.getAnimatedValue());
+                setTranslate((Float) valueAnimator.getAnimatedValue(), translateY);
                 view.invalidate();
             }
         });
@@ -272,84 +286,61 @@ public class TransactionsChart {
     }
 
     public void snap(){
-        if (selectedDeviceRect != null)
-            snapAnimation(translateY + selectorY - selectedDeviceRect.centerY());
+        //if (selector.selectedDeviceRect != null)
+        //    snapAnimation(translateY + selector.selectorX - selector.selectedDeviceRect.centerY());
     }
 
     public void resize(int w, int h){
-        Rect captionRect = new Rect();
-
         if (h > w) {
             this.width = w;
             this.height = h;
-            captionRect.set(0, h/2, w, h);
-            this.selectorY = (float) (h / 4.0);
         }else{
             this.width = w /2;
             this.height = h;
-            this.selectorY = (float) (h / 2.0);
-            captionRect.set(w / 2, barWidth, w, h);
         }
+
+        this.translateY = (this.height / 2);
+
         this.axis.width = this.width;
         this.axis.height = this.height;
-        caption.resize(captionRect);
 
+        caption.resize(w, h);
+        selector.resize(w, h);
         updateMatrix();
      }
 
     public void updateSelected(){
-        for (Bar bar:bars){
-            RectF deviceRect = new RectF();
-            graphCoords.mapRect(deviceRect, bar.rect);
-
-            bar.selected  = deviceRect.contains(deviceRect.centerX(), selectorY);
-
-            if (bar.selected){
-                selected = bar;
-                selectedDeviceRect = deviceRect;
-            }
-        }
-
+        selected = selector.getSelected(bars, plotMatrix);
         if (lastSelected != selected){
-            Vibrator vibrator = (Vibrator) view.context.getSystemService(Context.VIBRATOR_SERVICE);
-            vibrator.vibrate(20);
+            //Vibrator vibrator = (Vibrator) view.context.getSystemService(Context.VIBRATOR_SERVICE);
+            //vibrator.vibrate(20);
             lastSelected = selected;
         }
     }
 
     public void render(Canvas canvas) {
-        float tickHeight = 30;
-
-        canvas.save();
-        canvas.concat(graphCoords);
-
         if (transactions.size() == 0) {
             return;
         }
 
+        canvas.save();
+        canvas.concat(plotMatrix);
+
         for (Bar bar:bars){
             bar.draw(canvas);
         }
+        canvas.restore();
+        canvas.save();
+
+        canvas.concat(frameMatrix);
+        axis.draw(canvas);
 
         canvas.restore();
-        axis.draw(canvas, graphCoords);
-
-        Path p = new Path();
-        p.moveTo(0, selectorY - tickHeight);
-        p.lineTo(tickHeight, selectorY);
-        p.lineTo(0, selectorY + tickHeight);
-        canvas.drawPath(p, selectorStyle);
-
-        p.reset();
-        p.moveTo(width, selectorY - tickHeight);
-        p.lineTo(width - tickHeight, selectorY);
-        p.lineTo(width, selectorY + tickHeight);
-
-        canvas.drawPath(p, selectorStyle);
-        canvas.drawLine(tickHeight, selectorY, width- tickHeight, selectorY, selectorStyle);
+        selector.draw(canvas);
 
         if (selected != null) {
-            caption.draw(canvas, selected);
+            caption.draw(canvas, selected, chartType);
         }
+
     }
 }

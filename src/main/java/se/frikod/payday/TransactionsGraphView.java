@@ -52,7 +52,7 @@ public class TransactionsGraphView extends View {
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh){
-        mRenderer.resize(w,h);
+        mRenderer.resize(w, h);
     }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -63,7 +63,7 @@ public class TransactionsGraphView extends View {
         }
 
         invalidate();
-
+        this.getParent().requestDisallowInterceptTouchEvent(true);
         return true;
     }
 
@@ -76,10 +76,11 @@ public class TransactionsGraphView extends View {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            mRenderer.setTranslateY(mRenderer.getTranslateY() - distanceY);
+            //mRenderer.setTranslateY(mRenderer.getTranslateY() - distanceY);
+            mRenderer.setTranslate(mRenderer.getTranslateX() - distanceX, mRenderer.getTranslateY());
             scrolling = true;
-            return false;
-
+            //return false;
+            return true;
         }
 
         @Override
@@ -91,7 +92,8 @@ public class TransactionsGraphView extends View {
 
         @Override
         public boolean onDoubleTap(MotionEvent e) {
-            mRenderer.toggleZoom();
+            //mRenderer.toggleZoom();
+            mRenderer.groupedAnimation();
             invalidate();
             return true;
         }
