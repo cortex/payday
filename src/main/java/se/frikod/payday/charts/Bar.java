@@ -12,7 +12,9 @@ import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ValueAnimator;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
+import java.util.EnumMap;
 import java.util.List;
 
 import se.frikod.payday.Transaction;
@@ -39,8 +41,7 @@ class Bar{
     static Paint posFillSelected;
     static Paint posBorder;
 
-    static int width = 50;
-    static int margin = 5;
+
 
     public Direction direction;
 
@@ -63,22 +64,22 @@ class Bar{
 
     }
 
-    DateTime date;
+    LocalDate date;
 
-    Bar(float stackedX, float groupedX, float stackedDateX, float groupedDateX,  float val, float positiveHeight, float negativeHeight){
+    Bar( EnumMap<ChartType, Float> posX, float width, float val, float positiveHeight, float negativeHeight){
         if (val > 0) {
             this.rect = new RectF(0, 0, width, val);
-            this.stackedPos = new PointF(stackedX, positiveHeight - val );
-            this.stackedDatePos = new PointF(stackedDateX, positiveHeight - val);
-            this.groupedPos = new PointF(groupedX, -val);
-            this.groupedDatePos = new PointF(groupedDateX, -val);
+            this.stackedPos = new PointF(posX.get(ChartType.STACKED), positiveHeight - val );
+            this.stackedDatePos = new PointF(posX.get(ChartType.STACKED_DATE), positiveHeight - val);
+            this.groupedPos = new PointF(posX.get(ChartType.GROUPED), -val);
+            this.groupedDatePos = new PointF(posX.get(ChartType.GROUPED_DATE), -val);
             direction = Direction.POSITIVE;
         } else {
             this.rect = new RectF(0, 0, width, -val);
-            this.stackedPos = new PointF(stackedX, negativeHeight);
-            this.stackedDatePos = new PointF(stackedDateX, negativeHeight);
-            this.groupedDatePos = new PointF(groupedDateX, 0);
-            this.groupedPos = new PointF(groupedX, 0);
+            this.stackedPos = new PointF(posX.get(ChartType.STACKED), negativeHeight);
+            this.stackedDatePos = new PointF(posX.get(ChartType.STACKED_DATE), negativeHeight);
+            this.groupedPos = new PointF(posX.get(ChartType.GROUPED), 0);
+            this.groupedDatePos = new PointF(posX.get(ChartType.GROUPED_DATE), 0);
 
             direction = Direction.NEGATIVE;
         }
@@ -90,16 +91,19 @@ class Bar{
         posBorder.setStrokeWidth(w);
     }
 
-    public Animator animateTo(final View view, final PointF endPos){
+    public Animator animateTo(final View view, final PointF endPos, boolean direction){
         final PointF startPos = new PointF(rect.left, rect.top);
+
         ValueAnimator xanim = ValueAnimator.ofFloat(startPos.x, endPos.x);
         ValueAnimator yanim = ValueAnimator.ofFloat(startPos.y, endPos.y);
+
         AnimatorSet animation = new AnimatorSet();
 
         xanim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                rect.offsetTo((Float) valueAnimator.getAnimatedValue(), startPos.y);
+
+                rect.offsetTo((Float) valueAnimator.getAnimatedValue(), rect.top);
                 view.invalidate();
             }
         });
@@ -107,11 +111,15 @@ class Bar{
         yanim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                rect.offsetTo(endPos.x, (Float) valueAnimator.getAnimatedValue());
+                rect.offsetTo(rect.left, (Float) valueAnimator.getAnimatedValue());
                 view.invalidate();
             }
         });
-        animation.playSequentially(xanim, yanim);
+        if (direction) {
+            animation.playSequentially(xanim, yanim);
+        }else{
+            animation.playSequentially(yanim, xanim);
+        }
         return animation;
     }
 

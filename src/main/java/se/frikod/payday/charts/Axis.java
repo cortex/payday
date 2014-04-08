@@ -2,17 +2,21 @@ package se.frikod.payday.charts;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
-import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Path;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import se.frikod.payday.SIFormat;
 
-/**
- * Created by joakim on 12/29/13.
- */
-class Axis{
+class Tick {
+    float value;
+    String label;
+    float width;
+    boolean isLong;
+}
+
+class Axis {
     public float zoom;
     public int width;
     public int height;
@@ -20,96 +24,114 @@ class Axis{
     private Scale yScale;
     private Paint longTickStyle;
     private Paint tickStyle;
+    private Paint scaleBackground;
 
     private int longTickWidth = 30;
     private int shortTickWidth = 15;
 
-    Axis(float zoom, Scale yScale){
+    private float margin;
+    private String TAG = "Payday.Axis";
+
+    private List<Tick> ticks;
+
+    Axis(float zoom, Scale yScale, float density) {
+
         this.zoom = zoom;
         this.yScale = yScale;
+        this.margin = 50 * density;
 
         longTickStyle = new Paint();
-        longTickStyle.setColor(Color.HSVToColor(new float[]{220f, 0.0f, .70f}));
-        longTickStyle.setAlpha(220);
-        longTickStyle.setPathEffect(new DashPathEffect(new float[]{2, 8}, 0));
-        longTickStyle.setStrokeWidth(2f);
+        longTickStyle.setColor(Color.HSVToColor(new float[]{220f, .1f, 1f}));
+        longTickStyle.setStrokeWidth(density * 1f);
         longTickStyle.setStyle(Paint.Style.STROKE);
 
         tickStyle = new Paint();
         tickStyle.setColor(Color.HSVToColor(new float[]{220f, 0.0f, .70f}));
-        tickStyle.setAlpha(220);
-        tickStyle.setStrokeWidth(2f);
-        tickStyle.setTextSize(30f);
+        tickStyle.setStrokeWidth(density * 1f);
+        tickStyle.setTextSize(density * 12f);
         tickStyle.setAntiAlias(true);
         tickStyle.setTextAlign(Paint.Align.RIGHT);
 
+        scaleBackground = new Paint();
+        scaleBackground.setColor(Color.HSVToColor(new float[]{230f, 0.01f, 1f}));
+        scaleBackground.setAlpha(200);
+
+        this.ticks = new LinkedList<Tick>();
+
     }
 
-    /*private void calcStep(float height, int maxSteps){
-
-            step = floor(height/maxSteps);
-    }*/
-
-    public void draw(Canvas canvas){
-
-            float tickWidth;
-            float val;
-            float lw = height / zoom;
-            double max = lw / 2.0f / yScale.apply(1);
-            int step;
-            int margin = 100;
-            double mx = Math.log10(max) -1;
-
-            if(mx - Math.floor(mx) < 0.8)
-                step = (int) (1 * (Math.pow(10, Math.floor(mx))));
-            else
-                step = (int) (5 * (Math.pow(10, Math.floor(mx))));
-            Paint p = new Paint();
-            p.setColor(Color.HSVToColor(new float[]{230f, 0.01f, 1f}));
-            p.setAlpha(200);
-            canvas.drawRect(0, 0, margin + longTickWidth, height, p);
-
-            //Log.d(TAG, String.format("Max: %s Mx: %s Step: %s", max,  mx, step ));
-            for(int i = 0; i<max; i+= step){
-                val = (float)(yScale.apply(i) * zoom);
-                float origin = 0; //((float) height / 2.0f);
-
-                //TODO: crashes if you zoom in too much
-                if (i % (5 * step) == 0){
-                    tickWidth = longTickWidth;
-
-                    String number = SIFormat.humanReadable(i);
-
-                    canvas.drawText(number,
-                            margin - 10,
-                            origin - val + 0.3f * tickStyle.getTextSize(),
-                            tickStyle);
-                    if (val != 0)
-                        canvas.drawText("-" + number,
-                                margin - 10,
-                                origin + val + 0.3f * tickStyle.getTextSize(),
-                                tickStyle);
-                    Path path = new Path();
-
-
-                    path.moveTo(margin, origin + -val);
-                    path.lineTo(width, origin + -val);
-                    path.moveTo(margin, origin +  val);
-                    path.lineTo(width, origin +  val);
-
-                    canvas.drawPath(path, longTickStyle);
-
-                }else{
-                    tickWidth = shortTickWidth;
-                }
-
-                //canvas.drawLine(((float) width / 2.0f) +  val, 30, ((float) width / 2.0f) +  val, 30 + h, tickStyle);
-                //canvas.drawLine(((float) width / 2.0f) + -val, 30, ((float) width / 2.0f) + -val, 30 + h, tickStyle);
-
-                canvas.drawLine(margin, origin +  val, margin + tickWidth, origin +  val, tickStyle);
-                canvas.drawLine(margin, origin + -val, margin + tickWidth, origin + -val, tickStyle);
-
+    public void calcStep(float height) {
+        //Calculate best step size to fit in height
+        float lw = height / zoom;
+        double max = lw / 2.0f / yScale.apply(1);
+        int step = findBestScaleStep(height / 2 / zoom * 10);
+        ticks.clear();
+        for (int i = 0; i < max; i += step) {
+            Tick tick = new Tick();
+            tick.value = (float) (yScale.apply(i) * zoom);
+            tick.width = shortTickWidth;
+            if (i % (5 * step) == 0) {
+                tick.width = longTickWidth;
+                tick.label = SIFormat.humanReadable(i);
+                tick.isLong = true;
             }
+            ticks.add(tick);
         }
 
     }
+
+
+    public int findBestScaleStep(double height) {
+        double[] mults = {5.0, 2.0, 1.0, 0.5, 0.2, 0.1};
+        int m = (int) Math.pow(10.0f, Math.round(Math.log10(height) - 1.0f));
+        int MAX_STEPS = 50;
+        int step = m;
+        for (double mult : mults) {
+            int nSteps = (int) (height / (mult * m) + 1);
+            if (nSteps <= MAX_STEPS) {
+                step = (int) (mult * m);
+            }
+        }
+        return step;
+    }
+
+    public void drawBackground(Canvas canvas) {
+
+        height = canvas.getHeight();
+        width = canvas.getWidth();
+
+        float origin = 0;
+        for (Tick tick : ticks) {
+            if (tick.isLong) {
+                canvas.drawLine(margin, origin + -tick.value, width, origin + -tick.value, longTickStyle);
+                canvas.drawLine(margin, origin + tick.value, width, origin + tick.value, longTickStyle);
+            }
+        }
+    }
+
+    public void drawForeground(Canvas canvas) {
+
+        float origin = 0;
+        float textSize = tickStyle.getTextSize();
+
+        canvas.drawRect(0, -height / 2, margin + longTickWidth, height, scaleBackground);
+
+        for (Tick tick : ticks) {
+            if (tick.isLong) {
+                canvas.drawText(tick.label,
+                        margin - 10,
+                        origin - tick.value + 0.3f * textSize,
+                        tickStyle);
+                if (tick.value != 0)
+                    canvas.drawText("-" + tick.label,
+                            margin - 10,
+                            origin + tick.value + 0.3f * textSize,
+                            tickStyle);
+            }
+
+            canvas.drawLine(margin, origin + tick.value, margin + tick.width, origin + tick.value, tickStyle);
+            canvas.drawLine(margin, origin + -tick.value, margin + tick.width, origin + -tick.value, tickStyle);
+
+        }
+    }
+}

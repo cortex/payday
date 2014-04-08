@@ -27,7 +27,7 @@ class Caption{
     private Rect rect;
 
     Caption(TransactionsGraphView view){
-        float captionFontSize = 10  * view.getResources().getDisplayMetrics().density;
+        float captionFontSize = 12  * view.getResources().getDisplayMetrics().density;
 
         titleStyle = new Paint();
         titleStyle.setColor(Color.DKGRAY);

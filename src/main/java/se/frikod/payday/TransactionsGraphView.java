@@ -3,10 +3,14 @@ package se.frikod.payday;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.widget.Scroller;
+
+import com.nineoldandroids.animation.ValueAnimator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,18 +25,24 @@ public class TransactionsGraphView extends View {
     private ScaleGestureDetector mScaleDetector;
     private GestureDetector mGestureDetector;
     public Context context;
-    private boolean scrolling = false;
+
+
 
     public TransactionsGraphView(Context context) {
         super(context);
-        this.context = context;
-        transactions = new ArrayList<Transaction>();
+        init(context);
     }
+
+
 
     public TransactionsGraphView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.context = context;
+        init(context);
+    }
 
+    public void init(Context context) {
+        this.context = context;
+        this.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         mGestureDetector = new GestureDetector(context, new GestureListener());
         transactions = new ArrayList<Transaction>();
@@ -71,6 +81,7 @@ public class TransactionsGraphView extends View {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2,
                                final float velocityX, final float velocityY) {
+            mRenderer.flingAnimation(velocityX);
             return true;
         }
 
@@ -78,7 +89,8 @@ public class TransactionsGraphView extends View {
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             //mRenderer.setTranslateY(mRenderer.getTranslateY() - distanceY);
             mRenderer.setTranslate(mRenderer.getTranslateX() - distanceX, mRenderer.getTranslateY());
-            scrolling = true;
+            mRenderer.setManualZoom(mRenderer.getZoom() *  (1 + 0.005f * distanceY));
+            //scrolling = true;
             //return false;
             return true;
         }
@@ -93,7 +105,7 @@ public class TransactionsGraphView extends View {
         @Override
         public boolean onDoubleTap(MotionEvent e) {
             //mRenderer.toggleZoom();
-            mRenderer.groupedAnimation();
+            mRenderer.chartTypeAnimation();
             invalidate();
             return true;
         }
@@ -107,5 +119,4 @@ public class TransactionsGraphView extends View {
             return true;
         }
     }
-
 }

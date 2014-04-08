@@ -16,15 +16,13 @@
         style="@style/card"
         >
 
-
-
         <se.frikod.payday.TypefaceTextView
             style="@style/paydayLabel"
             android:textSize="24sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="0dp"
             android:textStyle="bold"
             android:text="@string/transaction_history_title"
             payday:typeface="fonts/Roboto-Light.ttf"

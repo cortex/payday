@@ -1,6 +1,6 @@
 package se.frikod.payday;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -11,7 +11,7 @@ public class Transaction{
     public BigDecimal amount;
     public String currency;
     public String description;
-    public DateTime date;
+    public LocalDate date;
 
     public Transaction(String date, BigDecimal amount, String currency, String description){
         this.date_string = date;
@@ -19,6 +19,6 @@ public class Transaction{
         this.currency = currency;
         this.description = description;
         DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd");
-        this.date = format.parseDateTime(date_string);
+        this.date = new LocalDate(format.parseDateTime(date_string));
     }
 }

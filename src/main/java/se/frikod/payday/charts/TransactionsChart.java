@@ -2,19 +2,20 @@ package se.frikod.payday.charts;
 
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Rect;
+import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.Log;
-import android.view.animation.BounceInterpolator;
+import android.widget.Scroller;
 
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.ValueAnimator;
 
-import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.joda.time.LocalDate;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,9 +25,15 @@ import se.frikod.payday.TransactionsGraphView;
 
 enum ChartType {STACKED, STACKED_DATE, GROUPED, GROUPED_DATE;
     public ChartType next() {
-        return values()[(ordinal() + 1) % values().length];
+        //return values()[(ordinal() + 1) % values().length];
+        if (this == STACKED_DATE){
+            return GROUPED_DATE;
+        }else{
+            return STACKED_DATE;
+        }
+
     }
-};
+}
 
 public class TransactionsChart {
 
@@ -50,33 +57,82 @@ public class TransactionsChart {
     private List<Transaction> transactions;
     private List<Bar> bars;
     private Bar lastSelected;
-    private TransactionsGraphView view;
+    private TransactionsGraphView mView;
     private Bar selected = null;
     private Matrix frameMatrix;
     private Matrix plotMatrix;
-    private Axis axis;
+    private Axis yAxis;
+    private DateTicks dateTicks;
     private Selector selector;
 
     private ChartType chartType;
 
+    LocalDate startDate;
+    LocalDate endDate;
+
+    BigDecimal maxTrans = BigDecimal.ZERO;
+    BigDecimal minTrans = BigDecimal.ZERO;
+    Map<LocalDate, List<Transaction>> transactionsPerDate;
+    Scale yScale;
+    float screenDensity;
+
+    private Scroller mScroller;
+    private ValueAnimator mScrollAnimator;
+
     public TransactionsChart(TransactionsGraphView view, List<Transaction> transactions) {
-        this.view = view;
+        this.mView = view;
         this.transactions = transactions;
+        this.screenDensity = view.getResources().getDisplayMetrics().density;
+        prepareTransactions();
+        yScale = new Scale();
+        yScale.update(0, Math.max(Math.abs(minTrans.doubleValue()), maxTrans.doubleValue()), 0, zoom * 100.0f);
+        this.dateTicks = new DateTicks(transactions.size(), screenDensity);
 
-        Days days;
-        Scale yScale;
-        DateTime startDate;
-        DateTime endDate;
+        initGraph();
 
-        Map<DateTime, List<Transaction>> transactionsPerDate;
+        this.caption = new Caption(this.mView);
+        this.yAxis = new Axis(zoom, yScale, screenDensity);
+        //this.xAxis = new Axis();
+        this.selector = new Selector();
+        this.plotMatrix = new Matrix();
+        this.frameMatrix = new Matrix();
+        this.width = view.getWidth();
+        this.height = view.getHeight();
+        resize(width, height);
+        chartType = ChartType.STACKED;
+        setZoom(zoom);
+        updateMatrix();
+        updateSelected();
 
-        BigDecimal maxTrans = BigDecimal.ZERO;
-        BigDecimal minTrans = BigDecimal.ZERO;
+        mScroller = new Scroller(view.context, null, true);
+        mScrollAnimator = ValueAnimator.ofFloat(0, 1);
+        mScrollAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+               // Log.i(TAG, "Scrolling " + mScrollAnimator.getAnimatedValue());
+
+                if (!mScroller.isFinished()) {
+                    mScroller.computeScrollOffset();
+                 //   Log.i(TAG, "Scrolling " + mScroller.getCurrX());
+
+                    setTranslate(mScroller.getCurrX(), getTranslateY());
+
+                } else {
+                    mScrollAnimator.cancel();
+                   // Log.i(TAG, "Scrolling done");
+                }
+                mView.invalidate();
+            }
+        });
+
+    }
+
+    private void prepareTransactions() {
 
         startDate = transactions.get(0).date;
         endDate = transactions.get(0).date;
 
-        transactionsPerDate = new HashMap<DateTime, List<Transaction>>();
+        transactionsPerDate = new HashMap<LocalDate, List<Transaction>>();
 
         for (Transaction t : transactions) {
             if (t.amount.compareTo(maxTrans) > 0)
@@ -97,42 +153,55 @@ public class TransactionsChart {
             }
             ts.add(t);
         }
+    }
 
-        days = Days.daysBetween(startDate, endDate);
+    private void initGraph() {
 
-        yScale = new Scale();
-        yScale.update(0, Math.max(Math.abs(minTrans.doubleValue()), maxTrans.doubleValue()), 0, zoom * 100.0f);
+        Days days;
+        LocalDate axisStartDate = startDate.minusDays(5);
+        LocalDate axisEndDate = endDate.plusDays(5);
+        days = Days.daysBetween(axisStartDate, axisEndDate);
 
-        this.caption = new Caption(this.view);
-        this.axis = new Axis(zoom, yScale);
-        this.selector = new Selector();
-        this.plotMatrix = new Matrix();
-        this.frameMatrix = new Matrix();
-        this.width = view.getWidth();
-        this.height = view.getHeight();
-        resize(width, height);
+        EnumMap<ChartType, Float> currentX = new EnumMap<ChartType, Float>(ChartType.class);
+        EnumMap<ChartType, Float> prevX = new EnumMap<ChartType, Float>(ChartType.class);
 
-        float stackedX = 0;
-        float groupedX = 0;
-        float stackedDateX = 0;
-        float groupDateX = 0;
+        prevX.put(ChartType.STACKED, 0f);
+        prevX.put(ChartType.GROUPED, 0f);
+        prevX.put(ChartType.GROUPED_DATE, 0f);
+        prevX.put(ChartType.STACKED_DATE, 0f);
+
+        currentX.put(ChartType.STACKED, 0f);
+        currentX.put(ChartType.GROUPED, 0f);
+        currentX.put(ChartType.GROUPED_DATE, 0f);
+        currentX.put(ChartType.STACKED_DATE, 0f);
 
         bars = new ArrayList<Bar>();
 
-        for (int i = 0; i<=days.getDays(); i++) {
-            DateTime day = startDate.plus(Days.days(i));
+        float barWidth = 20 * screenDensity;
+        float barMargin = 2 * screenDensity;
+
+        float inc = (barWidth + barMargin);
+        for (int i = 0; i <= days.getDays(); i++) {
+            LocalDate day = axisStartDate.plusDays(i);
             List<Transaction> dayTransactions = transactionsPerDate.get(day);
 
             float positiveHeight = 0;
             float negativeHeight = 0;
 
             Bar bar;
+            if (dayTransactions == null) {
+                currentX.put(ChartType.STACKED_DATE, currentX.get(ChartType.STACKED_DATE) + inc);
+                currentX.put(ChartType.GROUPED_DATE, currentX.get(ChartType.GROUPED_DATE) + inc);
+            } else {
+                currentX.put(ChartType.STACKED, currentX.get(ChartType.STACKED) + inc);
+                currentX.put(ChartType.STACKED_DATE, currentX.get(ChartType.STACKED_DATE) + inc);
 
-            if (dayTransactions != null) {
-                assert !dayTransactions.isEmpty();
                 for (Transaction t : dayTransactions) {
+                    currentX.put(ChartType.GROUPED, currentX.get(ChartType.GROUPED) + inc);
+                    currentX.put(ChartType.GROUPED_DATE, currentX.get(ChartType.GROUPED_DATE) + inc);
+
                     float val = (float) yScale.apply(t.amount);
-                    bar = new Bar(stackedX, groupedX, stackedDateX, groupDateX, val, positiveHeight, negativeHeight);
+                    bar = new Bar(currentX, barWidth, val, positiveHeight, negativeHeight);
                     bar.dayTransactions = dayTransactions;
                     bar.transaction = t;
                     bar.date = day;
@@ -140,61 +209,74 @@ public class TransactionsChart {
                     positiveHeight = Math.min(positiveHeight, bar.rect.top);
                     negativeHeight = Math.max(negativeHeight, bar.rect.bottom);
                     bars.add(bar);
-                    groupedX += (Bar.width + Bar.margin);
-                    groupDateX += (Bar.width + Bar.margin);
                 }
-                stackedX += (Bar.width + Bar.margin);
             }
-            stackedDateX += (Bar.width + Bar.margin);
-            groupDateX += (Bar.width + Bar.margin);
 
+            DateTick dateTick = new DateTick(day);
+            dateTick.coords.put(ChartType.GROUPED, new RectF(prevX.get(ChartType.GROUPED) + inc, 0, currentX.get(ChartType.GROUPED) + inc, 0));
+            dateTick.coords.put(ChartType.STACKED, new RectF(prevX.get(ChartType.STACKED) + inc, 0, currentX.get(ChartType.STACKED) + inc, 0));
+            dateTick.coords.put(ChartType.GROUPED_DATE, new RectF(prevX.get(ChartType.GROUPED_DATE) + inc, 0, currentX.get(ChartType.GROUPED_DATE) + inc, 0));
+            dateTick.coords.put(ChartType.STACKED_DATE, new RectF(prevX.get(ChartType.STACKED_DATE) + inc, 0, currentX.get(ChartType.STACKED_DATE) + inc, 0));
+
+            dateTick.currentRect = new RectF(prevX.get(ChartType.STACKED), 0, currentX.get(ChartType.STACKED), 0);
+
+            dateTicks.ticks.add(dateTick);
+
+            prevX = currentX.clone();
+
+            /*dateTicks.coords.get(ChartType.GROUPED).add();
+            dateTicks.coords.get(ChartType.STACKED).add(new PointF(stackedX, 0));
+            dateTicks.coords.get(ChartType.GROUPED_DATE).add(new PointF(groupDateX, 0));
+            dateTicks.coords.get(ChartType.STACKED_DATE).add(new PointF(stackedDateX, 0));
+            dateTicks.dates.add(day);*/
         }
-        chartType = ChartType.STACKED;
-        setZoom(zoom);
-        updateMatrix();
-        updateSelected();
     }
 
-    public float getZoom(){
+    public float getZoom() {
         return this.zoom;
     }
 
-    private void setZoom(float zoom){
+    private void setZoom(float zoom) {
         this.zoom = zoom;
-        this.axis.zoom = zoom;
-        Bar.setBorderWidth(5f/zoom);
+        this.yAxis.zoom = zoom;
+        this.yAxis.calcStep(this.height);
+        Bar.setBorderWidth(5f / zoom);
         updateMatrix();
+
     }
 
-    public void setManualZoom(float zoom){
+    public void setManualZoom(float zoom) {
         this.zoomState = true;
         this.manualZoom = zoom;
-        if (this.manualZoom > maxZoom){
+        if (this.manualZoom > maxZoom) {
             this.manualZoom = maxZoom;
         }
-        if (this.manualZoom < minZoom){
+        if (this.manualZoom < minZoom) {
             this.manualZoom = minZoom;
         }
         this.setZoom(this.manualZoom);
     }
 
-    public float getTranslateY(){
+    public float getTranslateY() {
         return this.translateY;
     }
-    public float getTranslateX() { return this.translateX; }
 
-    public void setTranslate(float x, float y){
+    public float getTranslateX() {
+        return this.translateX;
+    }
+
+    public void setTranslate(float x, float y) {
         this.translateY = y;
         this.translateX = x;
         updateSelected();
         updateMatrix();
     }
 
-    public void setWidth(int width){
+    public void setWidth(int width) {
         this.width = width;
     }
 
-    public void updateMatrix(){
+    public void updateMatrix() {
         frameMatrix.reset();
         //frameMatrix.postScale(zoom, 1);
         frameMatrix.postTranslate(0, translateY);
@@ -207,29 +289,29 @@ public class TransactionsChart {
 
         //graphMatrix.preScale(zoom, 1);
         // graphMatrix.preRotate(90f);
-        view.invalidate();
+        mView.invalidate();
     }
 
-    public void toggleZoom(){
-        if ( zoomState){
+    public void toggleZoom() {
+        if (zoomState) {
             zoomState = false;
             scaleToFit(false);
-        }else{
+        } else {
             zoomState = true;
             zoomAnimation(manualZoom);
         }
     }
 
-    public void scaleToFit(Boolean scaleSelectedOnly){
+    public void scaleToFit(Boolean scaleSelectedOnly) {
         RectF r = new RectF();
-        for (final Bar bar: bars){
-            if (!scaleSelectedOnly || bar.selected){
+        for (final Bar bar : bars) {
+            if (!scaleSelectedOnly || bar.selected) {
                 r.union(bar.rect);
             }
         }
 
         float maxh = Math.max(-r.top, r.bottom);
-        if (maxh != 0){
+        if (maxh != 0) {
             float newZoom = (width / 2.0f) / (1.2f * maxh);
             Log.d(TAG, (String.format("Max %s", maxh)));
             Log.d(TAG, (String.format("New zoom %s", newZoom)));
@@ -238,38 +320,77 @@ public class TransactionsChart {
         }
     }
 
-    public void zoomAnimation(float newZoom){
+    public void zoomAnimation(float newZoom) {
         ValueAnimator animation = ValueAnimator.ofFloat(getZoom(), newZoom);
         animation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                setZoom( (Float) valueAnimator.getAnimatedValue());
-                view.invalidate();
+                setZoom((Float) valueAnimator.getAnimatedValue());
+                mView.invalidate();
             }
         });
         animation.setDuration(700);
         animation.start();
     }
 
-    public void groupedAnimation(){
+    public void chartTypeAnimation() {
+        //this.translateX = 0;
+        //this.updateMatrix();
+
+
+        float mindx = Float.POSITIVE_INFINITY;
+        PointF targetX = new PointF();
         chartType = chartType.next();
-        for (Bar bar: bars){
-             if (chartType == ChartType.STACKED)
-                bar.animateTo(view, bar.stackedPos).start();
+        Bar closest = null;
 
-             if (chartType == ChartType.GROUPED)
-                 bar.animateTo(view, bar.groupedPos).start();
+        boolean direction = true;
 
-            if (chartType == ChartType.STACKED_DATE)
-                bar.animateTo(view, bar.stackedDatePos).start();
+        for (Bar bar : bars) {
+            PointF targetPos = new PointF();
 
-            if (chartType == ChartType.GROUPED_DATE)
-                bar.animateTo(view, bar.groupedDatePos).start();
+            if (chartType == ChartType.STACKED) {
+                direction = true;
+                targetPos = bar.stackedPos;
+            }
+            if (chartType == ChartType.GROUPED) {
+                direction = false;
+                targetPos = bar.groupedPos;
+            }
+            if (chartType == ChartType.STACKED_DATE) {
+                direction = true;
+                targetPos = bar.stackedDatePos;
+            }
+            if (chartType == ChartType.GROUPED_DATE) {
+                direction = false;
+                targetPos = bar.groupedDatePos;
+            }
+            RectF deviceBarRect = new RectF();
+            plotMatrix.mapRect(deviceBarRect, bar.rect);
+            float dx = deviceBarRect.centerX() - this.selector.selectorX;
+
+            if (Math.abs(dx) < mindx) {
+                mindx = Math.abs(dx);
+                float[] pts = new float[1];
+                pts[0] = targetPos.x;
+                //pts[1] = targetPos.y;
+
+                plotMatrix.mapPoints(pts);
+                targetX.x = pts[0] - dx;
+                closest = bar;
+                //Log.i(TAG,String.format("Tx %s, targetxd %s", translateX, pts[0]) );
+                //targetX.x += dx;
+            }
+            direction = !direction;
+            bar.animateTo(mView, targetPos, direction).start();
         }
-
+        //assert closest != null;
+        //Log.i(TAG, String.format("Closest bar %s %s", closest.transaction.description, mindx));
+        dateTicks.animateTo(chartType).start();
+        //Animator translateAnim = snapAnimation(targetX.x);
+        //translateAnim.start();
     }
 
-    public void snapAnimation(float targetX){
+    public Animator snapAnimation(float targetX) {
 
         ValueAnimator animation = ValueAnimator.ofFloat(translateX, targetX);
 
@@ -277,13 +398,30 @@ public class TransactionsChart {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 setTranslate((Float) valueAnimator.getAnimatedValue(), translateY);
-                view.invalidate();
+                mView.invalidate();
             }
         });
-        animation.setDuration(300);
-        animation.setInterpolator(new BounceInterpolator());
-        animation.start();
+        return animation;
     }
+
+    public void flingAnimation(float velocityX) {
+        float SCALE = 1;
+        int minX = -10000;
+        int minY = -10000;
+        int maxX = 10000;
+        int maxY = 10000;
+        int velX = (int)(velocityX/SCALE);
+        mScroller.fling(
+                (int)getTranslateX(),
+                0,
+                velX,0,
+        minX,maxX,minY,maxY);
+        mScrollAnimator.setDuration(mScroller.getDuration());
+        mScrollAnimator.start();
+
+        mView.invalidate();
+    }
+
 
     public void snap(){
         //if (selector.selectedDeviceRect != null)
@@ -295,14 +433,14 @@ public class TransactionsChart {
             this.width = w;
             this.height = h;
         }else{
-            this.width = w /2;
+            this.width = w / 2;
             this.height = h;
         }
 
         this.translateY = (this.height / 2);
 
-        this.axis.width = this.width;
-        this.axis.height = this.height;
+        this.yAxis.width = this.width;
+        this.yAxis.height = this.height;
 
         caption.resize(w, h);
         selector.resize(w, h);
@@ -319,23 +457,30 @@ public class TransactionsChart {
     }
 
     public void render(Canvas canvas) {
-        if (transactions.size() == 0) {
-            return;
-        }
+
+        canvas.save();
+        canvas.concat(frameMatrix);
+
+        yAxis.drawBackground(canvas);
+
+        canvas.translate(width / 2f + translateX, 0);
+
+        dateTicks.draw(canvas, chartType);
+
+        canvas.restore();
 
         canvas.save();
         canvas.concat(plotMatrix);
-
         for (Bar bar:bars){
             bar.draw(canvas);
         }
         canvas.restore();
+
         canvas.save();
-
         canvas.concat(frameMatrix);
-        axis.draw(canvas);
-
+        yAxis.drawForeground(canvas);
         canvas.restore();
+
         selector.draw(canvas);
 
         if (selected != null) {
