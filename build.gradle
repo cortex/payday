@@ -3,15 +3,17 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.7.3'
+        classpath 'com.android.tools.build:gradle:0.9.+'
     }
 }
 apply plugin: 'android'
 Properties props = new Properties()
 props.load(new FileInputStream(file("local.properties")))
 android {
-    compileSdkVersion 18
-    buildToolsVersion "18.0.1"
+    compileSdkVersion 19
+    buildToolsVersion "19.0.3"
+
+
     signingConfigs {
         debug {
             // storeFile file("debug.keystore")
