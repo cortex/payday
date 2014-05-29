@@ -5,6 +5,10 @@ import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.Log;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
+import android.widget.OverScroller;
 import android.widget.Scroller;
 
 import com.nineoldandroids.animation.Animator;
@@ -76,8 +80,10 @@ public class TransactionsChart {
     Scale yScale;
     float screenDensity;
 
-    private Scroller mScroller;
+    private OverScroller mScroller;
     private ValueAnimator mScrollAnimator;
+
+    Map<ChartType, Float> chartWidths;
 
     public TransactionsChart(TransactionsGraphView view, List<Transaction> transactions) {
         this.mView = view;
@@ -103,8 +109,10 @@ public class TransactionsChart {
         setZoom(zoom);
         updateMatrix();
         updateSelected();
+        mScroller = new OverScroller(view.context, new OvershootInterpolator(100f));
+        //mScroller = new OverScroller(view.context, new BounceInterpolator());
 
-        mScroller = new Scroller(view.context, null, true);
+        //mScroller = new Scroller(view.context, null, true);
         mScrollAnimator = ValueAnimator.ofFloat(0, 1);
         mScrollAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -113,7 +121,7 @@ public class TransactionsChart {
 
                 if (!mScroller.isFinished()) {
                     mScroller.computeScrollOffset();
-                 //   Log.i(TAG, "Scrolling " + mScroller.getCurrX());
+                    Log.i(TAG, "Scrolling " + mScroller.getCurrX());
 
                     setTranslate(mScroller.getCurrX(), getTranslateY());
 
@@ -121,7 +129,7 @@ public class TransactionsChart {
                     mScrollAnimator.cancel();
                    // Log.i(TAG, "Scrolling done");
                 }
-                mView.invalidate();
+                //mView.invalidate();
             }
         });
 
@@ -229,7 +237,14 @@ public class TransactionsChart {
             dateTicks.coords.get(ChartType.GROUPED_DATE).add(new PointF(groupDateX, 0));
             dateTicks.coords.get(ChartType.STACKED_DATE).add(new PointF(stackedDateX, 0));
             dateTicks.dates.add(day);*/
+
         }
+        Log.i(TAG, "Size:" + dateTicks.ticks.size());
+        chartWidths = new EnumMap<ChartType, Float>(ChartType.class);
+        for (Map.Entry<ChartType, RectF> entry: dateTicks.ticks.get(dateTicks.ticks.size()-1).coords.entrySet()){
+            chartWidths.put(entry.getKey(), entry.getValue().right);
+        }
+
     }
 
     public float getZoom() {
@@ -242,7 +257,6 @@ public class TransactionsChart {
         this.yAxis.calcStep(this.height);
         Bar.setBorderWidth(5f / zoom);
         updateMatrix();
-
     }
 
     public void setManualZoom(float zoom) {
@@ -278,7 +292,6 @@ public class TransactionsChart {
 
     public void updateMatrix() {
         frameMatrix.reset();
-        //frameMatrix.postScale(zoom, 1);
         frameMatrix.postTranslate(0, translateY);
 
         plotMatrix.reset();
@@ -287,8 +300,6 @@ public class TransactionsChart {
         plotMatrix.postTranslate(width / 2f + translateX, 0);
         plotMatrix.preScale(1, zoom);
 
-        //graphMatrix.preScale(zoom, 1);
-        // graphMatrix.preRotate(90f);
         mView.invalidate();
     }
 
@@ -405,18 +416,21 @@ public class TransactionsChart {
     }
 
     public void flingAnimation(float velocityX) {
+
+        //Log.i(TAG, "Start x" + getTranslateX());
         float SCALE = 1;
-        int minX = -10000;
-        int minY = -10000;
-        int maxX = 10000;
-        int maxY = 10000;
+        int minX = -chartWidths.get(chartType).intValue();
+        int minY = 0;
+        int maxX = 0;
+        int maxY = 0;
         int velX = (int)(velocityX/SCALE);
+        int duration = 1000;
         mScroller.fling(
                 (int)getTranslateX(),
                 0,
                 velX,0,
         minX,maxX,minY,maxY);
-        mScrollAnimator.setDuration(mScroller.getDuration());
+        mScrollAnimator.setDuration(duration);
         mScrollAnimator.start();
 
         mView.invalidate();
@@ -437,13 +451,11 @@ public class TransactionsChart {
             this.height = h;
         }
 
-        this.translateY = (this.height / 2);
-
-        this.yAxis.width = this.width;
-        this.yAxis.height = this.height;
-
+        translateY = (this.height / 2);
+        yAxis.resize(width, height);
         caption.resize(w, h);
         selector.resize(w, h);
+
         updateMatrix();
      }
 

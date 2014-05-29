@@ -11,9 +11,13 @@ Properties props = new Properties()
 props.load(new FileInputStream(file("local.properties")))
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.3"
+    buildToolsVersion "19.1.0"
 
-
+    sourceSets {
+    androidTest {
+    java.srcDirs = ['src/test/java']
+}
+}
     signingConfigs {
         debug {
             // storeFile file("debug.keystore")
@@ -44,6 +48,7 @@ android {
 }
 
 sourceSets {
+
     unitTest {
         java.srcDir file('src/test/java')
         resources.srcDir file('src/test/resources')

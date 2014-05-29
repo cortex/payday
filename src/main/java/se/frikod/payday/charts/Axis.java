@@ -3,6 +3,7 @@ package se.frikod.payday.charts;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -60,13 +61,22 @@ class Axis {
 
     }
 
+    public void resize(int width, int height){
+        this.width = width;
+        this.height = height;
+        this.calcStep(this.height);
+    }
+
     public void calcStep(float height) {
         //Calculate best step size to fit in height
-        float lw = height / zoom;
-        double max = lw / 2.0f / yScale.apply(1);
-        int step = findBestScaleStep(height / 2 / zoom * 10);
+        //float lw = height / zoom;
+        //double max = lw / 2.0f / yScale.apply(1);
+        int step = findBestScaleStep(height / yScale.apply(1.0));
+        double max = height / step;
+        if (step < 1) step = 1;
+        Log.i(TAG, "Step: " + step);
         ticks.clear();
-        for (int i = 0; i < max; i += step) {
+        for (int i = 0; yScale.apply(i) < max; i += step) {
             Tick tick = new Tick();
             tick.value = (float) (yScale.apply(i) * zoom);
             tick.width = shortTickWidth;
@@ -76,12 +86,14 @@ class Axis {
                 tick.isLong = true;
             }
             ticks.add(tick);
-        }
 
+        }
+        Log.i(TAG, "Number of ticks: " + ticks.size());
     }
 
 
     public int findBestScaleStep(double height) {
+
         double[] mults = {5.0, 2.0, 1.0, 0.5, 0.2, 0.1};
         int m = (int) Math.pow(10.0f, Math.round(Math.log10(height) - 1.0f));
         int MAX_STEPS = 50;
@@ -92,6 +104,7 @@ class Axis {
                 step = (int) (mult * m);
             }
         }
+        Log.i("Payday", String.format("Height / step: %s", height / step));
         return step;
     }
 
