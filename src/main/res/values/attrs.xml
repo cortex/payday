@@ -11,8 +11,9 @@
         <attr name="buttonBarButtonStyle" format="reference" />
     </declare-styleable>
 
-    <declare-styleable name="TypefaceStyle">
-        <attr name="typeface" format="string" />
-    </declare-styleable>
+
+        <declare-styleable name="TypefaceTextView">
+            <attr name="typeface" format="string" />
+        </declare-styleable>
 
 </resources>
