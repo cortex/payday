@@ -5,11 +5,8 @@ import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.Log;
-import android.view.animation.BounceInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.OverScroller;
-import android.widget.Scroller;
 
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.ValueAnimator;
@@ -39,6 +36,44 @@ enum ChartType {STACKED, STACKED_DATE, GROUPED, GROUPED_DATE;
     }
 }
 
+class Transactions{
+    // Holds and calculates stats for transactions
+    private List<Transaction> transactions;
+    LocalDate startDate;
+    LocalDate endDate;
+    BigDecimal maxTrans = BigDecimal.ZERO;
+    BigDecimal minTrans = BigDecimal.ZERO;
+    Map<LocalDate, List<Transaction>> transactionsPerDate;
+
+
+    Transactions(List<Transaction> transactions){
+        startDate = transactions.get(0).date;
+        endDate = transactions.get(0).date;
+
+        transactionsPerDate = new HashMap<LocalDate, List<Transaction>>();
+
+        for (Transaction t : transactions) {
+            if (t.amount.compareTo(maxTrans) > 0)
+                maxTrans = t.amount;
+
+            if (t.amount.compareTo(minTrans) < 0)
+                minTrans = t.amount;
+
+            if (startDate.isAfter(t.date))
+                startDate = t.date;
+            if (endDate.isBefore(t.date))
+                endDate = t.date;
+
+            List<Transaction> ts = transactionsPerDate.get(t.date);
+            if (ts == null) {
+                ts = new ArrayList<Transaction>();
+                transactionsPerDate.put(t.date, ts);
+            }
+            ts.add(t);
+        }
+    }
+}
+
 public class TransactionsChart {
 
     private static final String TAG = "Payday.TransactionsChart";
@@ -58,7 +93,6 @@ public class TransactionsChart {
     private int width;
     private int height;
 
-    private List<Transaction> transactions;
     private List<Bar> bars;
     private Bar lastSelected;
     private TransactionsGraphView mView;
@@ -71,12 +105,8 @@ public class TransactionsChart {
 
     private ChartType chartType;
 
-    LocalDate startDate;
-    LocalDate endDate;
 
-    BigDecimal maxTrans = BigDecimal.ZERO;
-    BigDecimal minTrans = BigDecimal.ZERO;
-    Map<LocalDate, List<Transaction>> transactionsPerDate;
+    private Transactions transactions;
     Scale yScale;
     float screenDensity;
 
@@ -87,27 +117,28 @@ public class TransactionsChart {
 
     public TransactionsChart(TransactionsGraphView view, List<Transaction> transactions) {
         this.mView = view;
-        this.transactions = transactions;
+        this.transactions = new Transactions(transactions);
         this.screenDensity = view.getResources().getDisplayMetrics().density;
-        prepareTransactions();
-        yScale = new Scale();
-        yScale.update(0, Math.max(Math.abs(minTrans.doubleValue()), maxTrans.doubleValue()), 0, zoom * 100.0f);
+
         this.dateTicks = new DateTicks(transactions.size(), screenDensity);
 
-        initGraph();
-
         this.caption = new Caption(this.mView);
-        this.yAxis = new Axis(zoom, yScale, screenDensity);
-        //this.xAxis = new Axis();
         this.selector = new Selector();
         this.plotMatrix = new Matrix();
         this.frameMatrix = new Matrix();
         this.width = view.getWidth();
         this.height = view.getHeight();
+
+
+        this.yScale = new Scale();
+        this.yAxis = new Axis(zoom, yScale, screenDensity);
+
         resize(width, height);
+        updateMatrix();
+        initGraph();
+
         chartType = ChartType.STACKED;
         setZoom(zoom);
-        updateMatrix();
         updateSelected();
         mScroller = new OverScroller(view.context, new OvershootInterpolator(100f));
         //mScroller = new OverScroller(view.context, new BounceInterpolator());
@@ -135,39 +166,13 @@ public class TransactionsChart {
 
     }
 
-    private void prepareTransactions() {
 
-        startDate = transactions.get(0).date;
-        endDate = transactions.get(0).date;
-
-        transactionsPerDate = new HashMap<LocalDate, List<Transaction>>();
-
-        for (Transaction t : transactions) {
-            if (t.amount.compareTo(maxTrans) > 0)
-                maxTrans = t.amount;
-
-            if (t.amount.compareTo(minTrans) < 0)
-                minTrans = t.amount;
-
-            if (startDate.isAfter(t.date))
-                startDate = t.date;
-            if (endDate.isBefore(t.date))
-                endDate = t.date;
-
-            List<Transaction> ts = transactionsPerDate.get(t.date);
-            if (ts == null) {
-                ts = new ArrayList<Transaction>();
-                transactionsPerDate.put(t.date, ts);
-            }
-            ts.add(t);
-        }
-    }
 
     private void initGraph() {
 
         Days days;
-        LocalDate axisStartDate = startDate.minusDays(5);
-        LocalDate axisEndDate = endDate.plusDays(5);
+        LocalDate axisStartDate = transactions.startDate.minusDays(5);
+        LocalDate axisEndDate = transactions.endDate.plusDays(5);
         days = Days.daysBetween(axisStartDate, axisEndDate);
 
         EnumMap<ChartType, Float> currentX = new EnumMap<ChartType, Float>(ChartType.class);
@@ -191,7 +196,7 @@ public class TransactionsChart {
         float inc = (barWidth + barMargin);
         for (int i = 0; i <= days.getDays(); i++) {
             LocalDate day = axisStartDate.plusDays(i);
-            List<Transaction> dayTransactions = transactionsPerDate.get(day);
+            List<Transaction> dayTransactions = transactions.transactionsPerDate.get(day);
 
             float positiveHeight = 0;
             float negativeHeight = 0;
@@ -208,8 +213,8 @@ public class TransactionsChart {
                     currentX.put(ChartType.GROUPED, currentX.get(ChartType.GROUPED) + inc);
                     currentX.put(ChartType.GROUPED_DATE, currentX.get(ChartType.GROUPED_DATE) + inc);
 
-                    float val = (float) yScale.apply(t.amount);
-                    bar = new Bar(currentX, barWidth, val, positiveHeight, negativeHeight);
+                    double val = t.amount.doubleValue();
+                    bar = new Bar(currentX, barWidth, (float) val, positiveHeight, negativeHeight);
                     bar.dayTransactions = dayTransactions;
                     bar.transaction = t;
                     bar.date = day;
@@ -254,7 +259,14 @@ public class TransactionsChart {
     private void setZoom(float zoom) {
         this.zoom = zoom;
         this.yAxis.zoom = zoom;
+        Log.i(TAG, "Zoom: " + zoom);
+        yScale.update(0,
+                Math.max(Math.abs(transactions.minTrans.doubleValue()), transactions.maxTrans.doubleValue()),
+                0, zoom *Math.max(Math.abs(transactions.minTrans.doubleValue()), transactions.maxTrans.doubleValue()));
+        Log.i(TAG, "" + yScale);
         this.yAxis.calcStep(this.height);
+
+
         Bar.setBorderWidth(5f / zoom);
         updateMatrix();
     }
@@ -295,7 +307,6 @@ public class TransactionsChart {
         frameMatrix.postTranslate(0, translateY);
 
         plotMatrix.reset();
-
         plotMatrix.postConcat(frameMatrix);
         plotMatrix.postTranslate(width / 2f + translateX, 0);
         plotMatrix.preScale(1, zoom);

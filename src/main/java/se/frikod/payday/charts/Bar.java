@@ -66,16 +66,16 @@ class Bar{
 
     LocalDate date;
 
-    Bar( EnumMap<ChartType, Float> posX, float width, float val, float positiveHeight, float negativeHeight){
-        if (val > 0) {
-            this.rect = new RectF(0, 0, width, val);
-            this.stackedPos = new PointF(posX.get(ChartType.STACKED), positiveHeight - val );
-            this.stackedDatePos = new PointF(posX.get(ChartType.STACKED_DATE), positiveHeight - val);
-            this.groupedPos = new PointF(posX.get(ChartType.GROUPED), -val);
-            this.groupedDatePos = new PointF(posX.get(ChartType.GROUPED_DATE), -val);
+    Bar( EnumMap<ChartType, Float> posX, float width, float height, float positiveHeight, float negativeHeight){
+        if (height > 0) {
+            this.rect = new RectF(0, 0, width, height);
+            this.stackedPos = new PointF(posX.get(ChartType.STACKED), positiveHeight - height );
+            this.stackedDatePos = new PointF(posX.get(ChartType.STACKED_DATE), positiveHeight - height);
+            this.groupedPos = new PointF(posX.get(ChartType.GROUPED), -height);
+            this.groupedDatePos = new PointF(posX.get(ChartType.GROUPED_DATE), -height);
             direction = Direction.POSITIVE;
         } else {
-            this.rect = new RectF(0, 0, width, -val);
+            this.rect = new RectF(0, 0, width, -height);
             this.stackedPos = new PointF(posX.get(ChartType.STACKED), negativeHeight);
             this.stackedDatePos = new PointF(posX.get(ChartType.STACKED_DATE), negativeHeight);
             this.groupedPos = new PointF(posX.get(ChartType.GROUPED), 0);

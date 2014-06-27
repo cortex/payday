@@ -69,16 +69,15 @@ class Axis {
 
     public void calcStep(float height) {
         //Calculate best step size to fit in height
-        //float lw = height / zoom;
-        //double max = lw / 2.0f / yScale.apply(1);
-        int step = findBestScaleStep(height / yScale.apply(1.0));
-        double max = height / step;
-        if (step < 1) step = 1;
+        Log.i(TAG, "" + yScale);
+        double scaleMax = yScale.unscale(height);
+        Log.i(TAG, String.format("Height: %s, Scaled height: %s", height, scaleMax));
+        double step = findBestScaleStep(scaleMax);
         Log.i(TAG, "Step: " + step);
         ticks.clear();
-        for (int i = 0; yScale.apply(i) < max; i += step) {
+        for (int i = 0; i < scaleMax; i += step) {
             Tick tick = new Tick();
-            tick.value = (float) (yScale.apply(i) * zoom);
+            tick.value = (float) yScale.apply(i);
             tick.width = shortTickWidth;
             if (i % (5 * step) == 0) {
                 tick.width = longTickWidth;
@@ -86,26 +85,33 @@ class Axis {
                 tick.isLong = true;
             }
             ticks.add(tick);
-
         }
         Log.i(TAG, "Number of ticks: " + ticks.size());
     }
 
 
-    public int findBestScaleStep(double height) {
+    public double findBestScaleStep(double height) {
 
-        double[] mults = {5.0, 2.0, 1.0, 0.5, 0.2, 0.1};
-        int m = (int) Math.pow(10.0f, Math.round(Math.log10(height) - 1.0f));
-        int MAX_STEPS = 50;
-        int step = m;
-        for (double mult : mults) {
-            int nSteps = (int) (height / (mult * m) + 1);
-            if (nSteps <= MAX_STEPS) {
-                step = (int) (mult * m);
+        double[] multiples =  {10, 5.0, 1.0, 0.5, 0.1};
+        int magnitude = (int) Math.pow(10.0f, Math.floor(Math.log10(height)));
+        int TARGET_STEPS = 50;
+
+        Double best_step = null;
+        Double best_delta = null;
+
+        for (double mult : multiples) {
+            double step = mult * magnitude;
+            double nSteps = (height / step);
+            double delta = Math.abs(TARGET_STEPS - nSteps);
+            if (best_delta == null || delta <= best_delta) {
+                best_step = step;
+                best_delta = delta;
             }
+
         }
-        Log.i("Payday", String.format("Height / step: %s", height / step));
-        return step;
+        assert best_step  != null;
+        Log.i("Payday", String.format("Height / step: %s", height / best_step));
+        return best_step;
     }
 
     public void drawBackground(Canvas canvas) {
