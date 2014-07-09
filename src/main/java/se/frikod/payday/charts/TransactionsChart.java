@@ -80,8 +80,8 @@ public class TransactionsChart {
     private final Caption caption;
     public float mxOffset = 0;
 
-    private float minZoom = 0.001f;
-    private float maxZoom = 2000f;
+    private float minZoom = 0.01f;
+    private float maxZoom = 20f;
 
     private float zoom = 5f;
     private float manualZoom = 5f;
@@ -137,18 +137,14 @@ public class TransactionsChart {
         updateMatrix();
         initGraph();
 
-        chartType = ChartType.STACKED;
+        chartType = ChartType.STACKED_DATE;
         setZoom(zoom);
         updateSelected();
         mScroller = new OverScroller(view.context, new OvershootInterpolator(100f));
-        //mScroller = new OverScroller(view.context, new BounceInterpolator());
-
-        //mScroller = new Scroller(view.context, null, true);
         mScrollAnimator = ValueAnimator.ofFloat(0, 1);
         mScrollAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-               // Log.i(TAG, "Scrolling " + mScrollAnimator.getAnimatedValue());
 
                 if (!mScroller.isFinished()) {
                     mScroller.computeScrollOffset();
@@ -158,14 +154,11 @@ public class TransactionsChart {
 
                 } else {
                     mScrollAnimator.cancel();
-                   // Log.i(TAG, "Scrolling done");
                 }
-                //mView.invalidate();
             }
         });
 
     }
-
 
 
     private void initGraph() {
