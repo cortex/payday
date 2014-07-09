@@ -92,7 +92,7 @@ class Axis {
 
     public double findBestScaleStep(double height) {
 
-        double[] multiples =  {10, 5.0, 1.0, 0.5, 0.1};
+        double[] multiples =  {1.0, 0.5, 0.2, 0.1, 0.05, 0.01};
         int magnitude = (int) Math.pow(10.0f, Math.floor(Math.log10(height)));
         int TARGET_STEPS = 50;
 
@@ -107,10 +107,10 @@ class Axis {
                 best_step = step;
                 best_delta = delta;
             }
-
         }
         assert best_step  != null;
-        Log.i("Payday", String.format("Height / step: %s", height / best_step));
+        Log.i("Payday", String.format("Magnitude : %s Height / step: %s", magnitude, height / best_step));
+        if (best_step < 1) best_step = 1.0;
         return best_step;
     }
 
